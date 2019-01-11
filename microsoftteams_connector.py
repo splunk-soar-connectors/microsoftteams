@@ -443,7 +443,7 @@ class MicrosoftTeamConnector(BaseConnector):
                                             None)
         return phantom.APP_SUCCESS, asset_name
 
-    def _get_phantom_base_url(self, action_result):
+    def _get_phantom_base_url_ms(self, action_result):
         """ Get base url of phantom.
 
         :param action_result: object of ActionResult class
@@ -469,7 +469,7 @@ class MicrosoftTeamConnector(BaseConnector):
         URL to make rest calls
         """
 
-        ret_val, phantom_base_url = self._get_phantom_base_url(action_result)
+        ret_val, phantom_base_url = self._get_phantom_base_url_ms(action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
