@@ -431,7 +431,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         asset_id = self.get_asset_id()
         rest_endpoint = MSTEAMS_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
-        url = '{}{}'.format(MSTEAMS_PHANTOM_BASE_URL, rest_endpoint)
+        url = '{}{}'.format(self.get_phantom_base_url + 'rest', rest_endpoint)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
 
         if phantom.is_fail(ret_val):
@@ -451,7 +451,7 @@ class MicrosoftTeamConnector(BaseConnector):
         base url of phantom
         """
 
-        url = '{}{}'.format(MSTEAMS_PHANTOM_BASE_URL, MSTEAMS_PHANTOM_SYS_INFO_URL)
+        url = '{}{}'.format(self.get_phantom_base_url + 'rest', MSTEAMS_PHANTOM_SYS_INFO_URL)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
         if phantom.is_fail(ret_val):
             return ret_val, None
