@@ -1,10 +1,9 @@
 # File: microsoftteams_consts.py
-# Copyright (c) 2018 Splunk Inc.
+# Copyright (c) 2018-2019 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL – Use or disclosure of this material in whole or in part
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
 
-MSTEAMS_PHANTOM_BASE_URL = 'https://127.0.0.1/rest'
 MSTEAMS_PHANTOM_SYS_INFO_URL = '/system_info'
 MSTEAMS_PHANTOM_ASSET_INFO_URL = '/asset/{asset_id}'
 MSTEAMS_LOGIN_BASE_URL = 'https://login.microsoftonline.com'
