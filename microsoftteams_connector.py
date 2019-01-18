@@ -611,7 +611,6 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # wait-time while request is being granted
         for i in range(0, 35):
-            self.send_progress('Waiting...')
             self._state = _load_app_state(self.get_asset_id(), self)
             if os.path.isfile(auth_status_file_path):
                 time_out = True
@@ -650,10 +649,10 @@ class MicrosoftTeamConnector(BaseConnector):
         url_to_show = '{0}/admin_consent?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
         _save_app_state(self._state, self.get_asset_id(), self)
         self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
-        self.save_progress(url_to_show)
+        self.save_progress('Waiting to receive the admin consent')
+        self.save_progress('{0}{1}'.format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
-        self.save_progress('Waiting to receive the admin consent')
 
         # Wait till authorization is given or timeout occurred
         status = self._wait(action_result=action_result)
