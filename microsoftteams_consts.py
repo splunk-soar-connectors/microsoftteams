@@ -27,7 +27,7 @@ MSTEAMS_BASE_URL_NOT_FOUND_MSG = 'Phantom Base URL not found in System Settings.
                                 'Please specify this value in System Settings.'
 MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG = 'Test connectivity failed'
 MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG = 'Test connectivity passed'
-MSTEAMS_ADMIN_CONSENT_MSG = 'Please hit the mentioned URL in another tab of browser to provide the admin consent: '
+MSTEAMS_ADMIN_CONSENT_MSG = 'Please hit the mentioned URL in another tab of browser to authorize the user and provide the admin consent: '
 MSTEAMS_ADMIN_CONSENT_FAILED_MSG = 'Admin consent not received'
 MSTEAMS_ADMIN_CONSENT_PASSED_MSG = 'Admin consent Received'
 MSTEAMS_AUTHORIZE_USER_MSG = 'Please authorize user in a separate tab using URL'

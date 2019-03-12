@@ -648,7 +648,6 @@ class MicrosoftTeamConnector(BaseConnector):
 
         url_to_show = '{0}/admin_consent?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
         _save_app_state(self._state, self.get_asset_id(), self)
-        self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
         self.save_progress('Waiting to receive the admin consent')
         self.save_progress('{0}{1}'.format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
 
