@@ -1,5 +1,5 @@
 # File: microsoftteams_connector.py
-# Copyright (c) 2018-2019 Splunk Inc.
+# Copyright (c) 2019 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -443,7 +443,7 @@ class MicrosoftTeamConnector(BaseConnector):
                                             None)
         return phantom.APP_SUCCESS, asset_name
 
-    def _get_phantom_base_url(self, action_result):
+    def _get_phantom_base_url_ms(self, action_result):
         """ Get base url of phantom.
 
         :param action_result: object of ActionResult class
@@ -469,7 +469,7 @@ class MicrosoftTeamConnector(BaseConnector):
         URL to make rest calls
         """
 
-        ret_val, phantom_base_url = self._get_phantom_base_url(action_result)
+        ret_val, phantom_base_url = self._get_phantom_base_url_ms(action_result)
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
@@ -611,7 +611,6 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # wait-time while request is being granted
         for i in range(0, 35):
-            self.send_progress('Waiting...')
             self._state = _load_app_state(self.get_asset_id(), self)
             if os.path.isfile(auth_status_file_path):
                 time_out = True
@@ -649,11 +648,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
         url_to_show = '{0}/admin_consent?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
         _save_app_state(self._state, self.get_asset_id(), self)
-        self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
-        self.save_progress(url_to_show)
+        self.save_progress('Waiting to receive the admin consent')
+        self.save_progress('{0}{1}'.format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
-        self.save_progress('Waiting to receive the admin consent')
 
         # Wait till authorization is given or timeout occurred
         status = self._wait(action_result=action_result)
