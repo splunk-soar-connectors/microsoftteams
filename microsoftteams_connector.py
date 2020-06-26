@@ -82,7 +82,7 @@ def _load_app_state(asset_id, app_connector=None):
 
 
 def _save_app_state(state, asset_id, app_connector):
-    """ This functions is used to save current state in file.
+    """ This function is used to save current state in file.
 
     :param state: Dictionary which contains data to write in state file
     :param asset_id: asset_id
@@ -93,7 +93,7 @@ def _save_app_state(state, asset_id, app_connector):
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
+            app_connector.debug_print('In _save_app_state: Invalid asset_id')
         return {}
 
     app_dir = os.path.split(__file__)[0]
@@ -102,7 +102,7 @@ def _save_app_state(state, asset_id, app_connector):
     real_state_file_path = os.path.realpath(state_file)
     if not os.path.dirname(real_state_file_path) == app_dir:
         if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
+            app_connector.debug_print('In _save_app_state: Invalid asset_id')
         return {}
 
     if app_connector:
