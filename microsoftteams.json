@@ -14,7 +14,10 @@
     "utctime_updated": "2019-04-02T23:13:12.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.pyc",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.8.24304",
+    "latest_tested_versions": [
+        "v1 API 2020-07-08"
+    ],
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "configuration": {
