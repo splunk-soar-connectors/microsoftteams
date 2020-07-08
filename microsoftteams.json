@@ -10,16 +10,17 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2020 Splunk Inc.",
-    "app_version": "1.0.5",
-    "utctime_updated": "2019-04-02T23:13:12.000000Z",
+    "app_version": "2.0.1",
+    "utctime_updated": "2020-06-26T23:36:21.000000Z",
     "package_name": "phantom_microsoftteams",
-    "main_module": "microsoftteams_connector.pyc",
-    "min_phantom_version": "4.8.24304",
-    "latest_tested_versions": [
-        "v1 API 2020-07-08"
-    ],
+    "main_module": "microsoftteams_connector.py",
+    "min_phantom_version": "4.6.19142",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
+    "python_version": "3",
+    "latest_tested_versions": [
+        "2020-05-29"
+    ],
     "configuration": {
         "client_id": {
             "description": "Client ID",

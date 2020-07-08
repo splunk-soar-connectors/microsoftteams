@@ -18,8 +18,12 @@ import os
 import time
 import pwd
 import grp
-import urllib
 from bs4 import BeautifulSoup
+
+try:
+    import urllib.parse as urllib
+except ImportError:
+    import urllib
 
 
 def _handle_login_redirect(request, key):
@@ -112,7 +116,7 @@ def _save_app_state(state, asset_id, app_connector):
         with open(real_state_file_path, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
-        print 'Unable to save state file: {0}'.format(str(e))
+        print('Unable to save state file: {0}'.format(str(e)))
 
     return phantom.APP_SUCCESS
 
@@ -983,7 +987,7 @@ if __name__ == '__main__':
             exit(1)
 
     if len(sys.argv) < 2:
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
