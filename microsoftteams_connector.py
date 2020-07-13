@@ -36,13 +36,11 @@ def _handle_login_redirect(request, key):
 
     asset_id = request.GET.get('asset_id')
     if not asset_id:
-        return HttpResponse('ERROR: Asset ID not found in URL', content_type="text/plain", status=400)
+        return HttpResponse('ERROR: Asset ID not found in URL')
     state = _load_app_state(asset_id)
-    if not state:
-        return HttpResponse('ERROR: Invalid asset_id', content_type="text/plain", status=400)
     url = state.get(key)
     if not url:
-        return HttpResponse('App state is invalid, {key} not found.'.format(key=key), content_type="text/plain", status=400)
+        return HttpResponse('App state is invalid, {key} not found.'.format(key=key))
     response = HttpResponse(status=302)
     response['Location'] = url
     return response
@@ -56,23 +54,11 @@ def _load_app_state(asset_id, app_connector=None):
     :return: state: Current state file as a dictionary
     """
 
-    asset_id = str(asset_id)
-    if not asset_id or not asset_id.isalnum():
-        if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
-        return {}
-
-    app_dir = os.path.dirname(os.path.abspath(__file__))
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
-    real_state_file_path = os.path.realpath(state_file)
-    if not os.path.dirname(real_state_file_path) == app_dir:
-        if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
-        return {}
-
+    dirpath = os.path.split(__file__)[0]
+    state_file = '{0}/{1}_state.json'.format(dirpath, asset_id)
     state = {}
     try:
-        with open(real_state_file_path, 'r') as state_file_obj:
+        with open(state_file, 'r') as state_file_obj:
             state_file_data = state_file_obj.read()
             state = json.loads(state_file_data)
     except Exception as e:
@@ -81,12 +67,11 @@ def _load_app_state(asset_id, app_connector=None):
 
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
-
     return state
 
 
 def _save_app_state(state, asset_id, app_connector):
-    """ This function is used to save current state in file.
+    """ This functions is used to save current state in file.
 
     :param state: Dictionary which contains data to write in state file
     :param asset_id: asset_id
@@ -94,26 +79,14 @@ def _save_app_state(state, asset_id, app_connector):
     :return: status: phantom.APP_SUCCESS
     """
 
-    asset_id = str(asset_id)
-    if not asset_id or not asset_id.isalnum():
-        if app_connector:
-            app_connector.debug_print('In _save_app_state: Invalid asset_id')
-        return {}
-
-    app_dir = os.path.split(__file__)[0]
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
-
-    real_state_file_path = os.path.realpath(state_file)
-    if not os.path.dirname(real_state_file_path) == app_dir:
-        if app_connector:
-            app_connector.debug_print('In _save_app_state: Invalid asset_id')
-        return {}
+    dirpath = os.path.split(__file__)[0]
+    state_file = '{0}/{1}_state.json'.format(dirpath, asset_id)
 
     if app_connector:
         app_connector.debug_print('Saving state: ', state)
 
     try:
-        with open(real_state_file_path, 'w+') as state_file_obj:
+        with open(state_file, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
         print('Unable to save state file: {0}'.format(str(e)))
@@ -130,7 +103,7 @@ def _handle_login_response(request):
 
     asset_id = request.GET.get('state')
     if not asset_id:
-        return HttpResponse('ERROR: Asset ID not found in URL\n{}'.format(json.dumps(request.GET)), content_type="text/plain", status=400)
+        return HttpResponse('ERROR: Asset ID not found in URL\n{}'.format(json.dumps(request.GET)))
 
     # Check for error in URL
     error = request.GET.get('error')
@@ -141,14 +114,14 @@ def _handle_login_response(request):
         message = 'Error: {0}'.format(error)
         if error_description:
             message = '{0} Details: {1}'.format(message, error_description)
-        return HttpResponse('Server returned {0}'.format(message), content_type="text/plain", status=400)
+        return HttpResponse('Server returned {0}'.format(message))
 
     code = request.GET.get('code')
     admin_consent = request.GET.get('admin_consent')
 
     # If none of the code or admin_consent is available
     if not (code or admin_consent):
-        return HttpResponse('Error while authenticating\n{0}'.format(json.dumps(request.GET)), content_type="text/plain", status=400)
+        return HttpResponse('Error while authenticating\n{0}'.format(json.dumps(request.GET)))
 
     state = _load_app_state(asset_id)
 
@@ -164,14 +137,14 @@ def _handle_login_response(request):
 
         # If admin_consent is True
         if admin_consent:
-            return HttpResponse('Admin Consent received. Please close this window.', content_type="text/plain")
-        return HttpResponse('Admin Consent declined. Please close this window and try again later.', content_type="text/plain", status=400)
+            return HttpResponse('Admin Consent received. Please close this window.')
+        return HttpResponse('Admin Consent declined. Please close this window and try again later.')
 
     # If value of admin_consent is not available, value of code is available
     state['code'] = code
     _save_app_state(state, asset_id, None)
 
-    return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
+    return HttpResponse('Code received. Please close this window, the action will continue to get new token.')
 
 
 def _handle_rest_request(request, path_parts):
@@ -183,7 +156,7 @@ def _handle_rest_request(request, path_parts):
     """
 
     if len(path_parts) < 2:
-        return HttpResponse('error: True, message: Invalid REST endpoint request', content_type="text/plain", status=404)
+        return HttpResponse('error: True, message: Invalid REST endpoint request')
 
     call_type = path_parts[1]
 
@@ -199,12 +172,9 @@ def _handle_rest_request(request, path_parts):
     if call_type == 'result':
         return_val = _handle_login_response(request)
         asset_id = request.GET.get('state')
-        if asset_id and asset_id.isalnum():
+        if asset_id:
             app_dir = os.path.dirname(os.path.abspath(__file__))
             auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, asset_id, MSTEAMS_TC_FILE)
-            real_auth_status_file_path = os.path.realpath(auth_status_file_path)
-            if not os.path.dirname(real_auth_status_file_path) == app_dir:
-                return HttpResponse("Error: Invalid asset_id", content_type="text/plain", status=400)
             open(auth_status_file_path, 'w').close()
             try:
                 uid = pwd.getpwnam('apache').pw_uid
@@ -215,7 +185,7 @@ def _handle_rest_request(request, path_parts):
                 pass
 
         return return_val
-    return HttpResponse('error: Invalid endpoint', content_type="text/plain", status=404)
+    return HttpResponse('error: Invalid endpoint')
 
 
 def _get_dir_name_from_app_name(app_name):
@@ -378,7 +348,9 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # In pagination, URL of next page contains complete URL
         # So no need to modify them
-        if not endpoint.startswith(MSTEAMS_MSGRAPH_API_BASE_URL):
+        if endpoint.startswith(MSTEAMS_MSGRAPH_TEAMS_ENDPOINT):
+            endpoint = '{0}{1}'.format(MSTEAMS_MSGRAPH_BETA_API_BASE_URL, endpoint)
+        elif not endpoint.startswith(MSTEAMS_MSGRAPH_API_BASE_URL):
             endpoint = '{0}{1}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, endpoint)
 
         if headers is None:
@@ -484,7 +456,6 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
         base url of phantom
         """
-
         url = '{}{}'.format(self.get_phantom_base_url() + 'rest', MSTEAMS_PHANTOM_SYS_INFO_URL)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
         if phantom.is_fail(ret_val):
@@ -579,6 +550,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
         self.save_progress(url_for_authorize_request)
+        self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
 
@@ -789,11 +761,8 @@ class MicrosoftTeamConnector(BaseConnector):
         endpoint = MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
 
         data = {
-            "rootMessage": {
-                "body": {
-                    "contentType": 1,
-                    "content": message
-                }
+            "body": {
+                "Content": message
             }
         }
 
@@ -844,7 +813,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_list_groups(self, param):
-        """ This function is used to list all the groups fo Microsoft Team.
+        """ This function is used to list all the groups for Microsoft Team.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -875,6 +844,38 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_list_teams(self, param):
+        """ This function is used to list all the teams fo Microsoft Team.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        endpoint = MSTEAMS_MSGRAPH_TEAMS_ENDPOINT
+
+        while True:
+
+            # make rest call using refresh token
+            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            for team in response.get('value', []):
+                action_result.add_data(team)
+
+            if not response.get(MSTEAMS_NEXT_LINK_STRING):
+                break
+
+            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+
+        summary = action_result.update_summary({})
+        summary['total_teams'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -889,6 +890,7 @@ class MicrosoftTeamConnector(BaseConnector):
             'test_connectivity': self._handle_test_connectivity,
             'send_message': self._handle_send_message,
             'list_groups': self._handle_list_groups,
+            'list_teams': self._handle_list_teams,
             'list_users': self._handle_list_users,
             'list_channels': self._handle_list_channels,
             'get_admin_consent': self._handle_get_admin_consent
@@ -966,7 +968,7 @@ if __name__ == '__main__':
 
     if username and password:
         try:
-            print ("Accessing the Login page")
+            print("Accessing the Login page")
             r = requests.get(BaseConnector._get_phantom_base_url() + "login", verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -979,11 +981,11 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
             headers['Referer'] = BaseConnector._get_phantom_base_url() + 'login'
 
-            print ("Logging into Platform to get the session id")
+            print("Logging into Platform to get the session id")
             r2 = requests.post(BaseConnector._get_phantom_base_url() + "login", verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platfrom. Error: {}".format(str(e)))
+            print("Unable to get session id from the platfrom. Error: {}".format(str(e)))
             exit(1)
 
     if len(sys.argv) < 2:
@@ -1002,6 +1004,6 @@ if __name__ == '__main__':
             in_json['user_session_token'] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)

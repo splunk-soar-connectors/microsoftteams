@@ -17,30 +17,25 @@
 <br>
 <h2>Authentication</h2>
 <br>
-This app requires creating a Microsoft Graph Application. To do so, navigate to <a href="https://apps.dev.microsoft.com">https://apps.dev.microsoft.com</a> in a browser and log in with a Microsoft account, then select <b>Add an app</b>.
+This app requires creating a Microsoft Graph Application. To do so, navigate to <a href="https://portal.azure.com/#home" target="_blank"> https://portal.azure.com/</a> in a browser and log in with a Microsoft account, then select <b>App registrations</b>.
 <br><br>
-On the next page, give your application a name and select <b>Create</b>.
+On the next page, select <b>New registration</b> and give your app a name.
 <br><br>
 Once the app is created, three steps need to be taken on the next page:
 <ul>
-    <li>Under <b>Application Secrets</b> select <b>Generate New Password</b>. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>
-    <li>Under <b>Platforms</b> select <b>Add Platform</b>. In the <b>Add Platform</b> window, select <b>Web</b>. The <b>Redirect URLs</b> field will be filled in a later step.</li>
-    <li>Under <b>Microsoft Graph Permissions</b> the following <b>Delegated Permissions</b> need to be added:
+    <li>Under <b>Certificates & secretes</b> select <b>New client secret</b>. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>
+    <li>Under <b>Overview</b> select <b>Add a Redirect URI</b>. In the <b>Add Platform</b> window, select <b>Web</b>. The <b>Redirect URLs</b> field will be filled in a later step.</li>
+    <li>Under <b>API Permissions</b> the following <b>Delegated Permissions</b> need to be added:
     <ul>
         <li>Group.ReadWrite.All</li>
         <li>offline_access</li>
         <li>User.ReadWrite.All</li>
     </ul>
 </ul>
-After making these changes, click <b>Save</b> at the bottom of the screen.
-
-<br>
-This app also requires tenant-id. To do so, navigate to <a href="https://portal.azure.com">https://portal.azure.com</a> in a browser and log in with a Microsoft account, then click on <b>Azure Active Directory</b>. 
-Under Azure Active Directory, click on <b>Properties</b> and copy <b>Directory Id</b> which will be used as tenant-id in asset.
-<br><br>
+After making these changes, click <b>Add permissions</b> at the bottom of the screen.
 
 <h2>Phantom Graph Asset</h2>
-When creating an asset for the <b>Microsoft Teams</b> app, place <b>Application Id</b> of the app created during the previous step in the <b>Client ID</b> field and place the password generated during the app creation process in the <b>Client Secret</b> field. Then, after filling out the <b>Tenant ID</b> field, click <b>SAVE</b>.
+When creating an asset for the <b>Microsoft Teams</b> app, place <b>Application Id</b> of the app in the <b>Client ID</b> field and place the password generated during the app creation process in the <b>Client Secret</b> field. Then, after filling out the <b>Tenant ID</b> field, click <b>SAVE</b>. Both the Application/Client ID and the Tenant ID can be found in the <b>Overview</b> tab on your app's Azure page.
 <br><br>
 After saving, a new field will appear in the <b>Asset Settings</b> tab. Take the URL found in the <b>POST incoming for Microsoft Teams to this location</b> field and place it in the <b>Redirect URLs</b> field mentioned in a previous step. To this URL, add <b>/result</b>. After doing so the URL should look something like:
 <br><br>
@@ -49,6 +44,9 @@ https://&lt;phantom_host&gt;/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65
 </pre>
 <br>
 Once again, click save at the bottom of the screen.
+<br><br>
+Additionally, updating the Base URL in the Phantom Company Settings is also required. Navigate to <b>Administration > Company Settings > Info</b> to configure the Base URL For Phantom Appliance. Then, select <b>Save Changes.</b>
+<br>
 <h2>Method to run get admin consent</h2>
 Run <b>get_admin_consent</b> action. It will display an URL. Open Navigate to this URL in a separate browser tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account with administrator privileges. After logging in, review the requested permissions listed, then click <b>Accept</b>. Finally, close that tab. Action should show success.
 <br>

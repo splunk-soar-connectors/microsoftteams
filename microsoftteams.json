@@ -10,8 +10,8 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2020 Splunk Inc.",
-    "app_version": "2.0.2",
-    "utctime_updated": "2020-07-08T20:29:09.000000Z",
+    "app_version": "2.0.1",
+    "utctime_updated": "2020-06-26T23:36:21.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
     "min_phantom_version": "4.6.19142",
@@ -44,10 +44,10 @@
     "actions": [
         {
             "action": "test connectivity",
-            "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
             "verbose": "You need to take admin consent first if you're a non-admin user",
             "type": "test",
+            "identifier": "test_connectivity",
             "read_only": true,
             "parameters": {},
             "output": [],
@@ -55,15 +55,12 @@
         },
         {
             "action": "get admin consent",
-            "identifier": "get_admin_consent",
             "description": "Get admin consent",
             "verbose": "Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user",
             "type": "generic",
+            "identifier": "get_admin_consent",
             "read_only": true,
             "parameters": {},
-            "render": {
-                "type": "table"
-            },
             "output": [
                 {
                     "data_path": "action_result.status",
@@ -107,13 +104,16 @@
                     ]
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
             "action": "list users",
-            "identifier": "list_users",
             "description": "List all users",
             "type": "investigate",
+            "identifier": "list_users",
             "read_only": true,
             "parameters": {},
             "output": [
@@ -548,9 +548,9 @@
         },
         {
             "action": "send message",
-            "identifier": "send_message",
             "description": "Send message to a channel of a group",
             "type": "generic",
+            "identifier": "send_message",
             "read_only": false,
             "parameters": {
                 "group_id": {
@@ -674,9 +674,9 @@
         },
         {
             "action": "list channels",
-            "identifier": "list_channels",
             "description": "Lists all channels of a group",
             "type": "investigate",
+            "identifier": "list_channels",
             "read_only": true,
             "parameters": {
                 "group_id": {
@@ -770,14 +770,11 @@
         },
         {
             "action": "list groups",
-            "identifier": "list_groups",
-            "description": "List all groups",
+            "description": "List all Azure Groups",
             "type": "investigate",
+            "identifier": "list_groups",
             "read_only": true,
             "parameters": {},
-            "render": {
-                "type": "table"
-            },
             "output": [
                 {
                     "data_path": "action_result.status",
@@ -1010,6 +1007,244 @@
                     ]
                 }
             ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list teams",
+            "description": "List all Microsoft Teams",
+            "type": "investigate",
+            "identifier": "list_teams",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total teams: 1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.mailNickname",
+                    "data_type": "string",
+                    "example_values": [
+                        "TeamOne"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.securityIdentifier",
+                    "data_type": "string",
+                    "example_values": [
+                        "S-1-12-1-2823526206-1112059217-98516634-653268292"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.classification",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "a84b973e-ad51-4248-9a3e-df054415f026"
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 0,
+                    "contains": [
+                        "ms teams group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSyncEnabled",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.preferredLanguage",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.expirationDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.theme",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.preferredDataLocation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mail",
+                    "data_type": "string",
+                    "example_values": [
+                        "TeamOne@phantomengineering.onmicrosoft.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isAssignableToRole",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.membershipRule",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesLastSyncDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "TeamOne"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.visibility",
+                    "data_type": "string",
+                    "example_values": [
+                        "Public"
+                    ],
+                    "column_name": "Visibility",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.proxyAddresses.*.",
+                    "data_type": "string",
+                    "example_values": [
+                        "SPO:SPO_2e56f4be-737f-418d-8dee-7d01911b91df@SPO_a417c578-c7ee-480d-a225-d48057e74df5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.proxyAddresses",
+                    "data_type": "string",
+                    "example_values": [
+                        "SMTP:TeamOne@phantomengineering.onmicrosoft.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.securityEnabled",
+                    "data_type": "numeric",
+                    "example_values": [
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.renewedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2018-02-05T21:42:33Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.groupTypes.*.",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unified"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "TeamOne"
+                    ],
+                    "column_name": "Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2018-02-05T21:42:33Z"
+                    ],
+                    "column_name": "Created On",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSamAccountName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.membershipRuleProcessingState",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesNetBiosName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.resourceProvisioningOptions.*.",
+                    "data_type": "string",
+                    "example_values": [
+                        "Team"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesDomainName",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSecurityIdentifier",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.createdByAppId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mailEnabled",
+                    "data_type": "numeric",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.total_teams",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         }
     ]

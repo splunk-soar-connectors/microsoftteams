@@ -11,12 +11,14 @@ MSTEAMS_SERVER_TOKEN_URL = '/{tenant_id}/oauth2/v2.0/token'
 MSTEAMS_AUTHORIZE_URL = '/{tenant_id}/oauth2/v2.0/authorize?client_id={client_id}&redirect_uri={redirect_uri}' \
                        '&response_type={response_type}&state={state}&scope={scope}'
 MSTEAMS_ADMIN_CONSENT_URL = '/{tenant_id}/adminconsent?client_id={client_id}&redirect_uri={redirect_uri}&state={state}'
-MSTEAMS_MSGRAPH_API_BASE_URL = 'https://graph.microsoft.com/beta'
+MSTEAMS_MSGRAPH_API_BASE_URL = 'https://graph.microsoft.com/v1.0'
+MSTEAMS_MSGRAPH_BETA_API_BASE_URL = 'https://graph.microsoft.com/beta'
 MSTEAMS_MSGRAPH_SELF_ENDPOINT = '/me'
 MSTEAMS_MSGRAPH_GROUPS_ENDPOINT = '/groups'
+MSTEAMS_MSGRAPH_TEAMS_ENDPOINT = '/groups?$filter=resourceProvisioningOptions/Any(x:x eq \'Team\')'
 MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT = '/users'
-MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT = '/groups/{group_id}/channels'
-MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT = '/groups/{group_id}/channels/{channel_id}/chatthreads'
+MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT = '/teams/{group_id}/channels'
+MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT = '/teams/{group_id}/channels/{channel_id}/messages'
 MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
@@ -31,6 +33,9 @@ MSTEAMS_ADMIN_CONSENT_MSG = 'Please hit the mentioned URL in another tab of brow
 MSTEAMS_ADMIN_CONSENT_FAILED_MSG = 'Admin consent not received'
 MSTEAMS_ADMIN_CONSENT_PASSED_MSG = 'Admin consent Received'
 MSTEAMS_AUTHORIZE_USER_MSG = 'Please authorize user in a separate tab using URL'
+MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your Phantom instance, check whether you have:  '\
+                                ' 1. Specified the Web Redirect URL of your App -- The Redirect URL should be <POST URL>/result . '\
+                                ' 2. Configured the base URL of your Phantom Instance at Administration -> Company Settings -> Info'
 MSTEAMS_CODE_RECEIVED_MSG = 'Code Received'
 MSTEAMS_MAKING_CONNECTION_MSG = 'Making Connection...'
 MSTEAMS_REST_URL_NOT_AVAILABLE_MSG = 'Rest URL not available. Error: {error}'
