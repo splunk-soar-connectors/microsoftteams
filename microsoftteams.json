@@ -10,11 +10,11 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2020 Splunk Inc.",
-    "app_version": "2.0.1",
-    "utctime_updated": "2020-06-26T23:36:21.000000Z",
+    "app_version": "2.0.2",
+    "utctime_updated": "2020-07-08T20:29:09.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "4.6.19142",
+    "min_phantom_version": "4.8.24304",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
@@ -45,7 +45,7 @@
         {
             "action": "test connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "You need to take admin consent first if you're a non-admin user",
+            "verbose": "You need to take admin consent first if you're a non-admin user.",
             "type": "test",
             "identifier": "test_connectivity",
             "read_only": true,
@@ -55,9 +55,9 @@
         },
         {
             "action": "get admin consent",
-            "description": "Get admin consent",
-            "verbose": "Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user",
-            "type": "generic",
+            "description": "Get the admin consent for a non-admin user",
+            "verbose": "Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user.",
+            "type": "investigate",
             "identifier": "get_admin_consent",
             "read_only": true,
             "parameters": {},
@@ -135,10 +135,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.assignedLicenses.*.disabledPlans",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.assignedLicenses.*.skuId",
@@ -184,17 +181,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.city",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.companyName",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.country",
@@ -212,17 +203,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.department",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.deviceKeys",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.displayName",
@@ -236,10 +221,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.employeeId",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.givenName",
@@ -274,17 +256,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.jobTitle",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.legalAgeGroupClassification",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.mail",
@@ -310,41 +286,26 @@
                 },
                 {
                     "data_path": "action_result.data.*.mobilePhone",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.officeLocation",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesDomainName",
                     "data_type": "string",
-                    "example_values": [
-                        ""
-                    ],
                     "contains": [
                         "domain"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesExtensionAttributes",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesImmutableId",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesLastSyncDateTime",
@@ -355,66 +316,39 @@
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesProvisioningErrors",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSamAccountName",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSecurityIdentifier",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSyncEnabled",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesUserPrincipalName",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.passwordPolicies",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.passwordProfile",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.postalCode",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.preferredDataLocation",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.preferredLanguage",
@@ -460,24 +394,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.showInAddressList",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.state",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.streetAddress",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.surname",
@@ -616,7 +541,7 @@
                 {
                     "data_path": "action_result.parameter.message",
                     "data_type": "string",
-                    "column_name": "message",
+                    "column_name": "Message",
                     "column_order": 2,
                     "example_values": [
                         "message from phantom"
@@ -892,38 +817,23 @@
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesProvisioningErrors",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSecurityIdentifier",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSyncEnabled",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.preferredDataLocation",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.preferredLanguage",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.proxyAddresses",
@@ -941,17 +851,11 @@
                 },
                 {
                     "data_path": "action_result.data.*.resourceBehaviorOptions",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.resourceProvisioningOptions",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.securityEnabled",
@@ -963,10 +867,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.theme",
-                    "data_type": "string",
-                    "example_values": [
-                        ""
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.visibility",
@@ -1024,7 +925,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -1142,8 +1044,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.securityEnabled",
-                    "data_type": "numeric",
+                    "data_type": "boolean",
                     "example_values": [
+                        true,
                         false
                     ]
                 },
@@ -1215,9 +1118,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.mailEnabled",
-                    "data_type": "numeric",
+                    "data_type": "boolean",
                     "example_values": [
-                        true
+                        true,
+                        false
                     ]
                 },
                 {
