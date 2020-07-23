@@ -930,33 +930,52 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Total teams: 1"
-                    ]
+                    "data_path": "action_result.data.*.classification",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.mailNickname",
+                    "data_path": "action_result.data.*.createdByAppId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2018-02-05T21:42:33Z"
+                    ],
+                    "column_name": "Created On",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.description",
                     "data_type": "string",
                     "example_values": [
                         "TeamOne"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.securityIdentifier",
+                    "data_path": "action_result.data.*.displayName",
                     "data_type": "string",
                     "example_values": [
-                        "S-1-12-1-2823526206-1112059217-98516634-653268292"
+                        "TeamOne"
+                    ],
+                    "column_name": "Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.expirationDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.groupTypes.*.",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unified"
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.classification",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.deletedDateTime",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -971,23 +990,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.onPremisesSyncEnabled",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.preferredLanguage",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.expirationDateTime",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.theme",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.preferredDataLocation",
+                    "data_path": "action_result.data.*.isAssignableToRole",
                     "data_type": "string"
                 },
                 {
@@ -1001,32 +1004,69 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.isAssignableToRole",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.mailEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.membershipRule",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesLastSyncDateTime",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.description",
+                    "data_path": "action_result.data.*.mailNickname",
                     "data_type": "string",
                     "example_values": [
                         "TeamOne"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.visibility",
+                    "data_path": "action_result.data.*.membershipRule",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.membershipRuleProcessingState",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesDomainName",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesLastSyncDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesNetBiosName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSamAccountName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSecurityIdentifier",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSyncEnabled",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.preferredDataLocation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.preferredLanguage",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.proxyAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "Public"
-                    ],
-                    "column_name": "Visibility",
-                    "column_order": 3
+                        "SMTP:TeamOne@phantomengineering.onmicrosoft.com"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.proxyAddresses.*.",
@@ -1036,10 +1076,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.proxyAddresses",
+                    "data_path": "action_result.data.*.renewedDateTime",
                     "data_type": "string",
                     "example_values": [
-                        "SMTP:TeamOne@phantomengineering.onmicrosoft.com"
+                        "2018-02-05T21:42:33Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.resourceProvisioningOptions.*.",
+                    "data_type": "string",
+                    "example_values": [
+                        "Team"
                     ]
                 },
                 {
@@ -1051,84 +1098,37 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.renewedDateTime",
+                    "data_path": "action_result.data.*.securityIdentifier",
                     "data_type": "string",
                     "example_values": [
-                        "2018-02-05T21:42:33Z"
+                        "S-1-12-1-2823526206-1112059217-98516634-653268292"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.groupTypes.*.",
-                    "data_type": "string",
-                    "example_values": [
-                        "Unified"
-                    ]
+                    "data_path": "action_result.data.*.theme",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.displayName",
+                    "data_path": "action_result.data.*.visibility",
                     "data_type": "string",
                     "example_values": [
-                        "TeamOne"
+                        "Public"
                     ],
-                    "column_name": "Name",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.createdDateTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2018-02-05T21:42:33Z"
-                    ],
-                    "column_name": "Created On",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesSamAccountName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.membershipRuleProcessingState",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesNetBiosName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resourceProvisioningOptions.*.",
-                    "data_type": "string",
-                    "example_values": [
-                        "Team"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesDomainName",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesSecurityIdentifier",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.createdByAppId",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.mailEnabled",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
+                    "column_name": "Visibility",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.summary.total_teams",
                     "data_type": "numeric",
                     "example_values": [
                         1
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total teams: 1"
                     ]
                 },
                 {

@@ -76,6 +76,7 @@ def _get_error_message_from_exception(python_version, e, app_connector=None):
     :return: error code and message
     """
     error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+    error_code = "Error code unavailable"
     try:
         if e.args:
             if len(e.args) > 1:
@@ -354,7 +355,7 @@ class MicrosoftTeamConnector(BaseConnector):
             soup = BeautifulSoup(response.text, "html.parser")
             # Remove the script, style, footer and navigation part from the HTML message
             for element in soup(["script", "style", "footer", "nav"]):
-               element.extract()
+                element.extract()
             error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
@@ -528,8 +529,6 @@ class MicrosoftTeamConnector(BaseConnector):
             request_func = getattr(requests, method)
         except AttributeError:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
-        if self._python_version == 2:
-            endpoint = endpoint.decode('utf-8')
         try:
             r = request_func(endpoint, data=data, headers=headers, verify=verify, params=params)
         except Exception as e:
@@ -629,7 +628,8 @@ class MicrosoftTeamConnector(BaseConnector):
         # the newly generated token is not being saved to state file and automatic workflow for token has been stopped.
         # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
 
-        if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
+        if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get
+        ("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
             message = "Error occurred while saving the newly generated access or refresh token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
             message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
