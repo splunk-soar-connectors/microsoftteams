@@ -544,7 +544,7 @@
                     "column_name": "Message",
                     "column_order": 2,
                     "example_values": [
-                        "message from phantom"
+                        "This is a test message"
                     ]
                 },
                 {
@@ -997,7 +997,7 @@
                     "data_path": "action_result.data.*.mail",
                     "data_type": "string",
                     "example_values": [
-                        "TeamOne@phantomengineering.onmicrosoft.com"
+                        "test@test.onmicrosoft.com"
                     ],
                     "contains": [
                         "email"
@@ -1065,7 +1065,7 @@
                     "data_path": "action_result.data.*.proxyAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "SMTP:TeamOne@phantomengineering.onmicrosoft.com"
+                        "SMTP:test@test.onmicrosoft.com"
                     ]
                 },
                 {
