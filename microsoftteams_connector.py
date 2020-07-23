@@ -1077,7 +1077,7 @@ class MicrosoftTeamConnector(BaseConnector):
         """ This function gets called once all the param dictionary elements are looped over and no more handle_action
         calls are left to be made. It gives the AppConnector a chance to loop through all the results that were
         accumulated by multiple handle_action function calls and create any summary if required. Another usage is
-        cleanup, disconnect from remote devices etc.
+        cleanup, disconnect from remote devices, etc.
 
         :return: status (success/failure)
         """
