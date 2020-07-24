@@ -45,7 +45,7 @@
         {
             "action": "test connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "You need to take admin consent first if you're a non-admin user.",
+            "verbose": "You first need admin consent if you're a non-admin user.",
             "type": "test",
             "identifier": "test_connectivity",
             "read_only": true,
