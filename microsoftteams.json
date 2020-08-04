@@ -57,9 +57,9 @@
             "action": "get admin consent",
             "description": "Get the admin consent for a non-admin user",
             "verbose": "Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user.",
-            "type": "investigate",
+            "type": "generic",
             "identifier": "get_admin_consent",
-            "read_only": true,
+            "read_only": false,
             "parameters": {},
             "output": [
                 {

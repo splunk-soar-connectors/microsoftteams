@@ -47,39 +47,39 @@ After making these changes, click <b>Add permissions</b> at the bottom of the sc
     </ul>
 </p>
 
-<h2>Configure the Microsoft Teams Phantom app's asset</h2>
+<h2>Configure the Microsoft Teams Phantom app asset</h2>
 When creating an asset for the <b>Microsoft Teams</b> app, place <b>Application Id</b> of the app in the <b>Client ID</b> field and place the password generated during the app creation process in the <b>Client Secret</b> field. Then, after filling out the <b>Tenant ID</b> field, click <b>SAVE</b>. Both the Application/Client ID and the Tenant ID can be found in the <b>Overview</b> tab on your app's Azure page.
 <br><br>
 After saving, a new field will appear in the <b>Asset Settings</b> tab. Take the URL found in the <b>POST incoming for Microsoft Teams to this location</b> field and place it in the <b>Redirect URLs</b> field mentioned in a previous step. To this URL, add <b>/result</b>. After doing so the URL should look something like:
 <br><br>
-<pre>
+<p>
 https://&lt;phantom_host&gt;/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/&lt;asset_name&gt;/result
-</pre>
+</p>
 <br>
 Once again, click Save at the bottom of the screen.
 <br><br>
 Additionally, updating the Base URL in the Phantom Company Settings is also required. Navigate to <b>Administration > Company Settings > Info</b> to configure the Base URL For Phantom Appliance. Then, select <b>Save Changes.</b>
 <br>
 <h2>Method to run get admin consent</h2>
-Run <b>get_admin_consent</b> action. It will display an URL. Open Navigate to this URL in a separate browser tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account with administrator privileges. After logging in, review the requested permissions listed, then click <b>Accept</b>. Finally, close that tab. Action should show success.
+Run <b>get_admin_consent</b> action. It will display an URL. Navigate to this URL in a separate browser tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account with administrator privileges. After logging in, review the requested permissions listed, then click <b>Accept</b>. Finally, close that tab. Action should show a success message.
 <p>
     <b>Note:</b> If the URL is not displayed while running the <b>get_admin_consent</b> action, the user can get the URL from the following ways:
     <ul>
         <li>User can find the URL in 'spawn.log' file.</li>
         <li>User needs to manually navigate to the URL in a separate browser tab. The URL format is:
-        <pre>https://&lt;phantom_host&gt;/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/&lt;asset_name&gt;/admin_consent?asset_id=&lt;asset_id&gt;</pre></li>
+        <b>https://&lt;phantom_host&gt;/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/&lt;asset_name&gt;/admin_consent?asset_id=&lt;asset_id&gt;</b></li>
         <p><b>Steps to fetch asset id</b></p>
         <ul>
             <li>Open the asset on which the action is executed.</li>
             <li>URL for the asset will be in the following format:</li>
-                <pre>https://&lt;phantom_host&gt;/apps/&lt;app_id&gt;/asset/&lt;asset_id&gt;/</pre>
+                <p><b>https//&lt;phantom_host&gt;/apps/&lt;app_id&gt;/asset/&lt;asset_id&gt;/</b></p>
             <li>Take the asset id from the URL.</li>
         </ul>
     </ul>
 </p>
 
 <h2>Method to run test connectivity</h2>
-After setting up the asset and user, click the <b>TEST CONNECTIVITY</b> button. A window should pop up and display a URL. Navigate to this URL in a separate browser tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account. After logging in, review the requested permissions listed, then click <b>Accept</b>. Finally, close that tab. The test connectivity window should show success.
+After setting up the asset and user, click the <b>TEST CONNECTIVITY</b> button. A window should pop up and display a URL. Navigate to this URL in a separate browser tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account. After logging in, review the requested permissions listed, then click <b>Accept</b>. Finally, close that tab. The test connectivity window should show a success message.
 <br><br>
 The app should now be ready to be used.
 
