@@ -617,7 +617,6 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self._state[MSTEAMS_TOKEN_STRING] = resp_json
         self._access_token = resp_json[MSTEAMS_ACCESS_TOKEN_STRING]
-        self._refresh_token = resp_json[MSTEAMS_REFRESH_TOKEN_STRING]
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
 
@@ -627,13 +626,21 @@ class MicrosoftTeamConnector(BaseConnector):
         # If the corresponding state file doesn't have correct owner, owner group or permissions,
         # the newly generated token is not being saved to state file and automatic workflow for token has been stopped.
         # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
-
-        if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get
-        ("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
-            message = "Error occurred while saving the newly generated access or refresh token (in place of the expired token) in the state file."
-            message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
-            return action_result.set_status(phantom.APP_ERROR, message)
+        
+        if self._admin_consent:
+            if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)):
+                message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
+                message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
+                message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
+                return action_result.set_status(phantom.APP_ERROR, message)
+        else:
+            self._refresh_token = resp_json[MSTEAMS_REFRESH_TOKEN_STRING]
+            if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get
+            ("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
+                message = "Error occurred while saving the newly generated access or refresh token (in place of the expired token) in the state file."
+                message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
+                message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
+                return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
 
@@ -647,86 +654,92 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         self.save_progress(MSTEAMS_MAKING_CONNECTION_MSG)
 
-        # Get initial REST URL
-        ret_val, app_rest_url = self._get_app_rest_url(action_result)
-        if phantom.is_fail(ret_val):
-            self.save_progress(MSTEAMS_REST_URL_NOT_AVAILABLE_MSG.format(error=action_result.get_message()))
-            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
+        if not self._admin_consent:
+            # Get initial REST URL
+            ret_val, app_rest_url = self._get_app_rest_url(action_result)
+            if phantom.is_fail(ret_val):
+                self.save_progress(MSTEAMS_REST_URL_NOT_AVAILABLE_MSG.format(error=action_result.get_message()))
+                return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
-        # Append /result to create redirect_uri
-        redirect_uri = '{0}/result'.format(app_rest_url)
-        app_state['redirect_uri'] = redirect_uri
+            # Append /result to create redirect_uri
+            redirect_uri = '{0}/result'.format(app_rest_url)
+            app_state['redirect_uri'] = redirect_uri
 
-        self.save_progress(MSTEAMS_OAUTH_URL_MSG)
-        self.save_progress(redirect_uri)
+            self.save_progress(MSTEAMS_OAUTH_URL_MSG)
+            self.save_progress(redirect_uri)
 
-        # Authorization URL used to make request for getting code which is used to generate access token
-        self._client_id = urllib.quote(self._client_id)
-        self._tenant = urllib.quote(self._tenant)
-        authorization_url = MSTEAMS_AUTHORIZE_URL.format(tenant_id=self._tenant, client_id=self._client_id,
-                                                         redirect_uri=redirect_uri, state=self.get_asset_id(),
-                                                         response_type='code',
-                                                         scope=MSTEAMS_REST_REQUEST_SCOPE)
-        authorization_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, authorization_url)
+            # Authorization URL used to make request for getting code which is used to generate access token
+            self._client_id = urllib.quote(self._client_id)
+            self._tenant = urllib.quote(self._tenant)
+            authorization_url = MSTEAMS_AUTHORIZE_URL.format(tenant_id=self._tenant, client_id=self._client_id,
+                                                            redirect_uri=redirect_uri, state=self.get_asset_id(),
+                                                            response_type='code',
+                                                            scope=MSTEAMS_REST_REQUEST_SCOPE)
+            authorization_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, authorization_url)
 
-        app_state['authorization_url'] = authorization_url
+            app_state['authorization_url'] = authorization_url
 
-        # URL which would be shown to the user
-        url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
-        _save_app_state(app_state, self.get_asset_id(), self)
+            # URL which would be shown to the user
+            url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
+            _save_app_state(app_state, self.get_asset_id(), self)
 
-        self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
-        self.save_progress(url_for_authorize_request)
-        self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
+            self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
+            self.save_progress(url_for_authorize_request)
+            self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
 
-        time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
+            time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
 
-        # Wait for some while user login to Microsoft
-        status = self._wait(action_result=action_result)
+            # Wait for some while user login to Microsoft
+            status = self._wait(action_result=action_result)
 
-        if phantom.is_fail(status):
-            self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
-            return action_result.get_status()
+            if phantom.is_fail(status):
+                self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
+                return action_result.get_status()
 
-        # Empty message to override last message of waiting
-        self.send_progress('')
-        self.save_progress(MSTEAMS_CODE_RECEIVED_MSG)
-        self._state = _load_app_state(self.get_asset_id(), self)
+            # Empty message to override last message of waiting
+            self.send_progress('')
+            self.save_progress(MSTEAMS_CODE_RECEIVED_MSG)
+            self._state = _load_app_state(self.get_asset_id(), self)
 
-        # if code is not available in the state file
-        if not self._state or not self._state.get('code'):
-            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
+            # if code is not available in the state file
+            if not self._state or not self._state.get('code'):
+                return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
-        current_code = self._state['code']
-        self.save_state(self._state)
-        _save_app_state(self._state, self.get_asset_id(), self)
-        self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
+            current_code = self._state['code']
+            self.save_state(self._state)
+            _save_app_state(self._state, self.get_asset_id(), self)
+            self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
 
         data = {
             'client_id': self._client_id,
-            'scope': MSTEAMS_REST_REQUEST_SCOPE,
+            'scope': "https://graph.microsoft.com/.default",
             'client_secret': self._client_secret,
-            'grant_type': 'authorization_code',
-            'redirect_uri': redirect_uri,
-            'code': current_code
+            'grant_type': 'client_credentials',
         }
+        if not self._admin_consent:
+            data['grant_type'] = 'authorization_code'
+            data['scope'] = MSTEAMS_REST_REQUEST_SCOPE
+            data['redirect_uri'] = redirect_uri
+            data['code'] = current_code
+
         # for first time access, new access token is generated
         ret_val = self._generate_new_access_token(action_result=action_result, data=data)
 
         if phantom.is_fail(ret_val):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
             return action_result.get_status()
+        
+        if not self._admin_consent:
+            self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
-        self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
+            url = '{}{}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
+            ret_val, response = self._update_request(action_result=action_result, endpoint=url)
 
-        url = '{}{}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
-        ret_val, response = self._update_request(action_result=action_result, endpoint=url)
+            if phantom.is_fail(ret_val):
+                self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
+                return action_result.get_status()
 
-        if phantom.is_fail(ret_val):
-            self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
-            return action_result.get_status()
-
-        self.save_progress(MSTEAMS_GOT_CURRENT_USER_INFO_MSG)
+            self.save_progress(MSTEAMS_GOT_CURRENT_USER_INFO_MSG)
         self.save_progress(MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG)
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -1070,6 +1083,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
+        self._admin_consent = config.get("admin_consent")
 
         return phantom.APP_SUCCESS
 

@@ -14,10 +14,10 @@
     "utctime_updated": "2020-08-04T22:52:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
+    "python_version" : "3",
     "min_phantom_version": "4.8.24304",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
-    "python_version": "3",
     "latest_tested_versions": [
         "2020-07-23"
     ],
@@ -39,6 +39,12 @@
             "data_type": "string",
             "required": true,
             "order": 2
+        },
+        "admin_consent": {
+            "description": "Admin Consent Already Provided",
+            "data_type": "boolean",
+            "default": true,
+            "order": 3
         }
     },
     "actions": [
