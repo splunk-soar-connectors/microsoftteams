@@ -41,7 +41,7 @@
             "order": 2
         },
         "admin_consent": {
-            "description": "Admin Consent Already Provided",
+            "description": "Admin consent already provided",
             "data_type": "boolean",
             "default": true,
             "order": 3

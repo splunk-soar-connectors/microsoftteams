@@ -325,6 +325,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_secret = None
         self._access_token = None
         self._refresh_token = None
+        self._python_version = None
 
     def _process_empty_response(self, response, action_result):
         """ This function is used to process empty response.
@@ -626,7 +627,7 @@ class MicrosoftTeamConnector(BaseConnector):
         # If the corresponding state file doesn't have correct owner, owner group or permissions,
         # the newly generated token is not being saved to state file and automatic workflow for token has been stopped.
         # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
-        
+
         if self._admin_consent:
             if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)):
                 message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
@@ -728,7 +729,7 @@ class MicrosoftTeamConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
             return action_result.get_status()
-        
+
         if not self._admin_consent:
             self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
@@ -1083,7 +1084,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
-        self._admin_consent = config.get("admin_consent")
+        self._admin_consent = config.get(MSTEAMS_ADMIN_CONSENT)
 
         return phantom.APP_SUCCESS
 
