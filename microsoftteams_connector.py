@@ -469,11 +469,14 @@ class MicrosoftTeamConnector(BaseConnector):
         self._tenant = urllib.quote(self._tenant)
         token_data = {
             'client_id': self._client_id,
-            'scope': MSTEAMS_REST_REQUEST_SCOPE,
+            'scope': "https://graph.microsoft.com/.default",
             'client_secret': self._client_secret,
-            'grant_type': MSTEAMS_REFRESH_TOKEN_STRING,
-            'refresh_token': self._refresh_token
+            'grant_type': 'client_credentials',
         }
+        if not self._admin_consent:
+            token_data['scope'] = MSTEAMS_REST_REQUEST_SCOPE
+            token_data['grant_type'] = MSTEAMS_REFRESH_TOKEN_STRING
+            token_data['refresh_token'] = self.refresh_token
 
         if not self._access_token:
             if not self._refresh_token:
