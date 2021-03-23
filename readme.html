@@ -1,5 +1,5 @@
 <!-- File: readme.html
-  Copyright (c) 2019-2020 Splunk Inc.
+  Copyright (c) 2019-2021 Splunk Inc.
 
   SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
   without a valid written license from Splunk Inc. is PROHIBITED.
@@ -14,23 +14,27 @@
     <li>For a non-admin user, you need to get the admin consent first. This can be done by running the action <b>get_admin_consent</b> by an admin user.
 </ul>
 <h2>Authentication</h2>
-<br>
-This app requires creating an app in the Azure Active Directory. To do so, navigate to <a href="https://portal.azure.com/#home" target="_blank"> https://portal.azure.com/</a> in a browser and log in with a Microsoft account, then select <b>App registrations</b>.
-<br><br>
-On the next page, select <b>New registration</b> and give your app a name.
-<br><br>
-Once the app is created, three steps need to be taken on the next page:
+This app requires creating an app in the Azure Active Directory.
 <ul>
-    <li>Under <b>Certificates & secrets</b> select <b>New client secret</b>. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>
-    <li>Under <b>Overview</b>, select <b>Add a Redirect URI</b>. In the <b>Add Platform</b> window, select <b>Web</b>. The <b>Redirect URLs</b> field will be filled in a later step.</li>
-    <li>Under <b>API Permissions</b> the following <b>Delegated Permissions</b> need to be added:
+    <li>Navigate to the <a href="https://portal.azure.com" target="_blank">https://portal.azure.com</a> in a browser and log in with a Microsoft account</li>
+    <li>Select <b>Azure Active Directory</b> from the left side menu</li>
+    <li>From the left panel, select <b>App Registrations</b></li>
+    <li>At the top of the middle section, select <b>New registration</b></li>
+    <li>On the next page, give a name to your application and click <b>Register</b></li>
+    <li>Once the app is created, the below steps needs to be performed on the next page:</li>
     <ul>
-        <li>Group.ReadWrite.All</li>
-        <li>offline_access</li>
-        <li>User.ReadWrite.All</li>
+        <li>Under <b>Certificates & secrets</b>, select <b>New client secret</b>. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>
+        <li>Under <b>Authentication</b>, select <b>Add a platform</b>. In the <b>Add a platform</b> window, select <b>Web</b>. The <b>Redirect
+            URLs</b> should be filled right here. We will get <b>Redirect URLs</b> from the Phantom asset that we will create below in the section titled "Configure the Microsoft Teams Phantom app asset".</li>
+        <li>Under <b>API Permissions</b>, the following <b>Delegated Permissions</b> from <b>Microsoft Graph</b> needs to be added:
+        <ul>
+            <li>Group.ReadWrite.All (https://graph.microsoft.com/Group.ReadWrite.All)</li>
+            <li>offline_access (https://graph.microsoft.com/offline_access)</li>
+            <li>User.ReadWrite.All (https://graph.microsoft.com/User.ReadWrite.All)</li>
+        </ul>
+        After making these changes, click <b>Add permissions</b> at the bottom of the screen, then click <b>Grant admin consent for Phantom</b>.
     </ul>
 </ul>
-After making these changes, click <b>Add permissions</b> at the bottom of the screen.
 
 <h2>State file permissions</h2>
 <p>
@@ -48,7 +52,7 @@ After making these changes, click <b>Add permissions</b> at the bottom of the sc
 </p>
 
 <h2>Configure the Microsoft Teams Phantom app asset</h2>
-When creating an asset for the <b>Microsoft Teams</b> app, place <b>Application Id</b> of the app in the <b>Client ID</b> field and place the password generated during the app creation process in the <b>Client Secret</b> field. Then, after filling out the <b>Tenant ID</b> field, click <b>SAVE</b>. Both the Application/Client ID and the Tenant ID can be found in the <b>Overview</b> tab on your app's Azure page.
+When creating an asset for the <b>Microsoft Teams</b> app, place the <b>Application Id</b> of the app in the <b>Client ID</b> field and place the password generated during the app creation process in the <b>Client Secret</b> field. Then, after filling out the <b>Tenant ID</b> field, click <b>SAVE</b>. Both the Application/Client ID and the Tenant ID can be found in the <b>Overview</b> tab on your app's Azure page.
 <br><br>
 After saving, a new field will appear in the <b>Asset Settings</b> tab. Take the URL found in the <b>POST incoming for Microsoft Teams to this location</b> field and place it in the <b>Redirect URLs</b> field mentioned in a previous step. To this URL, add <b>/result</b>. After doing so the URL should look something like:
 <br><br>

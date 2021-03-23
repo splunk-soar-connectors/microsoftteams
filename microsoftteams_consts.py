@@ -1,5 +1,5 @@
 # File: microsoftteams_consts.py
-# Copyright (c) 2019-2020 Splunk Inc.
+# Copyright (c) 2019-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -33,6 +33,7 @@ MSTEAMS_ADMIN_CONSENT_MSG = 'Please hit the mentioned URL in another tab of brow
 MSTEAMS_ADMIN_CONSENT_FAILED_MSG = 'Admin consent not received'
 MSTEAMS_ADMIN_CONSENT_PASSED_MSG = 'Admin consent Received'
 MSTEAMS_AUTHORIZE_USER_MSG = 'Please authorize user in a separate tab using URL'
+MSTEAMS_AUTHORIZE_WAIT_MSG = 'Waiting for authorization to complete'
 MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your Phantom instance, check whether you have:  '\
                                 ' 1. Specified the Web Redirect URL of your App -- The Redirect URL should be <POST URL>/result . '\
                                 ' 2. Configured the base URL of your Phantom Instance at Administration -> Company Settings -> Info'

@@ -9,17 +9,17 @@
     "product_name": "Teams",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2019-2020 Splunk Inc.",
-    "app_version": "2.0.6",
-    "utctime_updated": "2020-08-13T23:33:24.000000Z",
+    "license": "Copyright (c) 2019-2021 Splunk Inc.",
+    "app_version": "2.1.2",
+    "utctime_updated": "2021-03-19T05:45:59.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "4.8.24304",
+    "min_phantom_version": "4.9.39220",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
     "latest_tested_versions": [
-        "2020-07-23"
+        "Cloud 2021-03-15"
     ],
     "configuration": {
         "client_id": {
@@ -213,7 +213,7 @@
                     "data_path": "action_result.data.*.displayName",
                     "data_type": "string",
                     "example_values": [
-                        "John Smith"
+                        "Test User"
                     ],
                     "contains": [
                         "user name"
@@ -227,13 +227,13 @@
                     "data_path": "action_result.data.*.givenName",
                     "data_type": "string",
                     "example_values": [
-                        "John"
+                        "User"
                     ],
                     "contains": [
                         "user name"
                     ],
                     "column_name": "First Name",
-                    "column_order": "1"
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -242,13 +242,13 @@
                         "a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09"
                     ],
                     "column_name": "User ID",
-                    "column_order": "0"
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.imAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "test@abc.onmicrosoft.com"
+                        "test@abc.com"
                     ],
                     "contains": [
                         "email"
@@ -266,19 +266,19 @@
                     "data_path": "action_result.data.*.mail",
                     "data_type": "string",
                     "example_values": [
-                        "john.smith@abc.onmicrosoft.com"
+                        "test.user@abc.com"
                     ],
                     "contains": [
                         "email"
                     ],
                     "column_name": "Email",
-                    "column_order": "3"
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.mailNickname",
                     "data_type": "string",
                     "example_values": [
-                        "John"
+                        "User"
                     ],
                     "contains": [
                         "user name"
@@ -382,7 +382,7 @@
                     "data_path": "action_result.data.*.proxyAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "SMTP:test@abc.onmicrosoft.com"
+                        "SMTP:test@abc.com"
                     ]
                 },
                 {
@@ -408,10 +408,10 @@
                     "data_path": "action_result.data.*.surname",
                     "data_type": "string",
                     "example_values": [
-                        "Smith"
+                        "User"
                     ],
                     "column_name": "Surname",
-                    "column_order": "2"
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.usageLocation",
@@ -424,7 +424,7 @@
                     "data_path": "action_result.data.*.userPrincipalName",
                     "data_type": "string",
                     "example_values": [
-                        "john.smith@abc.onmicrosoft.com"
+                        "test.user@abc.com"
                     ],
                     "contains": [
                         "email"
@@ -551,7 +551,7 @@
                     "data_path": "action_result.data.*.@odata.context",
                     "data_type": "string",
                     "example_values": [
-                        "https://graph.microsoft.com/beta/$metadata#chatThreads/$entity"
+                        "https://test.link.com/beta/$metadata#chatThreads/$entity"
                     ],
                     "contains": [
                         "url"
@@ -567,6 +567,120 @@
                     "column_order": 3
                 },
                 {
+                    "data_path": "action_result.data.*.body.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "test message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "text"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "1615528921352"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.conversation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.locale",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.webUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.replyToId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.messageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.policyViolation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.lastEditedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -574,7 +688,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Id: 1517826451101"
+                        "Message sent"
                     ]
                 },
                 {
@@ -657,6 +771,25 @@
                     "contains": [
                         "ms teams channel id"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.webUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.membershipType",
+                    "data_type": "string",
+                    "example_values": [
+                        "standard"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isFavoriteByDefault",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_channels",
@@ -772,7 +905,7 @@
                     "data_path": "action_result.data.*.mail",
                     "data_type": "string",
                     "example_values": [
-                        "team2@test.onmicrosoft.com"
+                        "team2@test.com"
                     ],
                     "contains": [
                         "email"
@@ -839,7 +972,7 @@
                     "data_path": "action_result.data.*.proxyAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "SMTP : team2@test.onmicrosoft.com"
+                        "SMTP : team2@test.com"
                     ]
                 },
                 {
@@ -878,6 +1011,33 @@
                         "Private",
                         "Public"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.expirationDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.isAssignableToRole",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.securityIdentifier",
+                    "data_type": "string",
+                    "example_values": [
+                        "S-2-22-2-123456789-1234567890-123456789-1234567890"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesDomainName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesNetBiosName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSamAccountName",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_groups",
@@ -997,7 +1157,7 @@
                     "data_path": "action_result.data.*.mail",
                     "data_type": "string",
                     "example_values": [
-                        "test@test.onmicrosoft.com"
+                        "test@test.com"
                     ],
                     "contains": [
                         "email"
@@ -1065,7 +1225,7 @@
                     "data_path": "action_result.data.*.proxyAddresses",
                     "data_type": "string",
                     "example_values": [
-                        "SMTP:test@test.onmicrosoft.com"
+                        "SMTP:test@test.com"
                     ]
                 },
                 {
@@ -1116,6 +1276,18 @@
                     ],
                     "column_name": "Visibility",
                     "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.isManagementRestricted",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.writebackConfiguration.isEnabled",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.writebackConfiguration.onPremisesGroupType",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_teams",
