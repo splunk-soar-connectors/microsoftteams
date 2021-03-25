@@ -498,11 +498,17 @@
                     ],
                     "order": 1
                 },
+                "message_format": {
+                    "description": "The type of formatting to use for the message. One of: 'text', 'html'",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2
+                },
                 "message": {
                     "description": "Message to send",
                     "data_type": "string",
                     "required": true,
-                    "order": 2
+                    "order": 3
                 }
             },
             "output": [
@@ -539,10 +545,22 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.parameter.message_format",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams message format"
+                    ],
+                    "column_name": "Message Format",
+                    "column_order": 2,
+                    "example_values": [
+                        "text", "html"
+                    ]
+                },
+                {
                     "data_path": "action_result.parameter.message",
                     "data_type": "string",
                     "column_name": "Message",
-                    "column_order": 2,
+                    "column_order": 3,
                     "example_values": [
                         "This is a test message"
                     ]

@@ -838,15 +838,20 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _verify_parameters(self, group_id, channel_id, action_result):
+    def _verify_parameters(self, group_id, channel_id, message_format, action_result):
         """ This function is used to verify that the provided group_id is valid and channel_id belongs
-        to that group_id.
+        to that group_id. Also ensures that if a message format is given, it is valid.
 
         :param group_id: ID of group
         :param channel_id: ID of channel
+        :param message_format: the format to use for the message
         :param action_result: Object of ActionResult class
         :return: status (success/failed)
         """
+
+        if message_format and message_format not in MSTEAMS_VALID_MESSAGE_FORMATS:
+            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_INVALID_MESSAGE_FORMAT_MSG.format(
+                            message_format=message_format, valid_formats=MSTEAMS_VALID_MESSAGE_FORMATS))
 
         endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
         channel_list = []
@@ -885,8 +890,10 @@ class MicrosoftTeamConnector(BaseConnector):
         group_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_GROUP_ID], self)
         channel_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHANNEL_ID], self)
         message = param[MSTEAMS_JSON_MESSAGE]
+        message_format = param.get(MSTEAMS_JSON_MESSAGE_FORMAT, MSTEAMS_MESSAGE_FORMAT_TEXT)
 
-        status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
+        status = self._verify_parameters(group_id=group_id, channel_id=channel_id, message_format=message_format,
+                                         action_result=action_result)
 
         if phantom.is_fail(status):
             error_message = action_result.get_message()
@@ -898,7 +905,8 @@ class MicrosoftTeamConnector(BaseConnector):
 
         data = {
             "body": {
-                "Content": message
+                "Content": message,
+                "ContentType": message_format
             }
         }
 
