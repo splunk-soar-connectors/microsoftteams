@@ -499,7 +499,7 @@
                     "order": 1
                 },
                 "message": {
-                    "description": "Message to send",
+                    "description": "Message to send (HTML is supported)",
                     "data_type": "string",
                     "required": true,
                     "order": 2
@@ -544,7 +544,8 @@
                     "column_name": "Message",
                     "column_order": 2,
                     "example_values": [
-                        "This is a test message"
+                        "This is a test message",
+                        "<a href=\"https://www.google.com\"> Test link </a>"
                     ]
                 },
                 {
