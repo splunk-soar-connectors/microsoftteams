@@ -898,7 +898,8 @@ class MicrosoftTeamConnector(BaseConnector):
 
         data = {
             "body": {
-                "Content": message
+                "contentType": "html",
+                "content": message
             }
         }
 
