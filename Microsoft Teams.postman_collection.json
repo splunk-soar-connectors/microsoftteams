@@ -1,0 +1,304 @@
+{
+	"info": {
+		"_postman_id": "00a055a3-fdee-4ab9-9eed-b1a48cd75e23",
+		"name": "Microsoft Teams",
+		"description": "<h3>COLLECTION OF ENDPOINTS CONTACTED BY Microsoft teams SPLUNK SOAR APP</h3>\n<br />\n<h4>Authorization</h4>\nThis app requires creating a Microsoft Azure Application. To do so, navigate to <a href=\"https://portal.azure.com\">https://portal.azure.com</a> in a browser and log in with a Microsoft account, then select Azure Active Directory.\n<ol>\n<li>Go to App Registrations and click on + New registration.</li>\n<li>Give the app an appropriate name. Fill \"https://oauth.pstmn.io/v1/browser-callback\" as redirect uri</li>\n<li>Select a supported account type (configure the application to be multitenant).</li>\n<li>Click on the Register.</li>\n<ul>\n<li>Under Certificates & secrets, add New client secret. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>\n<li>Under API Permissions, click on Add a permission.</li>\n<li>Go to Microsoft Graph Permissions, the following Delegated Permissions need to be added:</li>\n<ul>\n<li>offline_access</li>\n<li>group.readwrite.all</li>\n<li>user.readwrite.all</li>\n<li>ChannelMessage.Read.All</li>\n</ul>\n<li>Click on the Add permissions.</li>\n<li>After making these changes, click on Grant admin consent.\n</li>\n</ul>\n<li>In postman window</li>\n<ul>\n<li>Fill \"client_id\", \"client_secret\" and \"tenant_id\" we got in previous step as this collection's variables</li>\n<li>Go to authorization tab of this collection click \"Get New Access Token\". Then use your credentials to login into the popup.</li>\n<li>After successful login press \"Proceed\" and then press \"Use Token\"</li>\n</ul>\n</ol>\n<br />\n<h3>Notes</h3>\n<ul>\n<li>Set 'group_id' in variables for 'list_channels' and 'send_message'.</li>\n<li>Set 'channel_id' in variables for 'send message'.</li>\n</ul>",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "list users",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users"
+					]
+				},
+				"description": "List users in a tenant"
+			},
+			"response": []
+		},
+		{
+			"name": "list groups",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    let response = pm.response.json();",
+							"    var group_id = response['value'][0]['id']",
+							"    pm.collectionVariables.set(\"group_id\", group_id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/groups",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"groups"
+					]
+				},
+				"description": "List groups in the organization"
+			},
+			"response": []
+		},
+		{
+			"name": "list teams",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{beta_base_url}}/groups?$filter=resourceProvisioningOptions/Any(x:x eq 'Team')",
+					"host": [
+						"{{beta_base_url}}"
+					],
+					"path": [
+						"groups"
+					],
+					"query": [
+						{
+							"key": "$filter",
+							"value": "resourceProvisioningOptions/Any(x:x eq 'Team')"
+						}
+					]
+				},
+				"description": "List the members in a group"
+			},
+			"response": []
+		},
+		{
+			"name": "list channels",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    let response = pm.response.json();",
+							"    var channel_id = response['value'][0]['id']",
+							"    pm.collectionVariables.set(\"channel_id\", channel_id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/teams/{{group_id}}/channels",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teams",
+						"{{group_id}}",
+						"channels"
+					]
+				},
+				"description": "List the members in a group"
+			},
+			"response": []
+		},
+		{
+			"name": "send message",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.variables.get(\"group_id\") == \"\" || pm.variables.get(\"channel_id\") == \"\"){",
+							"    console.error(\"Please run 'list channels' and 'list groups'\");",
+							"    throw new Error(\"No Group ID or Channel ID found, Please make sure to run both list groups and list channels before running send message.\");",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"contentType\": \"html\", \"content\": \"this is a test message for postman testing\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/teams/{{group_id}}/channels/{{channel_id}}/messages",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"teams",
+						"{{group_id}}",
+						"channels",
+						"{{channel_id}}",
+						"messages"
+					]
+				},
+				"description": "List the members in a group"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "tokenName",
+				"value": "MS Graph Token",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "offline_access group.readwrite.all user.readwrite.all ChannelMessage.Read.All",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/authorize",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "{{callback_url}}",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://graph.microsoft.com/v1.0"
+		},
+		{
+			"key": "callback_url",
+			"value": "https://oauth.pstmn.io/v1/browser-callback"
+		},
+		{
+			"key": "api_version",
+			"value": "?api-version=1.6"
+		},
+		{
+			"key": "client_id",
+			"value": ""
+		},
+		{
+			"key": "client_secret",
+			"value": ""
+		},
+		{
+			"key": "tenant_id",
+			"value": ""
+		},
+		{
+			"key": "group_id",
+			"value": ""
+		},
+		{
+			"key": "channel_id",
+			"value": ""
+		},
+		{
+			"key": "beta_base_url",
+			"value": "https://graph.microsoft.com/beta"
+		}
+	]
+}
