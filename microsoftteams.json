@@ -18,6 +18,7 @@
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud 2021-03-15"
     ],
