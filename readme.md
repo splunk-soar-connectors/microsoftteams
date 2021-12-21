@@ -34,7 +34,7 @@ This app requires creating an app in the Azure Active Directory.
 
 -   Once the app is created, the below steps needs to be performed on the next page:
 
-      
+
 
     -   Under **Certificates & secrets** , select **New client secret** . Note this key somewhere
         secure, as it cannot be retrieved after closing the window.
@@ -73,22 +73,22 @@ When creating an asset for the **Microsoft Teams** app, place the **Application 
 the **Client ID** field and place the password generated during the app creation process in the
 **Client Secret** field. Then, after filling out the **Tenant ID** field, click **SAVE** . Both the
 Application/Client ID and the Tenant ID can be found in the **Overview** tab on your app's Azure
-page.  
-  
+page.
+
 After saving, a new field will appear in the **Asset Settings** tab. Take the URL found in the
 **POST incoming for Microsoft Teams to this location** field and place it in the **Redirect URLs**
 field mentioned in a previous step. To this URL, add **/result** . After doing so the URL should
-look something like:  
-  
+look something like:
+
 
 https://\<phantom_host>/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/\<asset_name>/result
 
-  
-Once again, click Save at the bottom of the screen.  
-  
+
+Once again, click Save at the bottom of the screen.
+
 Additionally, updating the Base URL in the Phantom Company Settings is also required. Navigate to
 **Administration \> Company Settings \> Info** to configure the Base URL For Phantom Appliance.
-Then, select **Save Changes.**  
+Then, select **Save Changes.**
 
 ## Method to run get admin consent
 
@@ -105,7 +105,7 @@ get the URL from the following ways:
 -   User needs to manually navigate to the URL in a separate browser tab. The URL format is:
     **https://\<phantom_host>/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/\<asset_name>/admin_consent?asset_id=\<asset_id>**
 
-      
+
 
     **Steps to fetch asset id**
 
@@ -113,7 +113,7 @@ get the URL from the following ways:
 
     -   URL for the asset will be in the following format:
 
-          
+
 
         **https//\<phantom_host>/apps/\<app_id>/asset/\<asset_id>/**
 
@@ -125,6 +125,6 @@ After setting up the asset and user, click the **TEST CONNECTIVITY** button. A w
 and display a URL. Navigate to this URL in a separate browser tab. This new tab will redirect to a
 Microsoft login page. Log in to a Microsoft account. After logging in, review the requested
 permissions listed, then click **Accept** . Finally, close that tab. The test connectivity window
-should show a success message.  
-  
+should show a success message.
+
 The app should now be ready to be used.
