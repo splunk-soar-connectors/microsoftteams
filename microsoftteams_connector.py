@@ -15,21 +15,21 @@
 #
 #
 # Phantom App imports
+import grp
+import json
+import os
+import pwd
+import sys
+import time
+
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
+from django.http import HttpResponse
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 from microsoftteams_consts import *
-import requests
-from django.http import HttpResponse
-import json
-import sys
-import os
-import time
-import pwd
-import grp
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
 
 try:
     import urllib.parse as urllib
@@ -104,7 +104,8 @@ def _get_error_message_from_exception(python_version, e, app_connector=None):
     try:
         error_msg = _handle_py_ver_compat_for_input_str(python_version, error_msg, app_connector)
     except TypeError:
-        error_msg = "Error occurred while connecting to the Microsoft Teams server. Please check the asset configuration and|or the action parameters."
+        error_msg = "Error occurred while connecting to the Microsoft Teams server. "
+        error_msg += "Please check the asset configuration and|or the action parameters."
     except:
         error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
@@ -347,7 +348,8 @@ class MicrosoftTeamConnector(BaseConnector):
         if response.status_code in [200, 204]:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Status code: {}. Empty response and no information in the header".format(response.status_code)), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Status code: {}. Empty response and no information in the header".format(
+            response.status_code)), None)
 
     def _process_html_response(self, response, action_result):
         """ This function is used to process html response.
@@ -393,7 +395,8 @@ class MicrosoftTeamConnector(BaseConnector):
             resp_json = response.json()
         except Exception as e:
             error_code, error_msg = _get_error_message_from_exception(self._python_version, e, self)
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error Code: {0}. Error Message: {1}".format(error_code, error_msg)), None)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error Code: {0}. "
+                "Error Message: {1}".format(error_code, error_msg)), None)
 
         # Please specify the status codes here
         if 200 <= response.status_code < 399:
@@ -542,7 +545,8 @@ class MicrosoftTeamConnector(BaseConnector):
             r = request_func(endpoint, data=data, headers=headers, verify=verify, params=params)
         except Exception as e:
             error_code, error_msg = _get_error_message_from_exception(self._python_version, e, self)
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting to server. Error Code: {0}. Error Message: {1}".format(error_code, error_msg)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting to server. Error Code: {0}. "
+                "Error Message: {1}".format(error_code, error_msg)), resp_json)
 
         return self._process_response(r, action_result)
 
@@ -635,13 +639,16 @@ class MicrosoftTeamConnector(BaseConnector):
         #
         # If the corresponding state file doesn't have correct owner, owner group or permissions,
         # the newly generated token is not being saved to state file and automatic workflow for token has been stopped.
-        # So we have to check that token from response and token which are saved to state file after successful generation of new token are same or not.
+        # So we have to check that token from response and token which are saved to state file
+        # after successful generation of new token are same or not.
 
         if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get
         ("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
-            message = "Error occurred while saving the newly generated access or refresh token (in place of the expired token) in the state file."
+            message = "Error occurred while saving the newly generated access or "
+            message += "refresh token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to readme file for more information)."
+            message += "user should have the correct access rights and "
+            message += "ownership for the corresponding state file (refer to readme file for more information)."
             return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
@@ -1101,8 +1108,9 @@ class MicrosoftTeamConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
@@ -1111,12 +1119,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -1127,7 +1137,7 @@ if __name__ == '__main__':
     if username and password:
         try:
             print("Accessing the Login page")
-            r = requests.get(BaseConnector._get_phantom_base_url() + "login", verify=False)
+            r = requests.get(BaseConnector._get_phantom_base_url() + "login", verify=verify, timeout=MSTEAMS_DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -1140,15 +1150,16 @@ if __name__ == '__main__':
             headers['Referer'] = BaseConnector._get_phantom_base_url() + 'login'
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(BaseConnector._get_phantom_base_url() + "login", verify=False, data=data, headers=headers)
+            r2 = requests.post(BaseConnector._get_phantom_base_url() + "login", verify=verify, data=data,
+                headers=headers, timeout=MSTEAMS_DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: {}".format(str(e)))
-            exit(1)
+            sys.exit(1)
 
     if len(sys.argv) < 2:
         print("No test json specified as input")
-        exit(0)
+        sys.exit(0)
 
     with open(sys.argv[1]) as f:
         in_json = f.read()
@@ -1164,4 +1175,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
