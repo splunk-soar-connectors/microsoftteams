@@ -11,7 +11,7 @@ Minimum Product Version: 4\.9\.39220
 This app integrates with Microsoft Teams to support various generic and investigative actions
 
 [comment]: # " File: readme.md"
-[comment]: # "  Copyright (c) 2019-2021 Splunk Inc."
+[comment]: # "  Copyright (c) 2019-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
