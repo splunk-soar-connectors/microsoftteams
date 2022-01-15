@@ -1,9 +1,17 @@
 # File: microsoftteams_consts.py
-# Copyright (c) 2019-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-
+# Copyright (c) 2019-2022 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 MSTEAMS_PHANTOM_SYS_INFO_URL = '/system_info'
 MSTEAMS_PHANTOM_ASSET_INFO_URL = '/asset/{asset_id}'
 MSTEAMS_LOGIN_BASE_URL = 'https://login.microsoftonline.com'
@@ -55,3 +63,4 @@ MSTEAMS_ACCESS_TOKEN_STRING = 'access_token'
 MSTEAMS_REFRESH_TOKEN_STRING = 'refresh_token'
 MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'
 MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
+MSTEAMS_DEFAULT_TIMEOUT = 30
