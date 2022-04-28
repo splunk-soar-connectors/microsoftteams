@@ -14,7 +14,7 @@
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.2.0",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
@@ -1503,10 +1503,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.body.content",
-                    "data_type": "string",
-                    "example_values": [
-                        "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n<meta name=\"Generator\" content=\"Microsoft Exchange Server\">\r\n<!-- converted from text -->\r\n<style><!-- .EmailQuote { margin-left: 1pt; padding-left: 4pt; border-left: #800000 2px solid; } --></style></head>\r\n<body>\r\n<font size=\"2\"><span style=\"font-size:11pt;\"><div class=\"PlainText\">.........................................................................................................................................<br>\r\nJoin Teams Meeting<br>\r\nen-US<br>\r\n<a href=\"https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d\">https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d</a><br>\r\n<br>\r\n<br>\r\nIf you need a local number, get one here. And if you've forgotten the dial-in PIN, you can reset it.<br>\r\n<br>\r\n<br>\r\n<br>\r\n<br>\r\nLearn More <a href=\"https://aka.ms/JoinTeamsMeeting\">https://aka.ms/JoinTeamsMeeting</a> |&nbsp; | Meeting options: <a href=\"https://teams.microsoft.com/meetingOptions/?organizerId=eeb3645f-df19-47a1-8e8c-fcd234cb5f6f&amp;tenantId=140fe46d-819d-4b6d-b7ef-1c0a8270f4f0&amp;threadId=19_meeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj@thread.v2&amp;messageId=0&amp;language=en-US\">https://teams.microsoft.com/meetingOptions/?organizerId=eeb3645f-df19-47a1-8e8c-fcd234cb5f6f&amp;tenantId=140fe46d-819d-4b6d-b7ef-1c0a8270f4f0&amp;threadId=19_meeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj@thread.v2&amp;messageId=0&amp;language=en-US</a> |<br>\r\n.........................................................................................................................................<br>\r\n</div></span></font>\r\n</body>\r\n</html>\r\n"
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.body.contentType",
