@@ -27,6 +27,8 @@ MSTEAMS_MSGRAPH_TEAMS_ENDPOINT = '/groups?$filter=resourceProvisioningOptions/An
 MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT = '/users'
 MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT = '/teams/{group_id}/channels'
 MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT = '/teams/{group_id}/channels/{channel_id}/messages'
+MSTEAMS_MSGRAPH_CALENDER_EVENT_ENDPOINT = '/me/calendar/events'
+MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT = '/me/onlineMeetings'
 MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
@@ -53,14 +55,28 @@ MSTEAMS_GENERATING_ACCESS_TOKEN_MSG = 'Generating access token'
 MSTEAMS_CURRENT_USER_INFO_MSG = 'Getting info about the current user to verify token'
 MSTEAMS_GOT_CURRENT_USER_INFO_MSG = 'Got current user info'
 MSTEAMS_INVALID_CHANNEL_MSG = 'Channel {channel_id} does not belongs to group {group_id}'
+MSTEAMS_STATE_FILE_CORRUPT_ERR = (
+    "Error occurred while loading the state file due to it's unexpected format. "
+    "Resetting the state file with the default format. Please try again."
+)
 MSTEAMS_JSON_GROUP_ID = 'group_id'
 MSTEAMS_JSON_CHANNEL_ID = 'channel_id'
 MSTEAMS_JSON_MESSAGE = 'message'
+MSTEAMS_JSON_SUBJECT = 'subject'
+MSTEAMS_JSON_CALENDAR = 'add_calendar_event'
+MSTEAMS_JSON_DESCRIPTION = 'description'
+MSTEAMS_JSON_START_TIME = 'start_time'
+MSTEAMS_JSON_END_TIME = 'end_time'
+MSTEAMS_JSON_ATTENDEES = 'attendees'
 MSTEAMS_CONFIG_TENANT_ID = 'tenant_id'
 MSTEAMS_CONFIG_CLIENT_ID = 'client_id'
 MSTEAMS_TOKEN_STRING = 'token'
 MSTEAMS_ACCESS_TOKEN_STRING = 'access_token'
 MSTEAMS_REFRESH_TOKEN_STRING = 'refresh_token'
-MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'
+MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'  # pragma: allowlist secret
+MSTEAMS_CONFIG_TIMEZONE = 'timezone'
 MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
 MSTEAMS_DEFAULT_TIMEOUT = 30
+
+# Constants relating to '_get_error_message_from_exception'
+MSTEAMS_ERR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"

@@ -70,46 +70,39 @@ def _handle_py_ver_compat_for_input_str(python_version, input_str, app_connector
     try:
         if input_str and python_version == 2:
             input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-    except:
+    except Exception:
         if app_connector:
             app_connector.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
 
     return input_str
 
 
-def _get_error_message_from_exception(python_version, e, app_connector=None):
-    """ This function is used to get appropriate error message from the exception.
-    :param python_version: Python major version
-    :param e: Exception object
-    :param app_connector: Object of app_connector class
-    :return: error code and message
+def _get_error_message_from_exception(self, e):
     """
-    error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-    error_code = "Error code unavailable"
+    Get appropriate error message from the exception.
+    :param e: Exception object
+    :return: error message
+    """
+
+    error_code = None
+    error_msg = MSTEAMS_ERR_MSG_UNAVAILABLE
+
     try:
-        if e.args:
+        if hasattr(e, "args"):
             if len(e.args) > 1:
                 error_code = e.args[0]
                 error_msg = e.args[1]
             elif len(e.args) == 1:
-                error_code = "Error code unavailable"
                 error_msg = e.args[0]
-        else:
-            error_code = "Error code unavailable"
-            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-    except:
-        error_code = "Error code unavailable"
-        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+    except Exception:
+        pass
 
-    try:
-        error_msg = _handle_py_ver_compat_for_input_str(python_version, error_msg, app_connector)
-    except TypeError:
-        error_msg = "Error occurred while connecting to the Microsoft Teams server. "
-        error_msg += "Please check the asset configuration and|or the action parameters."
-    except:
-        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+    if not error_code:
+        error_text = "Error Message: {}".format(error_msg)
+    else:
+        error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
 
-    return error_code, error_msg
+    return error_text
 
 
 def _load_app_state(asset_id, app_connector=None):
@@ -144,7 +137,7 @@ def _load_app_state(asset_id, app_connector=None):
             # Fetching the Python major version
             try:
                 python_version = int(sys.version_info[0])
-            except:
+            except Exception:
                 app_connector.debug_print("Error occurred while getting the Phantom server's Python major version.")
                 return state
 
@@ -191,7 +184,7 @@ def _save_app_state(state, asset_id, app_connector=None):
         # Fetching the Python major version
         try:
             python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             if app_connector:
                 app_connector.debug_print("Error occurred while getting the Phantom server's Python major version.")
             return phantom.APP_ERROR
@@ -295,7 +288,7 @@ def _handle_rest_request(request, path_parts):
                 gid = grp.getgrnam('phantom').gr_gid
                 os.chown(auth_status_file_path, uid, gid)
                 os.chmod(auth_status_file_path, '0664')
-            except:
+            except Exception:
                 pass
 
         return return_val
@@ -371,7 +364,7 @@ class MicrosoftTeamConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         error_text = _handle_py_ver_compat_for_input_str(self._python_version, error_text, self)
@@ -542,7 +535,7 @@ class MicrosoftTeamConnector(BaseConnector):
         except AttributeError:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
         try:
-            r = request_func(endpoint, data=data, headers=headers, verify=verify, params=params)
+            r = request_func(endpoint, data=data, headers=headers, verify=verify, params=params, timeout=MSTEAMS_DEFAULT_TIMEOUT)
         except Exception as e:
             error_code, error_msg = _get_error_message_from_exception(self._python_version, e, self)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting to server. Error Code: {0}. "
@@ -1035,6 +1028,76 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_create_meeting(self, param):
+        """ This function is used to create meeting for Microsoft Teams.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        use_calendar = param.get(MSTEAMS_JSON_CALENDAR, False)
+        subject = param.get(MSTEAMS_JSON_SUBJECT)
+        data = {}
+        if subject:
+            data.update({
+                "subject": subject
+            })
+        if not use_calendar:
+            endpoint = MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT
+        else:
+            endpoint = MSTEAMS_MSGRAPH_CALENDER_EVENT_ENDPOINT
+            description = param.get(MSTEAMS_JSON_DESCRIPTION)
+            start_time = param.get(MSTEAMS_JSON_START_TIME)
+            end_time = param.get(MSTEAMS_JSON_END_TIME)
+            attendees = param.get(MSTEAMS_JSON_ATTENDEES)
+            attendees_list = []
+            if attendees:
+                attendees = [value.strip() for value in attendees.split(",")]
+                attendees = list(filter(None, attendees))
+                for attendee in attendees:
+                    attendee_dict = {"emailAddress": {
+                        "address": attendee
+                    }}
+                    attendees_list.append(attendee_dict)
+            data.update({ "isOnlineMeeting": True })
+            if description:
+                data.update({
+                    "body": {
+                        "content": description
+                    }
+                })
+            if start_time:
+                data.update({
+                    "start": {
+                        "dateTime": start_time,
+                        "timeZone": self._timezone
+                    }
+                })
+            if end_time:
+                data.update({
+                    "end": {
+                        "dateTime": end_time,
+                        "timeZone": self._timezone
+                    }
+                })
+            if attendees_list:
+                data.update({
+                    "attendees": attendees_list
+                })
+        # make rest call
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
+                                                 data=json.dumps(data))
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message='Meeting Created Successfully')
+
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -1052,7 +1115,8 @@ class MicrosoftTeamConnector(BaseConnector):
             'list_teams': self._handle_list_teams,
             'list_users': self._handle_list_users,
             'list_channels': self._handle_list_channels,
-            'get_admin_consent': self._handle_get_admin_consent
+            'get_admin_consent': self._handle_get_admin_consent,
+            'create_meeting': self._handle_create_meeting
         }
 
         action = self.get_action_identifier()
@@ -1073,11 +1137,15 @@ class MicrosoftTeamConnector(BaseConnector):
         """
 
         self._state = self.load_state()
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_STATE_FILE_CORRUPT_ERR)
 
         # Fetching the Python major version
         try:
             self._python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         # get the asset config
@@ -1088,7 +1156,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
-
+        self._timezone = config[MSTEAMS_CONFIG_TIMEZONE]
         return phantom.APP_SUCCESS
 
     def finalize(self):
