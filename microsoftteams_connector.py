@@ -22,6 +22,7 @@ import pwd
 import sys
 import time
 
+import encryption_helper
 import phantom.app as phantom
 import requests
 from bs4 import BeautifulSoup, UnicodeDammit
@@ -77,32 +78,39 @@ def _handle_py_ver_compat_for_input_str(python_version, input_str, app_connector
     return input_str
 
 
-def _get_error_message_from_exception(self, e):
-    """
-    Get appropriate error message from the exception.
+def _get_error_message_from_exception(python_version, e, app_connector=None):
+    """ This function is used to get appropriate error message from the exception.
+    :param python_version: Python major version
     :param e: Exception object
-    :return: error message
+    :param app_connector: Object of app_connector class
+    :return: error code and message
     """
-
-    error_code = None
-    error_msg = MSTEAMS_ERR_MSG_UNAVAILABLE
-
+    error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+    error_code = "Error code unavailable"
     try:
-        if hasattr(e, "args"):
+        if e.args:
             if len(e.args) > 1:
                 error_code = e.args[0]
                 error_msg = e.args[1]
             elif len(e.args) == 1:
+                error_code = "Error code unavailable"
                 error_msg = e.args[0]
-    except Exception:
-        pass
+        else:
+            error_code = "Error code unavailable"
+            error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
+    except:
+        error_code = "Error code unavailable"
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
-    if not error_code:
-        error_text = "Error Message: {}".format(error_msg)
-    else:
-        error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+    try:
+        error_msg = _handle_py_ver_compat_for_input_str(python_version, error_msg, app_connector)
+    except TypeError:
+        error_msg = "Error occurred while connecting to the Microsoft Teams server. "
+        error_msg += "Please check the asset configuration and|or the action parameters."
+    except:
+        error_msg = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
-    return error_text
+    return error_code, error_msg
 
 
 def _load_app_state(asset_id, app_connector=None):
@@ -246,6 +254,10 @@ def _handle_login_response(request):
 
     # If value of admin_consent is not available, value of code is available
     state['code'] = code
+    try:
+        state['code'] = MicrosoftTeamConnector().encrypt_state(code, "code")
+    except Exception as e:
+        return HttpResponse("{}: {}".format(MSTEAMS_DECRYPTION_ERR, str(e)), content_type="text/plain", status=400)
     _save_app_state(state, asset_id, None)
 
     return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
@@ -328,6 +340,23 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_secret = None
         self._access_token = None
         self._refresh_token = None
+        self.asset_id = self.get_asset_id()
+
+    def encrypt_state(self, encrypt_var, token_name):
+        """ Handle encryption of token.
+        :param encrypt_var: Variable needs to be encrypted
+        :return: encrypted variable
+        """
+        self.debug_print(MSTEAMS_ENCRYPT_TOKEN.format(token_name))
+        return encryption_helper.encrypt(encrypt_var, self.asset_id)
+
+    def decrypt_state(self, decrypt_var, token_name):
+        """ Handle decryption of token.
+        :param decrypt_var: Variable needs to be decrypted
+        :return: decrypted variable
+        """
+        self.debug_print(MSTEAMS_DECRYPT_TOKEN.format(token_name))
+        return encryption_helper.decrypt(decrypt_var, self.asset_id)
 
     def _process_empty_response(self, response, action_result):
         """ This function is used to process empty response.
@@ -621,9 +650,25 @@ class MicrosoftTeamConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        self._state[MSTEAMS_TOKEN_STRING] = resp_json
         self._access_token = resp_json[MSTEAMS_ACCESS_TOKEN_STRING]
         self._refresh_token = resp_json[MSTEAMS_REFRESH_TOKEN_STRING]
+
+        try:
+            encrypted_access_token = self.encrypt_state(resp_json[MSTEAMS_ACCESS_TOKEN_STRING], "access")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+
+        try:
+            encrypted_refresh_token = self.encrypt_state(resp_json[MSTEAMS_REFRESH_TOKEN_STRING], "refresh")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+
+        resp_json[MSTEAMS_ACCESS_TOKEN_STRING] = encrypted_access_token
+        resp_json[MSTEAMS_REFRESH_TOKEN_STRING] = encrypted_refresh_token
+
+        self._state[MSTEAMS_TOKEN_STRING] = resp_json
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
 
@@ -635,14 +680,19 @@ class MicrosoftTeamConnector(BaseConnector):
         # So we have to check that token from response and token which are saved to state file
         # after successful generation of new token are same or not.
 
-        if (self._access_token != self._state.get("token", {}).get(MSTEAMS_ACCESS_TOKEN_STRING)) or (self._refresh_token != self._state.get
-        ("token", {}).get(MSTEAMS_REFRESH_TOKEN_STRING)):
-            message = "Error occurred while saving the newly generated access or "
-            message += "refresh token (in place of the expired token) in the state file."
-            message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and "
-            message += "ownership for the corresponding state file (refer to readme file for more information)."
-            return action_result.set_status(phantom.APP_ERROR, message)
+        try:
+            if self._access_token != self.decrypt_state(self._state.get("token", {}).get
+                    (MSTEAMS_ACCESS_TOKEN_STRING), "access") or self._refresh_token != self.decrypt_state(self._state.get("token", {}).get(
+                    MSTEAMS_REFRESH_TOKEN_STRING), "refresh"):
+                message = "Error occurred while saving the newly generated access or "
+                message += "refresh token (in place of the expired token) in the state file."
+                message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
+                message += "user should have the correct access rights and "
+                message += "ownership for the corresponding state file (refer to readme file for more information)."
+                return action_result.set_status(phantom.APP_ERROR, message)
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
 
         return phantom.APP_SUCCESS
 
@@ -707,7 +757,11 @@ class MicrosoftTeamConnector(BaseConnector):
         if not self._state or not self._state.get('code'):
             return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
-        current_code = self._state['code']
+        try:
+            current_code = self.decrypt_state(self._state['code'], "code")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
         self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
@@ -1155,7 +1209,21 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_id = _handle_py_ver_compat_for_input_str(self._python_version, config[MSTEAMS_CONFIG_CLIENT_ID], self)
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
+        try:
+            if self._access_token:
+                self._access_token = self.decrypt_state(self._access_token, "access")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
+
+        try:
+            if self._refresh_token:
+                self._refresh_token = self.decrypt_state(self._refresh_token, "refresh")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
         self._timezone = config[MSTEAMS_CONFIG_TIMEZONE]
         return phantom.APP_SUCCESS
 
