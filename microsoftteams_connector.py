@@ -256,6 +256,7 @@ def _handle_login_response(request):
     state['code'] = code
     try:
         state['code'] = MicrosoftTeamConnector().encrypt_state(code, "code")
+        state[MSTEAMS_STATE_IS_ENCRYPTED] = True
     except Exception as e:
         return HttpResponse("{}: {}".format(MSTEAMS_DECRYPTION_ERR, str(e)), content_type="text/plain", status=400)
     _save_app_state(state, asset_id, None)
@@ -669,6 +670,7 @@ class MicrosoftTeamConnector(BaseConnector):
         resp_json[MSTEAMS_REFRESH_TOKEN_STRING] = encrypted_refresh_token
 
         self._state[MSTEAMS_TOKEN_STRING] = resp_json
+        self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
 
@@ -757,11 +759,12 @@ class MicrosoftTeamConnector(BaseConnector):
         if not self._state or not self._state.get('code'):
             return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
-        try:
-            current_code = self.decrypt_state(self._state['code'], "code")
-        except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+        if self._state.get(MSTEAMS_STATE_IS_ENCRYPTED):
+            try:
+                current_code = self.decrypt_state(self._state['code'], "code")
+            except Exception as e:
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+                return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
         self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
@@ -1209,21 +1212,21 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_id = _handle_py_ver_compat_for_input_str(self._python_version, config[MSTEAMS_CONFIG_CLIENT_ID], self)
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
-        try:
-            if self._access_token:
-                self._access_token = self.decrypt_state(self._access_token, "access")
-        except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
-
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
+        if self._state.get(MSTEAMS_STATE_IS_ENCRYPTED):
+            try:
+                if self._access_token:
+                    self._access_token = self.decrypt_state(self._access_token, "access")
+            except Exception as e:
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
 
-        try:
-            if self._refresh_token:
-                self._refresh_token = self.decrypt_state(self._refresh_token, "refresh")
-        except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+            try:
+                if self._refresh_token:
+                    self._refresh_token = self.decrypt_state(self._refresh_token, "refresh")
+            except Exception as e:
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
+                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
         self._timezone = config[MSTEAMS_CONFIG_TIMEZONE]
         return phantom.APP_SUCCESS
 

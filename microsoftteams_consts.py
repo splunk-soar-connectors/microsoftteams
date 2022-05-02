@@ -71,6 +71,7 @@ MSTEAMS_JSON_ATTENDEES = 'attendees'
 MSTEAMS_CONFIG_TENANT_ID = 'tenant_id'
 MSTEAMS_CONFIG_CLIENT_ID = 'client_id'
 MSTEAMS_TOKEN_STRING = 'token'
+MSTEAMS_STATE_IS_ENCRYPTED = 'is_encrypted'
 MSTEAMS_ACCESS_TOKEN_STRING = 'access_token'
 MSTEAMS_REFRESH_TOKEN_STRING = 'refresh_token'
 MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'  # pragma: allowlist secret
