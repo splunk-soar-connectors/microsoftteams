@@ -1238,7 +1238,20 @@ class MicrosoftTeamConnector(BaseConnector):
 
         :return: status (success/failure)
         """
+        try:
+            if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING):
+                self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_ACCESS_TOKEN_STRING] = self.encrypt_state(self._access_token, "access")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, self._get_error_message_from_exception(e)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
 
+        try:
+            if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING):
+                self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_REFRESH_TOKEN_STRING] = self.encrypt_state(self._refresh_token, "refresh")
+        except Exception as e:
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, self._get_error_message_from_exception(e)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+        self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         # Save the state, this data is saved across actions and app upgrades
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
