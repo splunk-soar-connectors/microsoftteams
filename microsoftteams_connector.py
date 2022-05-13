@@ -348,7 +348,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param encrypt_var: Variable needs to be encrypted
         :return: encrypted variable
         """
-        self.debug_print(MSTEAMS_ENCRYPT_TOKEN.format(token_name))
+        self.debug_print(MSTEAMS_ENCR_TOKEN.format(token_name))
         return encryption_helper.encrypt(encrypt_var, self.asset_id)
 
     def decrypt_state(self, decrypt_var, token_name):
@@ -356,7 +356,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param decrypt_var: Variable needs to be decrypted
         :return: decrypted variable
         """
-        self.debug_print(MSTEAMS_DECRYPT_TOKEN.format(token_name))
+        self.debug_print(MSTEAMS_DECR_TOKEN.format(token_name))
         return encryption_helper.decrypt(decrypt_var, self.asset_id)
 
     def _process_empty_response(self, response, action_result):
@@ -1227,7 +1227,7 @@ class MicrosoftTeamConnector(BaseConnector):
             except Exception as e:
                 self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
                 return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
-        self._timezone = config[MSTEAMS_CONFIG_TIMEZONE]
+        self._timezone = config.get(MSTEAMS_CONFIG_TIMEZONE)
         return phantom.APP_SUCCESS
 
     def finalize(self):

@@ -78,7 +78,7 @@ MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
 MSTEAMS_DEFAULT_TIMEOUT = 30
 
 # For encryption and decryption
-MSTEAMS_ENCRYPT_TOKEN = "Encrypting the {} token"
-MSTEAMS_DECRYPT_TOKEN = "Decrypting the {} token"
+MSTEAMS_ENCR_TOKEN = "Encrypting the {} token"
+MSTEAMS_DECR_TOKEN = "Decrypting the {} token"
 MSTEAMS_ENCRYPTION_ERR = "Error occurred while encrypting the state file"
 MSTEAMS_DECRYPTION_ERR = "Error occurred while decrypting the state file"
