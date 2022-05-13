@@ -348,7 +348,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param encrypt_var: Variable needs to be encrypted
         :return: encrypted variable
         """
-        self.debug_print(MSTEAMS_ENCR_TOKEN.format(token_name))
+        self.debug_print(MSTEAMS_ENCRYPT_TOKEN.format(token_name))   # nosemgrep
         return encryption_helper.encrypt(encrypt_var, self.asset_id)
 
     def decrypt_state(self, decrypt_var, token_name):
@@ -356,7 +356,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param decrypt_var: Variable needs to be decrypted
         :return: decrypted variable
         """
-        self.debug_print(MSTEAMS_DECR_TOKEN.format(token_name))
+        self.debug_print(MSTEAMS_DECRYPT_TOKEN.format(token_name))    # nosemgrep
         return encryption_helper.decrypt(decrypt_var, self.asset_id)
 
     def _process_empty_response(self, response, action_result):
