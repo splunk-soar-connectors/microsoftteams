@@ -20,7 +20,7 @@
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud 2021-03-15"
+        "Cloud 2022-05-23"
     ],
     "configuration": {
         "client_id": {
