@@ -258,7 +258,7 @@ def _handle_login_response(request):
         state['code'] = MicrosoftTeamConnector().encrypt_state(code, "code")
         state[MSTEAMS_STATE_IS_ENCRYPTED] = True
     except Exception as e:
-        return HttpResponse("{}: {}".format(MSTEAMS_DECRYPTION_ERR, str(e)), content_type="text/plain", status=400)
+        return HttpResponse("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, str(e)), content_type="text/plain", status=400)
     _save_app_state(state, asset_id, None)
 
     return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
@@ -686,9 +686,9 @@ class MicrosoftTeamConnector(BaseConnector):
         # after successful generation of new token are same or not.
 
         try:
-            if self._access_token != self.decrypt_state(self._state.get("token", {}).get
-                    (MSTEAMS_ACCESS_TOKEN_STRING), "access") or self._refresh_token != self.decrypt_state(self._state.get("token", {}).get(
-                    MSTEAMS_REFRESH_TOKEN_STRING), "refresh"):
+            if self._access_token != self.decrypt_state(self._state.get(MSTEAMS_TOKEN_STRING, {}).get
+                    (MSTEAMS_ACCESS_TOKEN_STRING), "access") or self._refresh_token != self.decrypt_state(self._state.get
+                    (MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING), "refresh"):
                 message = "Error occurred while saving the newly generated access or "
                 message += "refresh token (in place of the expired token) in the state file."
                 message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
