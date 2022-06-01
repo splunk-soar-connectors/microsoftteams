@@ -39,6 +39,8 @@ This app requires creating an app in the Azure Active Directory.
             <li>Group.ReadWrite.All (https://graph.microsoft.com/Group.ReadWrite.All)</li>
             <li>offline_access (https://graph.microsoft.com/offline_access)</li>
             <li>User.ReadWrite.All (https://graph.microsoft.com/User.ReadWrite.All)</li>
+            <li>Calendars.ReadWrite (https://graph.microsoft.com/Calendars.ReadWrite)</li>
+            <li>OnlineMeetings.ReadWrite (https://graph.microsoft.com/OnlineMeetings.ReadWrite)</li>
         </ul>
         After making these changes, click <b>Add permissions</b> at the bottom of the screen, then click <b>Grant admin consent for Phantom</b>.
     </ul>
@@ -95,5 +97,33 @@ After setting up the asset and user, click the <b>TEST CONNECTIVITY</b> button. 
 <br><br>
 The app should now be ready to be used.
 
+<h2>Important points to be considered for 'Create Meeting' action</h2>
+<ul>
+  <li>The <b>timezone</b> configuration parameter will only be used for <b>Create Meeting</b> action, when the user wants to provide <b>start_time</b> and <b>end_time</b> of the meeting.</li>
+  <li>The <b>timezone</b> parameter can be configured using the timezone of the microsoft teams calender. If not provided, by default the <b>UTC</b> timezone will be considered for scheduling the meetings.</li>
+  <li>In case of add_calendar_event = true, if the user wants to provide schedule time for the meeting, <b>start_time</b> and <b>end_time</b> both the parameters are required.</li>
+</ul>
+
+<h2>Port Information</h2>
+  <p>
+    The app uses HTTP/HTTPS protocol for communicating with the Microsoft Teams Server. Below are the default ports used by Splunk SOAR.
+    <table>
+      <tr class=plain>
+        <th>Service Name</th>
+        <th>Transport Protocol</th>
+        <th>Port</th>
+      </tr>
+      <tr>
+        <td>http</td>
+        <td>tcp</td>
+        <td>80</td>
+      </tr>
+      <tr>
+        <td>https</td>
+        <td>tcp</td>
+        <td>443</td>
+      </tr>
+    </table>
+  </p>
 </body>
 </html>
