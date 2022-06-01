@@ -740,7 +740,7 @@ class MicrosoftTeamConnector(BaseConnector):
         _save_app_state(app_state, self.get_asset_id(), self)
 
         self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
-        self.save_progress(url_for_authorize_request)
+        self.save_progress(url_for_authorize_request)   # nosemgrep
         self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
         self.save_progress(MSTEAMS_AUTHORIZE_WAIT_MSG)
 
