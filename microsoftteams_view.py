@@ -58,3 +58,23 @@ def display_view(provides, all_app_runs, context):
             results.append(ctx_result)
 
     return "microsoftteams_display_channels.html"
+
+
+def display_meeting(provides, all_app_runs, context):
+    """ Function that display flows.
+
+    :param provides: action name
+    :param all_app_runs: all_app_runs
+    :param context: context
+    :return: html page name
+    """
+
+    context['results'] = results = []
+    for summary, action_results in all_app_runs:
+        for result in action_results:
+            ctx_result = _get_ctx_result(provides, result)
+            if not ctx_result:
+                continue
+            results.append(ctx_result)
+
+    return "microsoftteams_display_meeting.html"

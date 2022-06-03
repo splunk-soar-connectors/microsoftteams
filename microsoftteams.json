@@ -10,17 +10,17 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2022 Splunk Inc.",
-    "app_version": "2.3.11",
+    "app_version": "2.4.0",
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.2.0",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud 2021-03-15"
+        "Cloud 2022-05-23"
     ],
     "configuration": {
         "client_id": {
@@ -40,6 +40,12 @@
             "data_type": "string",
             "required": true,
             "order": 2
+        },
+        "timezone": {
+            "data_type": "timezone",
+            "description": "Microsoft Teams' timezone",
+            "default": "UTC",
+            "order": 3
         }
     },
     "actions": [
@@ -560,15 +566,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "1517826451101"
-                    ],
-                    "column_name": "Message ID",
-                    "column_order": 3
-                },
-                {
                     "data_path": "action_result.data.*.body.content",
                     "data_type": "string",
                     "example_values": [
@@ -583,80 +580,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.etag",
-                    "data_type": "string",
-                    "example_values": [
-                        "1615528921352"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.displayName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test User"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.userIdentityType",
-                    "data_type": "string",
-                    "example_values": [
-                        "aadUser"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.device",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.application",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.conversation",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.locale",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.webUrl",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.subject",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.replyToId",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.importance",
-                    "data_type": "string",
-                    "example_values": [
-                        "normal"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.messageType",
-                    "data_type": "string",
-                    "example_values": [
-                        "message"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.createdDateTime",
                     "data_type": "string",
                     "example_values": [
@@ -668,8 +591,60 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.policyViolation",
+                    "data_path": "action_result.data.*.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "1615528921352"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.application",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.conversation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1517826451101"
+                    ],
+                    "column_name": "Message ID",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.lastEditedDateTime",
@@ -681,6 +656,37 @@
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.locale",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.messageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.policyViolation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.replyToId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.webUrl",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary",
@@ -765,6 +771,10 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
@@ -775,11 +785,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.email",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.webUrl",
+                    "data_path": "action_result.data.*.isFavoriteByDefault",
                     "data_type": "string"
                 },
                 {
@@ -790,7 +796,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.isFavoriteByDefault",
+                    "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
                 },
                 {
@@ -884,6 +890,10 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.expirationDateTime",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.groupTypes",
                     "data_type": "string",
                     "example_values": [
@@ -902,6 +912,10 @@
                     "contains": [
                         "ms teams group id"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.isAssignableToRole",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.mail",
@@ -944,6 +958,10 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.onPremisesDomainName",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.onPremisesLastSyncDateTime",
                     "data_type": "string",
                     "example_values": [
@@ -951,7 +969,15 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.onPremisesNetBiosName",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.onPremisesProvisioningErrors",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onPremisesSamAccountName",
                     "data_type": "string"
                 },
                 {
@@ -1001,6 +1027,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.securityIdentifier",
+                    "data_type": "string",
+                    "example_values": [
+                        "S-2-22-2-123456789-1234567890-123456789-1234567890"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.theme",
                     "data_type": "string"
                 },
@@ -1013,33 +1046,6 @@
                         "Private",
                         "Public"
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.expirationDateTime",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.isAssignableToRole",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.securityIdentifier",
-                    "data_type": "string",
-                    "example_values": [
-                        "S-2-22-2-123456789-1234567890-123456789-1234567890"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesDomainName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesNetBiosName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.onPremisesSamAccountName",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_groups",
@@ -1153,6 +1159,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.isAssignableToRole",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.isManagementRestricted",
                     "data_type": "string"
                 },
                 {
@@ -1280,10 +1290,6 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.isManagementRestricted",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.writebackConfiguration.isEnabled",
                     "data_type": "string"
                 },
@@ -1324,57 +1330,895 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "create meeting",
+            "description": "Create a microsoft teams meeting",
+            "verbose": "The <b>add_calendar_event</b> parameter can be used for creating a calender event for the given time and send the meeting invitation to all the attendees. If the value of that parameter is false, then apart from <b>subject</b>, rest of the parameters will be ignored and no event will be created in the calendar.",
+            "type": "generic",
+            "identifier": "create_meeting",
+            "read_only": false,
+            "parameters": {
+                "add_calendar_event": {
+                    "description": "Create a calendar event for the meeting or not",
+                    "data_type": "boolean",
+                    "default": false,
+                    "order": 0
+                },
+                "subject": {
+                    "description": "Subject of the meeting",
+                    "data_type": "string",
+                    "order": 1
+                },
+                "description": {
+                    "description": "Description of the meeting",
+                    "data_type": "string",
+                    "order": 2
+                },
+                "start_time": {
+                    "description": "Date and Time to start the meeting",
+                    "data_type": "string",
+                    "order": 3
+                },
+                "end_time": {
+                    "description": "Date and Time to end the meeting",
+                    "data_type": "string",
+                    "order": 4
+                },
+                "attendees": {
+                    "description": "Email-id of the users to send the meeting invitation",
+                    "data_type": "string",
+                    "allow_list": true,
+                    "contains": [
+                        "email"
+                    ],
+                    "primary": true,
+                    "order": 5
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.add_calendar_event",
+                    "data_type": "boolean",
+                    "example_values": [
+                        false,
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.attendees",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@abc.com, testuser@abc.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.end_time",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-04-15T12:30:00",
+                        "24 April, 2022 4:30 am"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.start_time",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-04-15T12:00:00",
+                        "24 April, 2022 4 am"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.subject",
+                    "data_type": "string",
+                    "example_values": [
+                        "Let's go for lunch",
+                        "Test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.@odata.context",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity",
+                        "https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.@odata.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "W/\"07XhOkNngkCkqoNfY+k/jQAFHNmDaQ==\""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowNewTimeProposals",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendees.*.emailAddress.address",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@abc.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendees.*.emailAddress.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@abc.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendees.*.status.response",
+                    "data_type": "string",
+                    "example_values": [
+                        "none"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendees.*.status.time",
+                    "data_type": "string",
+                    "example_values": [
+                        "0001-01-01T00:00:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendees.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "required"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.body.content",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "html"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.bodyPreview",
+                    "data_type": "string",
+                    "example_values": [
+                        ".........................................................................................................................................\r\nJoin Teams Meeting\r\nen-US\r\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.changeKey",
+                    "data_type": "string",
+                    "example_values": [
+                        "07XhOkNngkCkqoNfY+k/jQAFHNmDaQ=="
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-22T10:51:54.9092527Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.end.dateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-23T12:40:00.0000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.end.timeZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Pacific Standard Time"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hasAttachments",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hideAttendees",
+                    "data_type": "numeric",
+                    "example_values": [
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.iCalUId",
+                    "data_type": "string",
+                    "example_values": [
+                        "040000008200E00074C5B7101A82E00800000000A3FE23FB3656D80100000000000000001000000045D024D0A24F814DA4CBB362A95DD153"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY_k-jQAAAgENAAAA07XhOkNngkCkqoNfY_k-jQAFHbOt_AAAAA==",
+                        "MSplZWIzNjQ1Zi1kZjE5LTQ3YTEtOGU4Yy1mY2QyMzRjYjVmNmYqMCoqMTk6bWVldGluZ19NalZpWldFMk9ESXRNMlV5TmkwMFlqZGhMV0poT0dVdE4yRm1ZV1F3TTJOa09USm1AdGhyZWFkLnYy"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isAllDay",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isCancelled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isDraft",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isOnlineMeeting",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isOrganizer",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isReminderOn",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-22T10:51:56.5665393Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Meeting Room1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.locationType",
+                    "data_type": "string",
+                    "example_values": [
+                        "default"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.location.uniqueIdType",
+                    "data_type": "string",
+                    "example_values": [
+                        "unknown"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.occurrenceId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.onlineMeeting.joinUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onlineMeetingProvider",
+                    "data_type": "string",
+                    "example_values": [
+                        "teamsForBusiness"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.onlineMeetingUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.organizer.emailAddress.address",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@abc.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.organizer.emailAddress.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.originalEndTimeZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Pacific Standard Time"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.originalStartTimeZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Pacific Standard Time"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.recurrence",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.reminderMinutesBeforeStart",
+                    "data_type": "numeric",
+                    "example_values": [
+                        15
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.responseRequested",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.responseStatus.response",
+                    "data_type": "string",
+                    "example_values": [
+                        "organizer"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.responseStatus.time",
+                    "data_type": "string",
+                    "example_values": [
+                        "0001-01-01T00:00:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sensitivity",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.seriesMasterId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.showAs",
+                    "data_type": "string",
+                    "example_values": [
+                        "busy"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.start.dateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-23T12:30:00.0000000"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.start.timeZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Pacific Standard Time"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.subject",
+                    "data_type": "string",
+                    "example_values": [
+                        "My Code Review",
+                        "Test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.transactionId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "singleInstance"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.webLink",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://outlook.office365.com/owa/?itemid=AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY%2Bk%2FjQAAAgENAAAA07XhOkNngkCkqoNfY%2Bk%2FjQAFHbOt%2BAAAAA%3D%3D&exvsurl=1&path=/calendar/item"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatInfo.threadId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:meeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm@thread.v2"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatInfo.messageId",
+                    "data_type": "string",
+                    "example_values": [
+                        "0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatInfo.replyChainMessageId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.externalId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.joinWebUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.endDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-28T13:11:55.0940461Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isBroadcast",
+                    "data_type": "numeric",
+                    "example_values": [
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingCode",
+                    "data_type": "string",
+                    "example_values": [
+                        "230408462435"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingInfo",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.upn",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@abc.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.role",
+                    "data_type": "string",
+                    "example_values": [
+                        "presenter"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.user.displayName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.user.registrantId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.user.identityProvider",
+                    "data_type": "string",
+                    "example_values": [
+                        "AAD"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.guest",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.phone",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.acsUser",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.encrypted",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.spoolUser",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.onPremises",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.applicationInstance",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.acsApplicationInstance",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.participants.organizer.identity.spoolApplicationInstance",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.startDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-28T12:11:55.0940461Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinInformation.content",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.joinInformation.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "html"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowMeetingChat",
+                    "data_type": "string",
+                    "example_values": [
+                        "enabled"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.creationDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-28T12:11:55.7803555Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowedPresenters",
+                    "data_type": "string",
+                    "example_values": [
+                        "everyone"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConferencing",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.autoAdmittedUsers",
+                    "data_type": "string",
+                    "example_values": [
+                        "everyoneInCompany"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.broadcastSettings",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.lobbyBypassSettings.scope",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.lobbyBypassSettings.isDialInBypassEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.recordAutomatically",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isEntryExitAnnounced",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinMeetingIdSettings",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.videoTeleconferenceId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.allowTeamworkReactions",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowAttendeeToEnableMic",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.allowAttendeeToEnableCamera",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.outerMeetingAutoAdmittedUsers",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Meeting Created Successfully"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "custom",
+                "view": "microsoftteams_view.display_meeting"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {
         "wheel": [
             {
                 "module": "Django",
-                "input_file": "wheels/Django-3.2.5-py3-none-any.whl"
+                "input_file": "wheels/py3/Django-3.2.5-py3-none-any.whl"
             },
             {
                 "module": "asgiref",
-                "input_file": "wheels/asgiref-3.4.1-py3-none-any.whl"
+                "input_file": "wheels/py3/asgiref-3.4.1-py3-none-any.whl"
             },
             {
                 "module": "beautifulsoup4",
-                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
                 "module": "certifi",
-                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
             },
             {
                 "module": "chardet",
-                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
             },
             {
                 "module": "idna",
-                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
             },
             {
                 "module": "pytz",
-                "input_file": "wheels/pytz-2021.3-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/pytz-2022.1-py2.py3-none-any.whl"
             },
             {
                 "module": "requests",
-                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/soupsieve-2.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
             },
             {
                 "module": "sqlparse",
-                "input_file": "wheels/sqlparse-0.4.2-py3-none-any.whl"
+                "input_file": "wheels/py3/sqlparse-0.4.2-py3-none-any.whl"
             },
             {
                 "module": "typing_extensions",
-                "input_file": "wheels/typing_extensions-4.0.1-py3-none-any.whl"
+                "input_file": "wheels/py3/typing_extensions-4.1.1-py3-none-any.whl"
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
+            }
+        ]
+    },
+    "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "Django",
+                "input_file": "wheels/py3/Django-3.2.5-py3-none-any.whl"
+            },
+            {
+                "module": "asgiref",
+                "input_file": "wheels/py3/asgiref-3.5.0-py3-none-any.whl"
+            },
+            {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
+            },
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "pytz",
+                "input_file": "wheels/shared/pytz-2022.1-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "soupsieve",
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
+            },
+            {
+                "module": "sqlparse",
+                "input_file": "wheels/py3/sqlparse-0.4.2-py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
             }
         ]
     }
