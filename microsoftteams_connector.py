@@ -276,11 +276,11 @@ def _handle_rest_request(request, path_parts):
     :param path_parts: parts of the URL passed
     :return: dictionary containing response parameters
     """
-    logging.info('paul: info')
-    logging.debug('paul: debug')
-    logging.error('paul: error')
-    logging.warning('paul: warnings')
-    logging.critical('paul: critical')
+    logging.debug('paul: 4: debug')
+    logging.info('paul: 3: info')
+    logging.warning('paul: 2: warnings')
+    logging.error('paul: 1: error')
+    logging.critical('paul: 0: critical')
     return JsonResponse({'success': True, 'message': 'paul yay'})
 
 
