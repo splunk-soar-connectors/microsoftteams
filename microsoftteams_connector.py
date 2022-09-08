@@ -264,6 +264,11 @@ def _handle_login_response(request):
     return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
 
 
+import logging
+
+from django.http import JsonResponse
+
+
 def _handle_rest_request(request, path_parts):
     """ Handle requests for authorization.
 
@@ -271,41 +276,12 @@ def _handle_rest_request(request, path_parts):
     :param path_parts: parts of the URL passed
     :return: dictionary containing response parameters
     """
-
-    if len(path_parts) < 2:
-        return HttpResponse('error: True, message: Invalid REST endpoint request', content_type="text/plain", status=404)
-
-    call_type = path_parts[1]
-
-    # To handle admin_consent request in get_admin_consent action
-    if call_type == 'admin_consent':
-        return _handle_login_redirect(request, 'admin_consent_url')
-
-    # To handle authorize request in test connectivity action
-    if call_type == 'start_oauth':
-        return _handle_login_redirect(request, 'authorization_url')
-
-    # To handle response from microsoft login page
-    if call_type == 'result':
-        return_val = _handle_login_response(request)
-        asset_id = request.GET.get('state')
-        if asset_id and asset_id.isalnum():
-            app_dir = os.path.dirname(os.path.abspath(__file__))
-            auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, asset_id, MSTEAMS_TC_FILE)
-            real_auth_status_file_path = os.path.abspath(auth_status_file_path)
-            if not os.path.dirname(real_auth_status_file_path) == app_dir:
-                return HttpResponse("Error: Invalid asset_id", content_type="text/plain", status=400)
-            open(auth_status_file_path, 'w').close()
-            try:
-                uid = pwd.getpwnam('apache').pw_uid
-                gid = grp.getgrnam('phantom').gr_gid
-                os.chown(auth_status_file_path, uid, gid)
-                os.chmod(auth_status_file_path, '0664')
-            except Exception:
-                pass
-
-        return return_val
-    return HttpResponse('error: Invalid endpoint', content_type="text/plain", status=404)
+    logging.info('paul: info')
+    logging.debug('paul: debug')
+    logging.error('paul: error')
+    logging.warning('paul: warnings')
+    logging.critical('paul: critical')
+    return JsonResponse({'success': True, 'message': 'paul yay'})
 
 
 def _get_dir_name_from_app_name(app_name):
