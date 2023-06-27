@@ -2,11 +2,11 @@
 # Microsoft Teams
 
 Publisher: Splunk  
-Connector Version: 2\.4\.0  
+Connector Version: 2.4.0  
 Product Vendor: Microsoft  
 Product Name: Teams  
-Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.2\.0  
+Product Version Supported (regex): ".\*"  
+Minimum Product Version: 5.2.0  
 
 This app integrates with Microsoft Teams to support various generic and investigative actions
 
@@ -168,14 +168,14 @@ The below configuration variables are required for this Connector to operate.  T
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
-**client\_id** |  required  | string | Client ID
-**client\_secret** |  required  | password | Client Secret
-**tenant\_id** |  required  | string | Tenant ID
+**client_id** |  required  | string | Client ID
+**client_secret** |  required  | password | Client Secret
+**tenant_id** |  required  | string | Tenant ID
 **timezone** |  optional  | timezone | Microsoft Teams' timezone
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
-[get admin consent](#action-get-admin-consent) - Get the admin consent for a non\-admin user  
+[get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user  
 [list users](#action-list-users) - List all users  
 [send message](#action-send-message) - Send a message to a channel of a group  
 [list channels](#action-list-channels) - Lists all channels of a group  
@@ -189,7 +189,7 @@ Validate the asset configuration for connectivity using supplied configuration
 Type: **test**  
 Read only: **True**
 
-You first need admin consent if you're a non\-admin user\.
+You first need admin consent if you're a non-admin user.
 
 #### Action Parameters
 No parameters are required for this action
@@ -198,25 +198,25 @@ No parameters are required for this action
 No Output  
 
 ## action: 'get admin consent'
-Get the admin consent for a non\-admin user
+Get the admin consent for a non-admin user
 
 Type: **generic**  
 Read only: **False**
 
-Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non\-admin user\.
+Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user.
 
 #### Action Parameters
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.data | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   Admin consent Received 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list users'
 List all users
@@ -228,64 +228,64 @@ Read only: **True**
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data\.\*\.accountEnabled | boolean | 
-action\_result\.data\.\*\.assignedLicenses\.\*\.disabledPlans | string | 
-action\_result\.data\.\*\.assignedLicenses\.\*\.skuId | string | 
-action\_result\.data\.\*\.assignedPlans\.\*\.assignedDateTime | string | 
-action\_result\.data\.\*\.assignedPlans\.\*\.capabilityStatus | string | 
-action\_result\.data\.\*\.assignedPlans\.\*\.service | string | 
-action\_result\.data\.\*\.assignedPlans\.\*\.servicePlanId | string | 
-action\_result\.data\.\*\.businessPhones | string | 
-action\_result\.data\.\*\.city | string | 
-action\_result\.data\.\*\.companyName | string | 
-action\_result\.data\.\*\.country | string | 
-action\_result\.data\.\*\.deletedDateTime | string | 
-action\_result\.data\.\*\.department | string | 
-action\_result\.data\.\*\.deviceKeys | string | 
-action\_result\.data\.\*\.displayName | string |  `user name` 
-action\_result\.data\.\*\.employeeId | string | 
-action\_result\.data\.\*\.givenName | string |  `user name` 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.imAddresses | string |  `email` 
-action\_result\.data\.\*\.jobTitle | string | 
-action\_result\.data\.\*\.legalAgeGroupClassification | string | 
-action\_result\.data\.\*\.mail | string |  `email` 
-action\_result\.data\.\*\.mailNickname | string |  `user name` 
-action\_result\.data\.\*\.mobilePhone | string | 
-action\_result\.data\.\*\.officeLocation | string | 
-action\_result\.data\.\*\.onPremisesDomainName | string |  `domain` 
-action\_result\.data\.\*\.onPremisesExtensionAttributes | string | 
-action\_result\.data\.\*\.onPremisesImmutableId | string | 
-action\_result\.data\.\*\.onPremisesLastSyncDateTime | string | 
-action\_result\.data\.\*\.onPremisesProvisioningErrors | string | 
-action\_result\.data\.\*\.onPremisesSamAccountName | string | 
-action\_result\.data\.\*\.onPremisesSecurityIdentifier | string | 
-action\_result\.data\.\*\.onPremisesSyncEnabled | string | 
-action\_result\.data\.\*\.onPremisesUserPrincipalName | string | 
-action\_result\.data\.\*\.passwordPolicies | string | 
-action\_result\.data\.\*\.passwordProfile | string | 
-action\_result\.data\.\*\.postalCode | string | 
-action\_result\.data\.\*\.preferredDataLocation | string | 
-action\_result\.data\.\*\.preferredLanguage | string | 
-action\_result\.data\.\*\.provisionedPlans\.\*\.capabilityStatus | string | 
-action\_result\.data\.\*\.provisionedPlans\.\*\.provisioningStatus | string | 
-action\_result\.data\.\*\.provisionedPlans\.\*\.service | string | 
-action\_result\.data\.\*\.proxyAddresses | string | 
-action\_result\.data\.\*\.refreshTokensValidFromDateTime | string | 
-action\_result\.data\.\*\.showInAddressList | string | 
-action\_result\.data\.\*\.state | string | 
-action\_result\.data\.\*\.streetAddress | string | 
-action\_result\.data\.\*\.surname | string | 
-action\_result\.data\.\*\.usageLocation | string | 
-action\_result\.data\.\*\.userPrincipalName | string |  `email` 
-action\_result\.data\.\*\.userType | string | 
-action\_result\.summary\.total\_users | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.data.\*.accountEnabled | boolean |  |   True  False 
+action_result.data.\*.assignedLicenses.\*.disabledPlans | string |  |  
+action_result.data.\*.assignedLicenses.\*.skuId | string |  |   6fd2c87f-b296-42f0-b197-1e91e994b900 
+action_result.data.\*.assignedPlans.\*.assignedDateTime | string |  |   2018-01-24T11:17:21Z 
+action_result.data.\*.assignedPlans.\*.capabilityStatus | string |  |   Enabled 
+action_result.data.\*.assignedPlans.\*.service | string |  |   exchange 
+action_result.data.\*.assignedPlans.\*.servicePlanId | string |  |   efb87545-963c-4e0d-99df-69c6916d9eb0 
+action_result.data.\*.businessPhones | string |  |   22211156 
+action_result.data.\*.city | string |  |  
+action_result.data.\*.companyName | string |  |  
+action_result.data.\*.country | string |  |   US 
+action_result.data.\*.deletedDateTime | string |  |   2018-01-24T11:16:50Z 
+action_result.data.\*.department | string |  |  
+action_result.data.\*.deviceKeys | string |  |  
+action_result.data.\*.displayName | string |  `user name`  |   Test User 
+action_result.data.\*.employeeId | string |  |  
+action_result.data.\*.givenName | string |  `user name`  |   User 
+action_result.data.\*.id | string |  |   a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09 
+action_result.data.\*.imAddresses | string |  `email`  |   test@abc.com 
+action_result.data.\*.jobTitle | string |  |  
+action_result.data.\*.legalAgeGroupClassification | string |  |  
+action_result.data.\*.mail | string |  `email`  |   test.user@abc.com 
+action_result.data.\*.mailNickname | string |  `user name`  |   User 
+action_result.data.\*.mobilePhone | string |  |  
+action_result.data.\*.officeLocation | string |  |  
+action_result.data.\*.onPremisesDomainName | string |  `domain`  |  
+action_result.data.\*.onPremisesExtensionAttributes | string |  |  
+action_result.data.\*.onPremisesImmutableId | string |  |  
+action_result.data.\*.onPremisesLastSyncDateTime | string |  |   2018-01-24T11:16:50Z 
+action_result.data.\*.onPremisesProvisioningErrors | string |  |  
+action_result.data.\*.onPremisesSamAccountName | string |  |  
+action_result.data.\*.onPremisesSecurityIdentifier | string |  |  
+action_result.data.\*.onPremisesSyncEnabled | string |  |  
+action_result.data.\*.onPremisesUserPrincipalName | string |  |  
+action_result.data.\*.passwordPolicies | string |  |  
+action_result.data.\*.passwordProfile | string |  |  
+action_result.data.\*.postalCode | string |  |  
+action_result.data.\*.preferredDataLocation | string |  |  
+action_result.data.\*.preferredLanguage | string |  |   en 
+action_result.data.\*.provisionedPlans.\*.capabilityStatus | string |  |   Enabled 
+action_result.data.\*.provisionedPlans.\*.provisioningStatus | string |  |   Success 
+action_result.data.\*.provisionedPlans.\*.service | string |  |   exchange 
+action_result.data.\*.proxyAddresses | string |  |   SMTP:test@abc.com 
+action_result.data.\*.refreshTokensValidFromDateTime | string |  |   2018-01-24T11:16:50Z 
+action_result.data.\*.showInAddressList | string |  |  
+action_result.data.\*.state | string |  |  
+action_result.data.\*.streetAddress | string |  |  
+action_result.data.\*.surname | string |  |   User 
+action_result.data.\*.usageLocation | string |  |   US 
+action_result.data.\*.userPrincipalName | string |  `email`  |   test.user@abc.com 
+action_result.data.\*.userType | string |  |   Member 
+action_result.summary.total_users | numeric |  |   5 
+action_result.message | string |  |   Total users: 5 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'send message'
 Send a message to a channel of a group
@@ -296,44 +296,44 @@ Read only: **False**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**group\_id** |  required  | ID of group | string |  `ms teams group id` 
-**channel\_id** |  required  | ID of channel | string |  `ms teams channel id` 
-**message** |  required  | Message to send \(HTML is supported\) | string | 
+**group_id** |  required  | ID of group | string |  `ms teams group id` 
+**channel_id** |  required  | ID of channel | string |  `ms teams channel id` 
+**message** |  required  | Message to send (HTML is supported) | string | 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.channel\_id | string |  `ms teams channel id` 
-action\_result\.parameter\.group\_id | string |  `ms teams group id` 
-action\_result\.parameter\.message | string | 
-action\_result\.data\.\*\.\@odata\.context | string |  `url` 
-action\_result\.data\.\*\.body\.content | string | 
-action\_result\.data\.\*\.body\.contentType | string | 
-action\_result\.data\.\*\.createdDateTime | string | 
-action\_result\.data\.\*\.deletedDateTime | string | 
-action\_result\.data\.\*\.etag | string | 
-action\_result\.data\.\*\.from\.application | string | 
-action\_result\.data\.\*\.from\.conversation | string | 
-action\_result\.data\.\*\.from\.device | string | 
-action\_result\.data\.\*\.from\.user\.displayName | string | 
-action\_result\.data\.\*\.from\.user\.id | string | 
-action\_result\.data\.\*\.from\.user\.userIdentityType | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.importance | string | 
-action\_result\.data\.\*\.lastEditedDateTime | string | 
-action\_result\.data\.\*\.lastModifiedDateTime | string | 
-action\_result\.data\.\*\.locale | string | 
-action\_result\.data\.\*\.messageType | string | 
-action\_result\.data\.\*\.policyViolation | string | 
-action\_result\.data\.\*\.replyToId | string | 
-action\_result\.data\.\*\.subject | string | 
-action\_result\.data\.\*\.summary | string | 
-action\_result\.data\.\*\.webUrl | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.channel_id | string |  `ms teams channel id`  |   cd6f5efb-39f8-492e-80cd-c228c211cf17 
+action_result.parameter.group_id | string |  `ms teams group id`  |   594101ba-1fde-482d-8e24-3bbab23a3ca8 
+action_result.parameter.message | string |  |   This is a test message  <a href="https://www.google.com"> Test link </a> 
+action_result.data.\*.@odata.context | string |  `url`  |   https://test.link.com/beta/$metadata#chatThreads/$entity 
+action_result.data.\*.body.content | string |  |   test message 
+action_result.data.\*.body.contentType | string |  |   text 
+action_result.data.\*.createdDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.etag | string |  |   1615528921352 
+action_result.data.\*.from.application | string |  |  
+action_result.data.\*.from.conversation | string |  |  
+action_result.data.\*.from.device | string |  |  
+action_result.data.\*.from.user.displayName | string |  |   Test User 
+action_result.data.\*.from.user.id | string |  |   eeb3645f-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.from.user.userIdentityType | string |  |   aadUser 
+action_result.data.\*.id | string |  |   1517826451101 
+action_result.data.\*.importance | string |  |   normal 
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |   message 
+action_result.data.\*.policyViolation | string |  |  
+action_result.data.\*.replyToId | string |  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   Message sent 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list channels'
 Lists all channels of a group
@@ -344,24 +344,24 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**group\_id** |  required  | ID of group | string |  `ms teams group id` 
+**group_id** |  required  | ID of group | string |  `ms teams group id` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.group\_id | string |  `ms teams group id` 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.displayName | string | 
-action\_result\.data\.\*\.email | string | 
-action\_result\.data\.\*\.id | string |  `ms teams channel id` 
-action\_result\.data\.\*\.isFavoriteByDefault | string | 
-action\_result\.data\.\*\.membershipType | string | 
-action\_result\.data\.\*\.webUrl | string | 
-action\_result\.summary\.total\_channels | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.group_id | string |  `ms teams group id`  |   caf444a0-0e0e-426b-98ea-db67ff6b0b25 
+action_result.data.\*.description | string |  |   Test team 
+action_result.data.\*.displayName | string |  |   General 
+action_result.data.\*.email | string |  |  
+action_result.data.\*.id | string |  `ms teams channel id`  |   78f4a378-e7d3-49c8-a8a7-645b886752d9 
+action_result.data.\*.isFavoriteByDefault | string |  |  
+action_result.data.\*.membershipType | string |  |   standard 
+action_result.data.\*.webUrl | string |  |  
+action_result.summary.total_channels | numeric |  |   1 
+action_result.message | string |  |   Total channels: 3 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list groups'
 List all Azure Groups
@@ -373,44 +373,44 @@ Read only: **True**
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data\.\*\.classification | string | 
-action\_result\.data\.\*\.createdDateTime | string | 
-action\_result\.data\.\*\.deletedDateTime | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.displayName | string | 
-action\_result\.data\.\*\.expirationDateTime | string | 
-action\_result\.data\.\*\.groupTypes | string | 
-action\_result\.data\.\*\.id | string |  `ms teams group id` 
-action\_result\.data\.\*\.isAssignableToRole | string | 
-action\_result\.data\.\*\.mail | string |  `email` 
-action\_result\.data\.\*\.mailEnabled | boolean | 
-action\_result\.data\.\*\.mailNickname | string | 
-action\_result\.data\.\*\.membershipRule | string | 
-action\_result\.data\.\*\.membershipRuleProcessingState | string | 
-action\_result\.data\.\*\.onPremisesDomainName | string | 
-action\_result\.data\.\*\.onPremisesLastSyncDateTime | string | 
-action\_result\.data\.\*\.onPremisesNetBiosName | string | 
-action\_result\.data\.\*\.onPremisesProvisioningErrors | string | 
-action\_result\.data\.\*\.onPremisesSamAccountName | string | 
-action\_result\.data\.\*\.onPremisesSecurityIdentifier | string | 
-action\_result\.data\.\*\.onPremisesSyncEnabled | string | 
-action\_result\.data\.\*\.preferredDataLocation | string | 
-action\_result\.data\.\*\.preferredLanguage | string | 
-action\_result\.data\.\*\.proxyAddresses | string | 
-action\_result\.data\.\*\.renewedDateTime | string | 
-action\_result\.data\.\*\.resourceBehaviorOptions | string | 
-action\_result\.data\.\*\.resourceProvisioningOptions | string | 
-action\_result\.data\.\*\.securityEnabled | boolean | 
-action\_result\.data\.\*\.securityIdentifier | string | 
-action\_result\.data\.\*\.theme | string | 
-action\_result\.data\.\*\.visibility | string | 
-action\_result\.summary\.total\_groups | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.data.\*.classification | string |  |   classification 
+action_result.data.\*.createdDateTime | string |  |   2018-01-30T09:43:13Z 
+action_result.data.\*.deletedDateTime | string |  |   2018-01-30T09:43:13Z 
+action_result.data.\*.description | string |  |   team2 
+action_result.data.\*.displayName | string |  |   team2 
+action_result.data.\*.expirationDateTime | string |  |  
+action_result.data.\*.groupTypes | string |  |   Unified  DynamicMembership 
+action_result.data.\*.id | string |  `ms teams group id`  |   594101ba-1fde-482d-8e24-3bbab23a3ca8 
+action_result.data.\*.isAssignableToRole | string |  |  
+action_result.data.\*.mail | string |  `email`  |   team2@test.com 
+action_result.data.\*.mailEnabled | boolean |  |   True  False 
+action_result.data.\*.mailNickname | string |  |   team2 
+action_result.data.\*.membershipRule | string |  |   user.department -eq "Marketing" 
+action_result.data.\*.membershipRuleProcessingState | string |  |   on  off 
+action_result.data.\*.onPremisesDomainName | string |  |  
+action_result.data.\*.onPremisesLastSyncDateTime | string |  |   2018-01-30T09:43:13Z 
+action_result.data.\*.onPremisesNetBiosName | string |  |  
+action_result.data.\*.onPremisesProvisioningErrors | string |  |  
+action_result.data.\*.onPremisesSamAccountName | string |  |  
+action_result.data.\*.onPremisesSecurityIdentifier | string |  |  
+action_result.data.\*.onPremisesSyncEnabled | string |  |  
+action_result.data.\*.preferredDataLocation | string |  |  
+action_result.data.\*.preferredLanguage | string |  |  
+action_result.data.\*.proxyAddresses | string |  |   SMTP : team2@test.com 
+action_result.data.\*.renewedDateTime | string |  |   2018-01-30T09:43:13Z 
+action_result.data.\*.resourceBehaviorOptions | string |  |  
+action_result.data.\*.resourceProvisioningOptions | string |  |  
+action_result.data.\*.securityEnabled | boolean |  |   True  False 
+action_result.data.\*.securityIdentifier | string |  |   S-2-22-2-123456789-1234567890-123456789-1234567890 
+action_result.data.\*.theme | string |  |  
+action_result.data.\*.visibility | string |  |   Private  Public 
+action_result.summary.total_groups | numeric |  |   4 
+action_result.message | string |  |   Total groups: 3 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'list teams'
 List all Microsoft Teams
@@ -422,47 +422,47 @@ Read only: **True**
 No parameters are required for this action
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.data\.\*\.classification | string | 
-action\_result\.data\.\*\.createdByAppId | string | 
-action\_result\.data\.\*\.createdDateTime | string | 
-action\_result\.data\.\*\.deletedDateTime | string | 
-action\_result\.data\.\*\.description | string | 
-action\_result\.data\.\*\.displayName | string | 
-action\_result\.data\.\*\.expirationDateTime | string | 
-action\_result\.data\.\*\.groupTypes\.\*\. | string | 
-action\_result\.data\.\*\.id | string |  `ms teams group id` 
-action\_result\.data\.\*\.isAssignableToRole | string | 
-action\_result\.data\.\*\.isManagementRestricted | string | 
-action\_result\.data\.\*\.mail | string |  `email` 
-action\_result\.data\.\*\.mailEnabled | boolean | 
-action\_result\.data\.\*\.mailNickname | string | 
-action\_result\.data\.\*\.membershipRule | string | 
-action\_result\.data\.\*\.membershipRuleProcessingState | string | 
-action\_result\.data\.\*\.onPremisesDomainName | string |  `domain` 
-action\_result\.data\.\*\.onPremisesLastSyncDateTime | string | 
-action\_result\.data\.\*\.onPremisesNetBiosName | string | 
-action\_result\.data\.\*\.onPremisesSamAccountName | string | 
-action\_result\.data\.\*\.onPremisesSecurityIdentifier | string | 
-action\_result\.data\.\*\.onPremisesSyncEnabled | string | 
-action\_result\.data\.\*\.preferredDataLocation | string | 
-action\_result\.data\.\*\.preferredLanguage | string | 
-action\_result\.data\.\*\.proxyAddresses | string | 
-action\_result\.data\.\*\.proxyAddresses\.\*\. | string | 
-action\_result\.data\.\*\.renewedDateTime | string | 
-action\_result\.data\.\*\.resourceProvisioningOptions\.\*\. | string | 
-action\_result\.data\.\*\.securityEnabled | boolean | 
-action\_result\.data\.\*\.securityIdentifier | string | 
-action\_result\.data\.\*\.theme | string | 
-action\_result\.data\.\*\.visibility | string | 
-action\_result\.data\.\*\.writebackConfiguration\.isEnabled | string | 
-action\_result\.data\.\*\.writebackConfiguration\.onPremisesGroupType | string | 
-action\_result\.summary\.total\_teams | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric |   
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.data.\*.classification | string |  |  
+action_result.data.\*.createdByAppId | string |  |  
+action_result.data.\*.createdDateTime | string |  |   2018-02-05T21:42:33Z 
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.description | string |  |   TeamOne 
+action_result.data.\*.displayName | string |  |   TeamOne 
+action_result.data.\*.expirationDateTime | string |  |  
+action_result.data.\*.groupTypes.\*. | string |  |   Unified 
+action_result.data.\*.id | string |  `ms teams group id`  |   a84b973e-ad51-4248-9a3e-df054415f026 
+action_result.data.\*.isAssignableToRole | string |  |  
+action_result.data.\*.isManagementRestricted | string |  |  
+action_result.data.\*.mail | string |  `email`  |   test@test.com 
+action_result.data.\*.mailEnabled | boolean |  |   True  False 
+action_result.data.\*.mailNickname | string |  |   TeamOne 
+action_result.data.\*.membershipRule | string |  |  
+action_result.data.\*.membershipRuleProcessingState | string |  |  
+action_result.data.\*.onPremisesDomainName | string |  `domain`  |  
+action_result.data.\*.onPremisesLastSyncDateTime | string |  |  
+action_result.data.\*.onPremisesNetBiosName | string |  |  
+action_result.data.\*.onPremisesSamAccountName | string |  |  
+action_result.data.\*.onPremisesSecurityIdentifier | string |  |  
+action_result.data.\*.onPremisesSyncEnabled | string |  |  
+action_result.data.\*.preferredDataLocation | string |  |  
+action_result.data.\*.preferredLanguage | string |  |  
+action_result.data.\*.proxyAddresses | string |  |   SMTP:test@test.com 
+action_result.data.\*.proxyAddresses.\*. | string |  |   SPO:SPO_2e56f4be-737f-418d-8dee-7d01911b91df@SPO_a417c578-c7ee-480d-a225-d48057e74df5 
+action_result.data.\*.renewedDateTime | string |  |   2018-02-05T21:42:33Z 
+action_result.data.\*.resourceProvisioningOptions.\*. | string |  |   Team 
+action_result.data.\*.securityEnabled | boolean |  |   True  False 
+action_result.data.\*.securityIdentifier | string |  |   S-1-12-1-2823526206-1112059217-98516634-653268292 
+action_result.data.\*.theme | string |  |  
+action_result.data.\*.visibility | string |  |   Public 
+action_result.data.\*.writebackConfiguration.isEnabled | string |  |  
+action_result.data.\*.writebackConfiguration.onPremisesGroupType | string |  |  
+action_result.summary.total_teams | numeric |  |   1 
+action_result.message | string |  |   Total teams: 1 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
 
 ## action: 'create meeting'
 Create a microsoft teams meeting
@@ -470,128 +470,131 @@ Create a microsoft teams meeting
 Type: **generic**  
 Read only: **False**
 
-The <b>add\_calendar\_event</b> parameter can be used for creating a calender event for the given time and send the meeting invitation to all the attendees\. If the value of that parameter is false, then apart from <b>subject</b>, rest of the parameters will be ignored and no event will be created in the calendar\.
+The <b>add_calendar_event</b> parameter can be used for creating a calender event for the given time and send the meeting invitation to all the attendees. If the value of that parameter is false, then apart from <b>subject</b>, rest of the parameters will be ignored and no event will be created in the calendar.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**add\_calendar\_event** |  optional  | Create a calendar event for the meeting or not | boolean | 
+**add_calendar_event** |  optional  | Create a calendar event for the meeting or not | boolean | 
 **subject** |  optional  | Subject of the meeting | string | 
 **description** |  optional  | Description of the meeting | string | 
-**start\_time** |  optional  | Date and Time to start the meeting | string | 
-**end\_time** |  optional  | Date and Time to end the meeting | string | 
-**attendees** |  optional  | Email\-id of the users to send the meeting invitation | string |  `email` 
+**start_time** |  optional  | Date and Time to start the meeting | string | 
+**end_time** |  optional  | Date and Time to end the meeting | string | 
+**attendees** |  optional  | Email-id of the users to send the meeting invitation | string |  `email` 
 
 #### Action Output
-DATA PATH | TYPE | CONTAINS
---------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.add\_calendar\_event | boolean | 
-action\_result\.parameter\.attendees | string |  `email` 
-action\_result\.parameter\.description | string | 
-action\_result\.parameter\.end\_time | string | 
-action\_result\.parameter\.start\_time | string | 
-action\_result\.parameter\.subject | string | 
-action\_result\.data\.\*\.\@odata\.context | string |  `url` 
-action\_result\.data\.\*\.\@odata\.etag | string | 
-action\_result\.data\.\*\.allowNewTimeProposals | boolean | 
-action\_result\.data\.\*\.attendees\.\*\.emailAddress\.address | string |  `email` 
-action\_result\.data\.\*\.attendees\.\*\.emailAddress\.name | string |  `email` 
-action\_result\.data\.\*\.attendees\.\*\.status\.response | string | 
-action\_result\.data\.\*\.attendees\.\*\.status\.time | string | 
-action\_result\.data\.\*\.attendees\.\*\.type | string | 
-action\_result\.data\.\*\.body\.content | string | 
-action\_result\.data\.\*\.body\.contentType | string | 
-action\_result\.data\.\*\.bodyPreview | string | 
-action\_result\.data\.\*\.changeKey | string | 
-action\_result\.data\.\*\.createdDateTime | string | 
-action\_result\.data\.\*\.end\.dateTime | string | 
-action\_result\.data\.\*\.end\.timeZone | string | 
-action\_result\.data\.\*\.hasAttachments | boolean | 
-action\_result\.data\.\*\.hideAttendees | numeric | 
-action\_result\.data\.\*\.iCalUId | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.importance | string | 
-action\_result\.data\.\*\.isAllDay | boolean | 
-action\_result\.data\.\*\.isCancelled | boolean | 
-action\_result\.data\.\*\.isDraft | boolean | 
-action\_result\.data\.\*\.isOnlineMeeting | boolean | 
-action\_result\.data\.\*\.isOrganizer | boolean | 
-action\_result\.data\.\*\.isReminderOn | boolean | 
-action\_result\.data\.\*\.lastModifiedDateTime | string | 
-action\_result\.data\.\*\.location\.displayName | string | 
-action\_result\.data\.\*\.location\.locationType | string | 
-action\_result\.data\.\*\.location\.uniqueIdType | string | 
-action\_result\.data\.\*\.occurrenceId | string | 
-action\_result\.data\.\*\.onlineMeeting\.joinUrl | string |  `url` 
-action\_result\.data\.\*\.onlineMeetingProvider | string | 
-action\_result\.data\.\*\.onlineMeetingUrl | string | 
-action\_result\.data\.\*\.organizer\.emailAddress\.address | string |  `email` 
-action\_result\.data\.\*\.organizer\.emailAddress\.name | string | 
-action\_result\.data\.\*\.originalEndTimeZone | string | 
-action\_result\.data\.\*\.originalStartTimeZone | string | 
-action\_result\.data\.\*\.recurrence | string | 
-action\_result\.data\.\*\.reminderMinutesBeforeStart | numeric | 
-action\_result\.data\.\*\.responseRequested | boolean | 
-action\_result\.data\.\*\.responseStatus\.response | string | 
-action\_result\.data\.\*\.responseStatus\.time | string | 
-action\_result\.data\.\*\.sensitivity | string | 
-action\_result\.data\.\*\.seriesMasterId | string | 
-action\_result\.data\.\*\.showAs | string | 
-action\_result\.data\.\*\.start\.dateTime | string | 
-action\_result\.data\.\*\.start\.timeZone | string | 
-action\_result\.data\.\*\.subject | string | 
-action\_result\.data\.\*\.transactionId | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.webLink | string |  `url` 
-action\_result\.data\.\*\.joinUrl | string |  `url` 
-action\_result\.data\.\*\.chatInfo\.threadId | string | 
-action\_result\.data\.\*\.chatInfo\.messageId | string | 
-action\_result\.data\.\*\.chatInfo\.replyChainMessageId | string | 
-action\_result\.data\.\*\.externalId | string | 
-action\_result\.data\.\*\.joinWebUrl | string |  `url` 
-action\_result\.data\.\*\.endDateTime | string | 
-action\_result\.data\.\*\.isBroadcast | numeric | 
-action\_result\.data\.\*\.meetingCode | string | 
-action\_result\.data\.\*\.meetingInfo | string | 
-action\_result\.data\.\*\.participants\.organizer\.upn | string |  `email` 
-action\_result\.data\.\*\.participants\.organizer\.role | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.user\.id | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.user\.tenantId | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.user\.displayName | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.user\.registrantId | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.user\.identityProvider | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.guest | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.phone | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.device | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.acsUser | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.encrypted | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.spoolUser | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.onPremises | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.application | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.applicationInstance | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.acsApplicationInstance | string | 
-action\_result\.data\.\*\.participants\.organizer\.identity\.spoolApplicationInstance | string | 
-action\_result\.data\.\*\.startDateTime | string | 
-action\_result\.data\.\*\.joinInformation\.content | string | 
-action\_result\.data\.\*\.joinInformation\.contentType | string | 
-action\_result\.data\.\*\.allowMeetingChat | string | 
-action\_result\.data\.\*\.creationDateTime | string | 
-action\_result\.data\.\*\.allowedPresenters | string | 
-action\_result\.data\.\*\.audioConferencing | string | 
-action\_result\.data\.\*\.autoAdmittedUsers | string | 
-action\_result\.data\.\*\.broadcastSettings | string | 
-action\_result\.data\.\*\.lobbyBypassSettings\.scope | boolean | 
-action\_result\.data\.\*\.lobbyBypassSettings\.isDialInBypassEnabled | boolean | 
-action\_result\.data\.\*\.recordAutomatically | boolean | 
-action\_result\.data\.\*\.isEntryExitAnnounced | boolean | 
-action\_result\.data\.\*\.joinMeetingIdSettings | string | 
-action\_result\.data\.\*\.videoTeleconferenceId | string | 
-action\_result\.data\.\*\.allowTeamworkReactions | boolean | 
-action\_result\.data\.\*\.allowAttendeeToEnableMic | boolean | 
-action\_result\.data\.\*\.allowAttendeeToEnableCamera | boolean | 
-action\_result\.data\.\*\.outerMeetingAutoAdmittedUsers | string | 
-action\_result\.summary | string | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.add_calendar_event | boolean |  |   False  True 
+action_result.parameter.attendees | string |  `email`  |   test@abc.com, testuser@abc.com 
+action_result.parameter.description | string |  |   Test 
+action_result.parameter.end_time | string |  |   2017-04-15T12:30:00  24 April, 2022 4:30 am 
+action_result.parameter.start_time | string |  |   2017-04-15T12:00:00  24 April, 2022 4 am 
+action_result.parameter.subject | string |  |   Let's go for lunch  Test 
+action_result.data.\*.@odata.context | string |  `url`  |   https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity  https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity 
+action_result.data.\*.@odata.etag | string |  |   W/"07XhOkNngkCkqoNfY+k/jQAFHNmDaQ==" 
+action_result.data.\*.allowNewTimeProposals | boolean |  |   True  False 
+action_result.data.\*.attendees.\*.emailAddress.address | string |  `email`  |   test@abc.com 
+action_result.data.\*.attendees.\*.emailAddress.name | string |  `email`  |   test@abc.com 
+action_result.data.\*.attendees.\*.status.response | string |  |   none 
+action_result.data.\*.attendees.\*.status.time | string |  |   0001-01-01T00:00:00Z 
+action_result.data.\*.attendees.\*.type | string |  |   required 
+action_result.data.\*.body.content | string |  |  
+action_result.data.\*.body.contentType | string |  |   html 
+action_result.data.\*.bodyPreview | string |  |   .........................................................................................................................................
+Join Teams Meeting
+en-US
+https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT 
+action_result.data.\*.changeKey | string |  |   07XhOkNngkCkqoNfY+k/jQAFHNmDaQ== 
+action_result.data.\*.createdDateTime | string |  |   2022-04-22T10:51:54.9092527Z 
+action_result.data.\*.end.dateTime | string |  |   2022-04-23T12:40:00.0000000 
+action_result.data.\*.end.timeZone | string |  |   Pacific Standard Time 
+action_result.data.\*.hasAttachments | boolean |  |   True  False 
+action_result.data.\*.hideAttendees | numeric |  |   False 
+action_result.data.\*.iCalUId | string |  |   040000008200E00074C5B7101A82E00800000000A3FE23FB3656D80100000000000000001000000045D024D0A24F814DA4CBB362A95DD153 
+action_result.data.\*.id | string |  |   AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY_k-jQAAAgENAAAA07XhOkNngkCkqoNfY_k-jQAFHbOt_AAAAA==  MSplZWIzNjQ1Zi1kZjE5LTQ3YTEtOGU4Yy1mY2QyMzRjYjVmNmYqMCoqMTk6bWVldGluZ19NalZpWldFMk9ESXRNMlV5TmkwMFlqZGhMV0poT0dVdE4yRm1ZV1F3TTJOa09USm1AdGhyZWFkLnYy 
+action_result.data.\*.importance | string |  |   normal 
+action_result.data.\*.isAllDay | boolean |  |   True  False 
+action_result.data.\*.isCancelled | boolean |  |   True  False 
+action_result.data.\*.isDraft | boolean |  |   True  False 
+action_result.data.\*.isOnlineMeeting | boolean |  |   True  False 
+action_result.data.\*.isOrganizer | boolean |  |   True  False 
+action_result.data.\*.isReminderOn | boolean |  |   True  False 
+action_result.data.\*.lastModifiedDateTime | string |  |   2022-04-22T10:51:56.5665393Z 
+action_result.data.\*.location.displayName | string |  |   Meeting Room1 
+action_result.data.\*.location.locationType | string |  |   default 
+action_result.data.\*.location.uniqueIdType | string |  |   unknown 
+action_result.data.\*.occurrenceId | string |  |  
+action_result.data.\*.onlineMeeting.joinUrl | string |  `url`  |   https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d 
+action_result.data.\*.onlineMeetingProvider | string |  |   teamsForBusiness 
+action_result.data.\*.onlineMeetingUrl | string |  |  
+action_result.data.\*.organizer.emailAddress.address | string |  `email`  |   test@abc.com 
+action_result.data.\*.organizer.emailAddress.name | string |  |   Test User 
+action_result.data.\*.originalEndTimeZone | string |  |   Pacific Standard Time 
+action_result.data.\*.originalStartTimeZone | string |  |   Pacific Standard Time 
+action_result.data.\*.recurrence | string |  |  
+action_result.data.\*.reminderMinutesBeforeStart | numeric |  |   15 
+action_result.data.\*.responseRequested | boolean |  |   True  False 
+action_result.data.\*.responseStatus.response | string |  |   organizer 
+action_result.data.\*.responseStatus.time | string |  |   0001-01-01T00:00:00Z 
+action_result.data.\*.sensitivity | string |  |   normal 
+action_result.data.\*.seriesMasterId | string |  |  
+action_result.data.\*.showAs | string |  |   busy 
+action_result.data.\*.start.dateTime | string |  |   2022-04-23T12:30:00.0000000 
+action_result.data.\*.start.timeZone | string |  |   Pacific Standard Time 
+action_result.data.\*.subject | string |  |   My Code Review  Test 
+action_result.data.\*.transactionId | string |  |  
+action_result.data.\*.type | string |  |   singleInstance 
+action_result.data.\*.webLink | string |  `url`  |   https://outlook.office365.com/owa/?itemid=AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY%2Bk%2FjQAAAgENAAAA07XhOkNngkCkqoNfY%2Bk%2FjQAFHbOt%2BAAAAA%3D%3D&exvsurl=1&path=/calendar/item 
+action_result.data.\*.joinUrl | string |  `url`  |   https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d 
+action_result.data.\*.chatInfo.threadId | string |  |   19:meeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm@thread.v2 
+action_result.data.\*.chatInfo.messageId | string |  |   0 
+action_result.data.\*.chatInfo.replyChainMessageId | string |  |  
+action_result.data.\*.externalId | string |  |  
+action_result.data.\*.joinWebUrl | string |  `url`  |   https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d 
+action_result.data.\*.endDateTime | string |  |   2022-04-28T13:11:55.0940461Z 
+action_result.data.\*.isBroadcast | numeric |  |   False 
+action_result.data.\*.meetingCode | string |  |   230408462435 
+action_result.data.\*.meetingInfo | string |  |  
+action_result.data.\*.participants.organizer.upn | string |  `email`  |   test@abc.com 
+action_result.data.\*.participants.organizer.role | string |  |   presenter 
+action_result.data.\*.participants.organizer.identity.user.id | string |  |   eeb3645f-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.participants.organizer.identity.user.tenantId | string |  |   140fe46d-819d-4b6d-b7ef-1c0a8270f4f0 
+action_result.data.\*.participants.organizer.identity.user.displayName | string |  |  
+action_result.data.\*.participants.organizer.identity.user.registrantId | string |  |  
+action_result.data.\*.participants.organizer.identity.user.identityProvider | string |  |   AAD 
+action_result.data.\*.participants.organizer.identity.guest | string |  |  
+action_result.data.\*.participants.organizer.identity.phone | string |  |  
+action_result.data.\*.participants.organizer.identity.device | string |  |  
+action_result.data.\*.participants.organizer.identity.acsUser | string |  |  
+action_result.data.\*.participants.organizer.identity.encrypted | string |  |  
+action_result.data.\*.participants.organizer.identity.spoolUser | string |  |  
+action_result.data.\*.participants.organizer.identity.onPremises | string |  |  
+action_result.data.\*.participants.organizer.identity.application | string |  |  
+action_result.data.\*.participants.organizer.identity.applicationInstance | string |  |  
+action_result.data.\*.participants.organizer.identity.acsApplicationInstance | string |  |  
+action_result.data.\*.participants.organizer.identity.spoolApplicationInstance | string |  |  
+action_result.data.\*.startDateTime | string |  |   2022-04-28T12:11:55.0940461Z 
+action_result.data.\*.joinInformation.content | string |  |  
+action_result.data.\*.joinInformation.contentType | string |  |   html 
+action_result.data.\*.allowMeetingChat | string |  |   enabled 
+action_result.data.\*.creationDateTime | string |  |   2022-04-28T12:11:55.7803555Z 
+action_result.data.\*.allowedPresenters | string |  |   everyone 
+action_result.data.\*.audioConferencing | string |  |  
+action_result.data.\*.autoAdmittedUsers | string |  |   everyoneInCompany 
+action_result.data.\*.broadcastSettings | string |  |  
+action_result.data.\*.lobbyBypassSettings.scope | boolean |  |   True  False 
+action_result.data.\*.lobbyBypassSettings.isDialInBypassEnabled | boolean |  |   True  False 
+action_result.data.\*.recordAutomatically | boolean |  |   True  False 
+action_result.data.\*.isEntryExitAnnounced | boolean |  |   True  False 
+action_result.data.\*.joinMeetingIdSettings | string |  |  
+action_result.data.\*.videoTeleconferenceId | string |  |  
+action_result.data.\*.allowTeamworkReactions | boolean |  |   True  False 
+action_result.data.\*.allowAttendeeToEnableMic | boolean |  |   True  False 
+action_result.data.\*.allowAttendeeToEnableCamera | boolean |  |   True  False 
+action_result.data.\*.outerMeetingAutoAdmittedUsers | string |  |  
+action_result.summary | string |  |  
+action_result.message | string |  |   Meeting Created Successfully 
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 
