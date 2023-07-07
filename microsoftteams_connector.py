@@ -1158,6 +1158,68 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message='Meeting Created Successfully')
 
+    def _handle_get_channel_message(self, param):
+        """ This function is used to send the message in a group.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_GROUP_ID], self)
+        channel_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHANNEL_ID], self)
+        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
+
+        status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
+
+        if phantom.is_fail(status):
+            error_message = action_result.get_message()
+            if 'teamId' in error_message:
+                error_message = error_message.replace('teamId', "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
+
+        # make rest call
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+
+        if phantom.is_fail(ret_val):
+            error_message = action_result.get_message()
+            if 'teamId' in error_message:
+                error_message = error_message.replace('teamId', "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+    
+    def _handle_get_chat_message(self, param):
+        """ This function is used to send the message in a group.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
+        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
+
+        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
+
+        # make rest call
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR)
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -1176,7 +1238,9 @@ class MicrosoftTeamConnector(BaseConnector):
             'list_users': self._handle_list_users,
             'list_channels': self._handle_list_channels,
             'get_admin_consent': self._handle_get_admin_consent,
-            'create_meeting': self._handle_create_meeting
+            'create_meeting': self._handle_create_meeting,
+            'get_channel_message': self._handle_get_channel_message,
+            'get_chat_message': self._handle_get_chat_message,
         }
 
         action = self.get_action_identifier()

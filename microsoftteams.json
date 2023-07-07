@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2022 Splunk Inc.",
-    "app_version": "2.4.0",
+    "app_version": "2.5.0-fdse",
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
@@ -2118,6 +2118,467 @@
             "render": {
                 "type": "custom",
                 "view": "microsoftteams_view.display_meeting"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get channel message",
+            "description": "Get message in a channel",
+            "type": "generic",
+            "identifier": "get_channel_message",
+            "read_only": false,
+            "parameters": {
+                "group_id": {
+                    "description": "ID of group",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams group id"
+                    ],
+                    "order": 0
+                },
+                "channel_id": {
+                    "description": "ID of channel",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams channel id"
+                    ],
+                    "order": 1
+                },
+                "message_id": {
+                    "description": "ID of message",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 2
+                }
+                
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.channel_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams channel id"
+                    ],
+                    "column_name": "Channel ID",
+                    "column_order": 1,
+                    "example_values": [
+                        "cd6f5efb-39f8-492e-80cd-c228c211cf17"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams group id"
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 0,
+                    "example_values": [
+                        "594101ba-1fde-482d-8e24-3bbab23a3ca8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string",
+                    "column_name": "Message ID",
+                    "column_order": 2,
+                    "example_values": [
+                        "1688719160710"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.@odata.context",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.link.com/beta/$metadata#chatThreads/$entity"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "test message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "text"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "1615528921352"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.@odata.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.visibleHistoryStartDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "0001-01-01T00:00:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.members.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.members.*.displayName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.members.*.userIdentityType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.members.*.tenantId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.user",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.application.@odata.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.application.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.application.displayName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.eventDetail.initiator.application.applicationIdentityType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1517826451101"
+                    ],
+                    "column_name": "Message ID",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.locale",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.messageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.policyViolation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.replyToId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.webUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message sent"
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get chat message",
+            "description": "Get message in a chat",
+            "type": "generic",
+            "identifier": "get_chat_message",
+            "read_only": false,
+            "parameters": {
+                "chat_id": {
+                    "description": "ID of chat",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "order": 0
+                },
+                "message_id": {
+                    "description": "ID of message",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 1
+                }
+                
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.chat_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "column_name": "Chat ID",
+                    "column_order": 1,
+                    "example_values": [
+                        "19:1c06006a-1885-401b-8dd2-b23e21dd4fe1_cbb6948d-8c5c-41e7-82e7-d6abeeac89ae@unq.gbl.spaces"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string",
+                    "column_name": "Message ID",
+                    "column_order": 2,
+                    "example_values": [
+                        "1688719160710"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.@odata.context",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.link.com/beta/$metadata#chatThreads/$entity"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "test message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "text"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "1615528921352"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.from.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.from.user.@odata.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.from.user.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.user.userIdentityType",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1517826451101"
+                    ],
+                    "column_name": "Message ID",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.locale",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.messageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.policyViolation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.replyToId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.webUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message sent"
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
             },
             "versions": "EQ(*)"
         }
