@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2022 Splunk Inc.",
-    "app_version": "2.5.0-fdse",
+    "app_version": "2.5.1-fdse",
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
@@ -479,10 +479,10 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "send message",
+            "action": "send channel message",
             "description": "Send a message to a channel of a group",
             "type": "generic",
-            "identifier": "send_message",
+            "identifier": "send_channel_message",
             "read_only": false,
             "parameters": {
                 "group_id": {
@@ -686,6 +686,221 @@
                 },
                 {
                     "data_path": "action_result.data.*.webUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message sent"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "send chat message",
+            "description": "Send a message to a chat",
+            "type": "generic",
+            "identifier": "send_chat_message",
+            "read_only": false,
+            "parameters": {
+                "chat_id": {
+                    "description": "ID of chat",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "order": 0
+                },
+                "message": {
+                    "description": "Message to send (HTML is supported)",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.chat_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "column_name": "Chat ID",
+                    "column_order": 0,
+                    "example_values": [
+                        "19:2da4c29f6d7041eca70b638b43d45437@thread.v2"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string",
+                    "column_name": "Message",
+                    "column_order": 1,
+                    "example_values": [
+                        "This is a test message",
+                        "<a href=\"https://www.google.com\"> Test link </a>"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.@odata.context",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.link.com/beta/$metadata#chatThreads/$entity"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "test message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "text"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.etag",
+                    "data_type": "string",
+                    "example_values": [
+                        "1615528921352"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.from.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.from.user.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.from.user.userIdentityType",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1517826451101"
+                    ],
+                    "column_name": "Message ID",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.importance",
+                    "data_type": "string",
+                    "example_values": [
+                        "normal"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-03-12T06:02:01.352Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.locale",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.messageType",
+                    "data_type": "string",
+                    "example_values": [
+                        "message"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.policyViolation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.replyToId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.webUrl",
                     "data_type": "string"
                 },
                 {

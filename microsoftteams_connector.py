@@ -941,7 +941,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
-    def _handle_send_message(self, param):
+    def _handle_send_channel_message(self, param):
         """ This function is used to send the message in a group.
 
         :param param: Dictionary of input parameters
@@ -963,7 +963,7 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace('teamId', "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
+        endpoint = MSTEAMS_MSGRAPH_CHANNEL_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
 
         data = {
             "body": {
@@ -980,6 +980,40 @@ class MicrosoftTeamConnector(BaseConnector):
             error_message = action_result.get_message()
             if 'teamId' in error_message:
                 error_message = error_message.replace('teamId', "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent')
+    
+    def _handle_send_message(self, param):
+        """ This function is used to send the message in a group.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
+        message = param[MSTEAMS_JSON_MESSAGE]
+
+        endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
+
+        data = {
+            "body": {
+                "contentType": "html",
+                "content": message
+            }
+        }
+
+        # make rest call
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
+                                                 data=json.dumps(data))
+
+        if phantom.is_fail(ret_val):
+            error_message = action_result.get_message()
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         action_result.add_data(response)
@@ -1232,7 +1266,8 @@ class MicrosoftTeamConnector(BaseConnector):
         # Dictionary mapping each action with its corresponding actions
         action_mapping = {
             'test_connectivity': self._handle_test_connectivity,
-            'send_message': self._handle_send_message,
+            'send_channel_message': self._handle_send_channel_message,
+            'send_chat_message': self._handle_send_message,
             'list_groups': self._handle_list_groups,
             'list_teams': self._handle_list_teams,
             'list_users': self._handle_list_users,
