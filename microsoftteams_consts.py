@@ -32,7 +32,6 @@ MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT = '/me/onlineMeetings'
 MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
-MSTEAMS_REST_REQUEST_SCOPE = 'offline_access onlinemeetings.readwrite user.readwrite.all calendars.readwrite channelmessage.send user.read.all channel.readbasic.all groupmember.read.all'
 MSTEAMS_TOKEN_EXPIRED = 'Access token has expired'
 MSTEAMS_TOKEN_NOT_AVAILABLE_MSG = 'Token not available. Please run test connectivity first.'
 MSTEAMS_BASE_URL_NOT_FOUND_MSG = 'Phantom Base URL not found in System Settings. ' \
@@ -74,6 +73,7 @@ MSTEAMS_ACCESS_TOKEN_STRING = 'access_token'
 MSTEAMS_REFRESH_TOKEN_STRING = 'refresh_token'
 MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'  # pragma: allowlist secret
 MSTEAMS_CONFIG_TIMEZONE = 'timezone'
+MSTEAMS_CONFIG_SCOPE = 'scope'
 MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
 MSTEAMS_DEFAULT_TIMEOUT = 30
 
@@ -82,3 +82,6 @@ MSTEAMS_ENCRYPT_TOKEN = "Encrypting the {} token"
 MSTEAMS_DECRYPT_TOKEN = "Decrypting the {} token"
 MSTEAMS_ENCRYPTION_ERR = "Error occurred while encrypting the state file"
 MSTEAMS_DECRYPTION_ERR = "Error occurred while decrypting the state file"
+
+# Constants relating to '_get_error_message_from_exception'
+ERR_MESSAGE_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"

@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2022 Splunk Inc.",
-    "app_version": "2.4.0",
+    "app_version": "2.4.1",
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
@@ -46,6 +46,13 @@
             "description": "Microsoft Teams' timezone",
             "default": "UTC",
             "order": 3
+        },
+        "scope": {
+            "description": "Scopes to access (space-separated)",
+            "data_type": "string",
+            "required": true,
+            "default": "offline_access calendars.readwrite onlinemeetings.readwrite channelmessage.send user.readbasic.all channel.readbasic.all groupmember.read.all",
+            "order": 4
         }
     },
     "actions": [
@@ -897,7 +904,6 @@
                     "data_path": "action_result.data.*.groupTypes",
                     "data_type": "string",
                     "example_values": [
-                        "Unified",
                         "DynamicMembership"
                     ]
                 },
@@ -953,8 +959,7 @@
                     "data_path": "action_result.data.*.membershipRuleProcessingState",
                     "data_type": "string",
                     "example_values": [
-                        "on",
-                        "off"
+                        "on"
                     ]
                 },
                 {
@@ -1043,8 +1048,7 @@
                     "column_name": "Visibility",
                     "column_order": 3,
                     "example_values": [
-                        "Private",
-                        "Public"
+                        "Private"
                     ]
                 },
                 {
@@ -1430,8 +1434,7 @@
                     "data_path": "action_result.parameter.subject",
                     "data_type": "string",
                     "example_values": [
-                        "Let's go for lunch",
-                        "Test"
+                        "Let's go for lunch"
                     ]
                 },
                 {
@@ -1573,8 +1576,7 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY_k-jQAAAgENAAAA07XhOkNngkCkqoNfY_k-jQAFHbOt_AAAAA==",
-                        "MSplZWIzNjQ1Zi1kZjE5LTQ3YTEtOGU4Yy1mY2QyMzRjYjVmNmYqMCoqMTk6bWVldGluZ19NalZpWldFMk9ESXRNMlV5TmkwMFlqZGhMV0poT0dVdE4yRm1ZV1F3TTJOa09USm1AdGhyZWFkLnYy"
+                        "AQMkAGYxNGJmOWQyLTlhMjctNGRiOS1iODU0LTA1ZWE3ZmQ3NDU3MQBGAAADeDDJKaEf4EihMWU6SZgKbAcA07XhOkNngkCkqoNfY_k-jQAAAgENAAAA07XhOkNngkCkqoNfY_k-jQAFHbOt_AAAAA=="
                     ]
                 },
                 {
@@ -1785,8 +1787,7 @@
                     "data_path": "action_result.data.*.subject",
                     "data_type": "string",
                     "example_values": [
-                        "My Code Review",
-                        "Test"
+                        "My Code Review"
                     ]
                 },
                 {
@@ -2137,24 +2138,8 @@
                 "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
-                "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
                 "module": "pytz",
-                "input_file": "wheels/shared/pytz-2022.1-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/pytz-2023.3-py2.py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
@@ -2162,15 +2147,11 @@
             },
             {
                 "module": "sqlparse",
-                "input_file": "wheels/py3/sqlparse-0.4.2-py3-none-any.whl"
+                "input_file": "wheels/py3/sqlparse-0.4.4-py3-none-any.whl"
             },
             {
                 "module": "typing_extensions",
                 "input_file": "wheels/py3/typing_extensions-4.1.1-py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
             }
         ]
     },
@@ -2182,43 +2163,27 @@
             },
             {
                 "module": "asgiref",
-                "input_file": "wheels/py3/asgiref-3.5.0-py3-none-any.whl"
+                "input_file": "wheels/py3/asgiref-3.7.2-py3-none-any.whl"
             },
             {
                 "module": "beautifulsoup4",
                 "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
-                "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
                 "module": "pytz",
-                "input_file": "wheels/shared/pytz-2022.1-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/pytz-2023.3-py2.py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.4.1-py3-none-any.whl"
             },
             {
                 "module": "sqlparse",
-                "input_file": "wheels/py3/sqlparse-0.4.2-py3-none-any.whl"
+                "input_file": "wheels/py3/sqlparse-0.4.4-py3-none-any.whl"
             },
             {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
+                "module": "typing_extensions",
+                "input_file": "wheels/py3/typing_extensions-4.7.1-py3-none-any.whl"
             }
         ]
     }

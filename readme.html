@@ -34,15 +34,18 @@ This app requires creating an app in the Azure Active Directory.
         <li>Under <b>Certificates & secrets</b>, select <b>New client secret</b>. Note this key somewhere secure, as it cannot be retrieved after closing the window.</li>
         <li>Under <b>Authentication</b>, select <b>Add a platform</b>. In the <b>Add a platform</b> window, select <b>Web</b>. The <b>Redirect
             URLs</b> should be filled right here. We will get <b>Redirect URLs</b> from the Phantom asset that we will create below in the section titled "Configure the Microsoft Teams Phantom app asset".</li>
-        <li>Under <b>API Permissions</b>, the following <b>Delegated Permissions</b> from <b>Microsoft Graph</b> needs to be added:
+        <li>Under <b>API Permissions</b>, the following minimum<b>Delegated Permissions</b> from <b>Microsoft Graph</b> needs to be added:
         <ul>
-            <li>Group.ReadWrite.All (https://graph.microsoft.com/Group.ReadWrite.All)</li>
-            <li>offline_access (https://graph.microsoft.com/offline_access)</li>
-            <li>User.ReadWrite.All (https://graph.microsoft.com/User.ReadWrite.All)</li>
-            <li>Calendars.ReadWrite (https://graph.microsoft.com/Calendars.ReadWrite)</li>
-            <li>OnlineMeetings.ReadWrite (https://graph.microsoft.com/OnlineMeetings.ReadWrite)</li>
+            <li><b>OnlineMeetings.ReadWrite</b> <u>(https://graph.microsoft.com/OnlineMeetings.ReadWrite)</u>: Allows an app to create, read online meetings on behalf of the signed-in user.</li>
+            <li><b>Calendars.ReadWrite</b>  <u>(https://graph.microsoft.com/Calendars.ReadWrite)</u>: Allows the app to create, read, update, and delete events in user calendars.</li>
+            <li><b>offline_access</b> <u>(https://graph.microsoft.com/offline_access)</u>: Allows the app to read and update user data, even when they are not currently using the app.</li>
+            <li><b>Channel.ReadBasic.All</b>  <u>(https://graph.microsoft.com/Channel.ReadBasic.All)</u>: Read channel names and channel descriptions, on behalf of the signed-in user.</li>
+            <li><b>User.ReadBasic.All</b> <u>(https://graph.microsoft.com/User.ReadBasic.All)</u>: Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user.</li>
+            <li><b>ChannelMessage.Send</b>  <u>(https://graph.microsoft.com/ChannelMessage.Send)</u>: Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user.</li>
         </ul>
         After making these changes, click <b>Add permissions</b> at the bottom of the screen, then click <b>Grant admin consent for Phantom</b>.
+
+        For revoking the permissions, please refer <a href="https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph" target="_blank">this</a> documentation.
     </ul>
 </ul>
 
