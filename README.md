@@ -2,7 +2,7 @@
 # Microsoft Teams
 
 Publisher: Splunk  
-Connector Version: 2.4.1  
+Connector Version: 2.5.0  
 Product Vendor: Microsoft  
 Product Name: Teams  
 Product Version Supported (regex): ".\*"  
