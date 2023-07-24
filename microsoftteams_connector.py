@@ -1,6 +1,6 @@
 # File: microsoftteams_connector.py
 #
-# Copyright (c) 2019-2022 Splunk Inc.
+# Copyright (c) 2019-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ def _get_error_message_from_exception(self, e):
     """
 
     error_code = None
-    error_msg = ERR_MESSAGE_UNAVAILABLE
+    error_msg = ERROR_MSG_UNAVAILABLE
 
     self.error_print("Error occurred.", e)
 
@@ -253,7 +253,7 @@ def _handle_login_response(request):
         state['code'] = MicrosoftTeamConnector().encrypt_state(code, "code")
         state[MSTEAMS_STATE_IS_ENCRYPTED] = True
     except Exception as e:
-        return HttpResponse("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, str(e)), content_type="text/plain", status=400)
+        return HttpResponse("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, str(e)), content_type="text/plain", status=400)
     _save_app_state(state, asset_id, None)
 
     return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
@@ -654,14 +654,14 @@ class MicrosoftTeamConnector(BaseConnector):
         try:
             encrypted_access_token = self.encrypt_state(resp_json[MSTEAMS_ACCESS_TOKEN_STRING], "access")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
 
         try:
             encrypted_refresh_token = self.encrypt_state(resp_json[MSTEAMS_REFRESH_TOKEN_STRING], "refresh")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
 
         resp_json[MSTEAMS_ACCESS_TOKEN_STRING] = encrypted_access_token
         resp_json[MSTEAMS_REFRESH_TOKEN_STRING] = encrypted_refresh_token
@@ -690,8 +690,8 @@ class MicrosoftTeamConnector(BaseConnector):
                 message += "ownership for the corresponding state file (refer to readme file for more information)."
                 return action_result.set_status(phantom.APP_ERROR, message)
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+            self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
 
         return phantom.APP_SUCCESS
 
@@ -760,8 +760,8 @@ class MicrosoftTeamConnector(BaseConnector):
             try:
                 current_code = self.decrypt_state(self._state['code'], "code")
             except Exception as e:
-                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-                return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+                return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
         self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
@@ -1216,15 +1216,15 @@ class MicrosoftTeamConnector(BaseConnector):
                 if self._access_token:
                     self._access_token = self.decrypt_state(self._access_token, "access")
             except Exception as e:
-                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
 
             try:
                 if self._refresh_token:
                     self._refresh_token = self.decrypt_state(self._refresh_token, "refresh")
             except Exception as e:
-                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERR, _get_error_message_from_exception(self._python_version, e, self)))
-                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERR)
+                self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(self._python_version, e, self)))
+                return self.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
         self._timezone = config.get(MSTEAMS_CONFIG_TIMEZONE)
         return phantom.APP_SUCCESS
 
@@ -1240,15 +1240,15 @@ class MicrosoftTeamConnector(BaseConnector):
             if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING):
                 self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_ACCESS_TOKEN_STRING] = self.encrypt_state(self._access_token, "access")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, self._get_error_message_from_exception(e)))
-            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, self._get_error_message_from_exception(e)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
 
         try:
             if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING):
                 self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_REFRESH_TOKEN_STRING] = self.encrypt_state(self._refresh_token, "refresh")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERR, self._get_error_message_from_exception(e)))
-            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERR)
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, self._get_error_message_from_exception(e)))
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
         self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         # Save the state, this data is saved across actions and app upgrades
         self.save_state(self._state)
