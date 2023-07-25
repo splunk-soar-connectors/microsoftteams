@@ -947,7 +947,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_GROUP_ID], self)
         channel_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHANNEL_ID], self)
-        message = param[MSTEAMS_JSON_MESSAGE]
+        message = param[MSTEAMS_JSON_MSG]
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -957,7 +957,7 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace('teamId', "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_MSG_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
 
         data = {
             "body": {
@@ -1194,7 +1194,7 @@ class MicrosoftTeamConnector(BaseConnector):
         if not isinstance(self._state, dict):
             self.debug_print("Resetting the state file with the default format")
             self._state = {"app_version": self.get_app_json().get("app_version")}
-            return self.set_status(phantom.APP_ERROR, MSTEAMS_STATE_FILE_CORRUPT_ERR)
+            return self.set_status(phantom.APP_ERROR, MSTEAMS_STATE_FILE_CORRUPT_ERROR)
 
         # Fetching the Python major version
         try:
