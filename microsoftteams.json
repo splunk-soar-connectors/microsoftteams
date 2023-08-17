@@ -20,7 +20,7 @@
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud 2022-05-23"
+        "Cloud, Aug 17 2023"
     ],
     "configuration": {
         "client_id": {
@@ -1519,7 +1519,7 @@
                     "data_path": "action_result.data.*.bodyPreview",
                     "data_type": "string",
                     "example_values": [
-                        ".........................................................................................................................................\r\nJoin Teams Meeting\r\nen-US\r\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT"
+                        ".........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT"
                     ]
                 },
                 {

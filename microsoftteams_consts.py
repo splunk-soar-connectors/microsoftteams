@@ -32,7 +32,6 @@ MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT = '/me/onlineMeetings'
 MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
-MSTEAMS_TOKEN_EXPIRED = 'Access token has expired'
 MSTEAMS_TOKEN_NOT_AVAILABLE_MSG = 'Token not available. Please run test connectivity first.'
 MSTEAMS_BASE_URL_NOT_FOUND_MSG = 'Phantom Base URL not found in System Settings. ' \
                                 'Please specify this value in System Settings.'
@@ -43,9 +42,9 @@ MSTEAMS_ADMIN_CONSENT_FAILED_MSG = 'Admin consent not received'
 MSTEAMS_ADMIN_CONSENT_PASSED_MSG = 'Admin consent Received'
 MSTEAMS_AUTHORIZE_USER_MSG = 'Please authorize user in a separate tab using URL'
 MSTEAMS_AUTHORIZE_WAIT_MSG = 'Waiting for authorization to complete'
-MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your Phantom instance, check whether you have:  '\
+MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your SOAR instance, check whether you have:  '\
                                 ' 1. Specified the Web Redirect URL of your App -- The Redirect URL should be <POST URL>/result . '\
-                                ' 2. Configured the base URL of your Phantom Instance at Administration -> Company Settings -> Info'
+                                ' 2. Configured the base URL of your SOAR Instance at Administration -> Company Settings -> Info'
 MSTEAMS_CODE_RECEIVED_MSG = 'Code Received'
 MSTEAMS_MAKING_CONNECTION_MSG = 'Making Connection...'
 MSTEAMS_REST_URL_NOT_AVAILABLE_MSG = 'Rest URL not available. Error: {error}'
