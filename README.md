@@ -11,6 +11,7 @@ Minimum Product Version: 6.0.2
 This app integrates with Microsoft Teams to support various generic and investigative actions
 
 [comment]: # " File: README.md"
+
 [comment]: # "  Copyright (c) 2019-2023 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
@@ -46,12 +47,11 @@ This app requires creating an app in the Azure Active Directory.
 
 -   Once the app is created, the below steps needs to be performed on the next page:
 
-
-
     -   Under **Certificates & secrets** , select **New client secret** . Note this key somewhere
         secure, as it cannot be retrieved after closing the window.
     -   Under **Authentication** , select **Add a platform** . In the **Add a platform** window,
         select **Web** . The **Redirect URLs** should be filled right here. We will get **Redirect
+        
         URLs** from the Splunk SOAR asset that we will create below in the section titled "Configure the
         Microsoft Teams Splunk SOAR app asset".
     -   Under **API Permissions** , the following minimum **Delegated Permissions** from **Microsoft Graph**
@@ -84,6 +84,7 @@ This app requires creating an app in the Azure Active Directory.
 
         Note: Following the given steps will remove consent for all the permissions
 
+
 ## State file permissions
 
 Please check the permissions for the state file as mentioned below.
@@ -100,7 +101,9 @@ Please check the permissions for the state file as mentioned below.
     file)
 -   File owner: Appropriate phantom user
 
+
 ## Configure the Microsoft Teams Splunk SOAR app asset
+
 
 When creating an asset for the **Microsoft Teams** app, place the **Application Id** of the app in
 the **Client ID** field and place the password generated during the app creation process in the
@@ -108,7 +111,9 @@ the **Client ID** field and place the password generated during the app creation
 Application/Client ID and the Tenant ID can be found in the **Overview** tab on your app's Azure
 page.  
 
+
 Added a new **Scope** configuration parameter with minimum required scopes as the default value, and you can add/delete the scopes from the value according to the requirement. The scopes added in this parameter should be same as added while creating the application on azure portal
+
   
 After saving, a new field will appear in the **Asset Settings** tab. Take the URL found in the
 **POST incoming for Microsoft Teams to this location** field and place it in the **Redirect URLs**
@@ -116,11 +121,13 @@ field mentioned in a previous step. To this URL, add **/result** . After doing s
 look something like:  
   
 
+
 https://\<splunk_soar_host>/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/\<asset_name>/result
 
   
 Once again, click Save at the bottom of the screen.  
   
+
 Additionally, updating the Base URL in the Company Settings is also required. Navigate to
 **Administration \> Company Settings \> Info** to configure the Base URL For Splunk SOAR Appliance.
 Then, select **Save Changes.**  
@@ -149,6 +156,7 @@ get the URL from the following ways:
     -   URL for the asset will be in the following format:
 
           
+
 
         **https//\<splunk_soar_host>/apps/\<app_id>/asset/\<asset_id>/**
 
