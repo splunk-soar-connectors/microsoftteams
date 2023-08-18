@@ -137,13 +137,6 @@ def _load_app_state(asset_id, app_connector=None):
             state = json.loads(state_file_data)
     except Exception as e:
         if app_connector:
-            # Fetching the Python major version
-            try:
-                python_version = int(sys.version_info[0])
-            except Exception:
-                app_connector.debug_print("Error occurred while getting the Phantom server's Python major version.")
-                return state
-
             error_text = _get_error_message_from_exception(e, app_connector)
             app_connector.debug_print('In _load_app_state: {}'.format(error_text))
 
@@ -184,14 +177,6 @@ def _save_app_state(state, asset_id, app_connector=None):
         with open(real_state_file_path, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
-        # Fetching the Python major version
-        try:
-            python_version = int(sys.version_info[0])
-        except Exception:
-            if app_connector:
-                app_connector.debug_print("Error occurred while getting the Phantom server's Python major version.")
-            return phantom.APP_ERROR
-
         error_text = _get_error_message_from_exception(e, app_connector)
         if app_connector:
             app_connector.debug_print('Unable to save state file: {}'.format(error_text))
