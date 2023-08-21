@@ -59,6 +59,7 @@ def _handle_login_redirect(request, key):
     response['Location'] = url
     return response
 
+
 def _get_error_message_from_exception(self, e):
     """
     Get appropriate error message from the exception.
