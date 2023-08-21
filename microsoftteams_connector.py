@@ -68,13 +68,6 @@ def _handle_py_ver_compat_for_input_str(input_str, app_connector=None):
     :param app_connector: Object of app_connector class
     :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str - Python 2')
     """
-    try:
-        if input_str:
-            input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-    except Exception:
-        if app_connector:
-            app_connector.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
-
     return input_str
 
 
