@@ -25,7 +25,7 @@ import time
 import encryption_helper
 import phantom.app as phantom
 import requests
-from bs4 import BeautifulSoup, UnicodeDammit
+from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
@@ -58,18 +58,6 @@ def _handle_login_redirect(request, key):
     response = HttpResponse(status=302)
     response['Location'] = url
     return response
-
-
-def _handle_py_ver_compat_for_input_str(input_str, app_connector=None):
-    """
-    This method returns the encoded|original string based on the Python version.
-    :param python_version: Python major version
-    :param input_str: Input string to be processed
-    :param app_connector: Object of app_connector class
-    :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str - Python 2')
-    """
-    return input_str
-
 
 def _get_error_message_from_exception(self, e):
     """
@@ -371,7 +359,6 @@ class MicrosoftTeamConnector(BaseConnector):
         except Exception:
             error_text = "Cannot parse error details"
 
-        error_text = _handle_py_ver_compat_for_input_str(error_text, self)
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
                                                                       error_text)
 
@@ -398,12 +385,12 @@ class MicrosoftTeamConnector(BaseConnector):
         if 200 <= response.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
-        error_message = _handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}'), self)
+        error_message = response.text.replace('{', '{{').replace('}', '}}')
         message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, error_message)
 
         # Show only error message if available
         if isinstance(resp_json.get('error', {}), dict) and resp_json.get('error', {}).get('message'):
-            error_message = _handle_py_ver_compat_for_input_str(resp_json['error']['message'], self)
+            error_message = resp_json['error']['message']
             message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, error_message)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
@@ -443,7 +430,7 @@ class MicrosoftTeamConnector(BaseConnector):
             return self._process_empty_response(response, action_result)
 
         # everything else is actually an error at this point
-        error_message = _handle_py_ver_compat_for_input_str(response.text.replace('{', '{{').replace('}', '}}'), self)
+        error_message = response.text.replace('{', '{{').replace('}', '}}')
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
             response.status_code, error_message)
 
@@ -925,8 +912,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = _handle_py_ver_compat_for_input_str(param[MSTEAMS_JSON_GROUP_ID], self)
-        channel_id = _handle_py_ver_compat_for_input_str(param[MSTEAMS_JSON_CHANNEL_ID], self)
+        group_id = param[MSTEAMS_JSON_GROUP_ID]
+        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
         message = param[MSTEAMS_JSON_MSG]
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
@@ -970,7 +957,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = _handle_py_ver_compat_for_input_str(param[MSTEAMS_JSON_GROUP_ID], self)
+        group_id = param[MSTEAMS_JSON_GROUP_ID]
 
         endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
 
@@ -1185,8 +1172,8 @@ class MicrosoftTeamConnector(BaseConnector):
         # get the asset config
         config = self.get_config()
 
-        self._tenant = _handle_py_ver_compat_for_input_str(config[MSTEAMS_CONFIG_TENANT_ID], self)
-        self._client_id = _handle_py_ver_compat_for_input_str(config[MSTEAMS_CONFIG_CLIENT_ID], self)
+        self._tenant = config[MSTEAMS_CONFIG_TENANT_ID]
+        self._client_id = config[MSTEAMS_CONFIG_CLIENT_ID]
         self._client_secret = config[MSTEAMS_CONFIG_CLIENT_SECRET]
         self._access_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING)
         self._refresh_token = self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING)
