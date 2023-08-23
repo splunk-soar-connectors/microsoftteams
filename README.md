@@ -296,8 +296,8 @@ Read only: **False**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**group\_id** |  required  | ID of group | string |  `ms teams group id` 
-**channel\_id** |  required  | ID of channel | string |  `ms teams channel id` 
+**group\_id** |  required  | ID of group (e.g., fbe2bf47-16c8-47cf-b4a5-4b9b187c508b)| string |  `ms teams group id` 
+**channel\_id** |  required  | ID of channel (e.g., 19:4a95f7d8db4c4e7fae857bcebe0623e6@thread.tacv2)| string |  `ms teams channel id` 
 **message** |  required  | Message to send \(HTML is supported\) | string | 
 
 #### Action Output
