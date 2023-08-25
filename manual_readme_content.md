@@ -57,7 +57,7 @@ This app requires creating an app in the Azure Active Directory.
 
         For revoking the permissions, please refer [this](https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph) documentation.
 
-        It might happen sometimes that after removing the permissions from the azure app, it might be still visible in the state file as those permissions aren’t fully revoked.
+        After removing the permissions from the Azure app, it might still be visible in the state file as those permissions aren’t fully revoked.
 
         To verify the permissions are revoked or not, follow the below steps:
         - Navigate to the https://portal.azure.com in a browser and log in with a Microsoft account
@@ -100,7 +100,7 @@ Application/Client ID and the Tenant ID can be found in the **Overview** tab on 
 page.  
 
 
-Added a new **Scope** configuration parameter with minimum required scopes as the default value, and you can add/delete the scopes from the value according to the requirement. The scopes added in this parameter should be same as added while creating the application on azure portal
+The **Scope** configuration parameter's default value is the minimum required scopes. You can add/delete scopes as needed. The scopes added in this parameter should be consistent with those used to create the application on the Azure portal
 
   
 After saving, a new field will appear in the **Asset Settings** tab. Take the URL found in the
