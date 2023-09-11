@@ -44,13 +44,18 @@ This app requires creating an app in the Azure Active Directory.
         Microsoft Teams Splunk SOAR app asset".
     -   Under **API Permissions** , the following minimum **Delegated Permissions** from **Microsoft Graph**
         needs to be added:
-        -   **offline_access**: Allows the app to read and update user data, even when they are not currently using the app. This permission is required to generate the refresh_token, if offline_access is not provided then Test connectivity action will fail and no other action will work.
-        -   **User.ReadBasic.All**: Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user. Required to run the **list users, get admin consent and test connectivity action** action. To run the test connectivity and get admin consent action, User.read scope is sufficient.
-        -   **OnlineMeetings.ReadWrite**: Allows an app to create, read online meetings on behalf of the signed-in user. Required to run the **create meeting** action.
-        -   **Calendars.ReadWrite**: Allows the app to create, read, update, and delete events in user calendars. Required to run the **create meeting** action with **add_calendar_event** set to true.
-        -   **Channel.ReadBasic.All**: Read channel names and channel descriptions, on behalf of the signed-in user. This permission is required for 'list channels' action. Required to run the **list channels** action.
-        -  **ChannelMessage.Send**: Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. Required to run the **send message** action.
-        - **GroupMember.Read.All**: Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. Required to run the **list groups** and **list teams** action.
+
+
+        | Permission       | Action    | Description   | Admin Consent Required 
+        | :--------------- | :-------- | :------------ | :------------------- |
+        | offline_access  | test connectivity | Allows the app to read and update user data, even when they are not currently using the app. This permission is required to generate the refresh_token, if offline_access is not provided then Test connectivity action will fail and no other action will work. | No
+        | User.ReadBasic.All  | list users, get admin consent and test connectivity  | Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user | No
+        | OnlineMeetings.ReadWrite  | create meeting | Allows an app to create, read online meetings on behalf of the signed-in user. | No
+        | Calendars.ReadWrite  | create meeting (while add_calendar_event parameter is set to True) | Allows the app to create, read, update, and delete events in user calendars. | No
+        | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
+        | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
+
 
         After making these changes, click **Add permissions** at the bottom of the screen, then
         click **Grant admin consent for <tenant_name>** .
@@ -122,33 +127,35 @@ Then, select **Save Changes.**
 
 ## Method to run get admin consent
 
-Run **get_admin_consent** action. It will display an URL. Navigate to this URL in a separate browser
+Run **get_admin_consent** action. It will display an URL in spawn.logs file. Navigate to this URL in a separate browser
 tab. This new tab will redirect to a Microsoft login page. Log in to a Microsoft account with
 administrator privileges. After logging in, review the requested permissions listed, then click
 **Accept** . Finally, close that tab. Action should show a success message.
 
-**Note:** If the URL is not displayed while running the **get_admin_consent** action, the user can
-get the URL from the following ways:
+**Note:** To user can get the URL while running the **get_admin_consent** action via following ways:
 
--   User can find the URL in 'spawn.log' file.
+1.   User can find the URL in 'spawn.log' file. Search for the line starting with "Please hit the mentioned URL in another tab of browser to authorize the user and provide the admin consent". It should contain the URL.
 
--   User needs to manually navigate to the URL in a separate browser tab. The URL format is:
+2. If not via spawn.log, user can also manually generate the URL and navigate to the URL in a separate browser tab. The URL format is:
     **https://\<splunk_soar_host>/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/\<asset_name>/admin_consent?asset_id=\<asset_id>**
-
+    
+    User needs to replace splunk_soar_host, asset_name and asset_id with it's corrosponding values in the above mentioned URL.
       
-
-    **Steps to fetch asset id**
+    **Steps to fetch splunk_soar_host, asset_id and asset_name**
 
     -   Open the asset on which the action is executed.
 
     -   URL for the asset will be in the following format:
 
-          
-
-
         **https//\<splunk_soar_host>/apps/\<app_id>/asset/\<asset_id>/**
 
-    -   Take the asset id from the URL.
+    -   For example, the splunk_soar_host, app_id and asset_id as highlighted below.
+
+        [![](img/microsoftteams_asset.png)](img/microsoftteams_asset.png)
+
+    -   After replacing splunk_soar_host, asset_id and asset_name with it's corrosponding values the redirect URL would be,
+
+        **https://splunk_soar_test/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/microsoft_teams/admin_consent?asset_id=6**
 
 ## Method to run test connectivity
 
