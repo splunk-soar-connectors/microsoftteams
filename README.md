@@ -71,21 +71,21 @@ This app requires creating an app in the Azure Active Directory.
 
         After making these changes, click **Add permissions** at the bottom of the screen, then
         click **Grant admin consent for <tenant_name>** .
+## Method to revoke permission
+- For revoking the permissions, please refer [this](https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph) documentation.
 
-        For revoking the permissions, please refer [this](https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph) documentation.
+- After removing the permissions from the Azure app, it might still be visible in the state file as those permissions aren’t fully revoked.
 
-        After removing the permissions from the Azure app, it might still be visible in the state file as those permissions aren’t fully revoked.
+- To verify the permissions are revoked or not, follow the below steps:
+    - Navigate to the https://portal.azure.com in a browser and log in with a Microsoft account
+    - Select **Azure Active Directory** from the left side menu
+    - From the left panel, select **Enterprise applications**
+    - Select the application used in the asset
+    - From the left hand side select **Permissions**
+    - In the **Permissions** page go to **user consent**
 
-        To verify the permissions are revoked or not, follow the below steps:
-        - Navigate to the https://portal.azure.com in a browser and log in with a Microsoft account
-        - Select **Azure Active Directory** from the left side menu
-        - From the left panel, select **Enterprise applications**
-        - Select the application used in the asset
-        - From the left hand side select **Permissions**
-        - In the **Permissions** page go to **user consent**
-
-        If any extra permissions are present in the user consent, then it should be removed.\
-        To remove the permissions visible in the **user consent** please refer [this](https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph) documentation.
+    - If any extra permissions are present in the user consent, then it should be removed.
+    - To remove the permissions visible in the **user consent** please refer [this](https://learn.microsoft.com/en-gb/azure/active-directory/manage-apps/manage-application-permissions?pivots=ms-graph) documentation.
 
         Note: Following the given steps will remove consent for all the permissions
 
@@ -163,11 +163,15 @@ administrator privileges. After logging in, review the requested permissions lis
 
     -   For example, the splunk_soar_host, app_id and asset_id as highlighted below.
 
-        [![](img/microsoftteams_asset.png)](img/microsoftteams_asset.png)
+        - After replacing splunk_soar_host, asset_id and asset_name with it's corresponding values the redirect URL would be,
 
-    -   After replacing splunk_soar_host, asset_id and asset_name with it's corrosponding values the redirect URL would be,
+            **https://splunk_soar_test/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/microsoft_teams/admin_consent?asset_id=6**
 
-        **https://splunk_soar_test/rest/handler/microsoftteams_6ba1906f-5899-44df-bb65-1bee4df8ca3c/microsoft_teams/admin_consent?asset_id=6**
+
+
+
+    [![](img/microsoftteams_asset.png)](img/microsoftteams_asset.png)
+
 
 ## Method to run test connectivity
 
