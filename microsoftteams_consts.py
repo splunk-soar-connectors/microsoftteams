@@ -33,7 +33,7 @@ MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
 MSTEAMS_REST_REQUEST_SCOPE = 'offline_access group.readwrite.all user.readwrite.all'
-MSTEAMS_TOKEN_EXPIRED = 'Access token has expired'
+MSTEAMS_TOKEN_EXPIRED = ['Access token has expired', 'Lifetime validation failed, the token is expired.']
 MSTEAMS_TOKEN_NOT_AVAILABLE_MSG = 'Token not available. Please run test connectivity first.'
 MSTEAMS_BASE_URL_NOT_FOUND_MSG = 'Phantom Base URL not found in System Settings. ' \
                                 'Please specify this value in System Settings.'

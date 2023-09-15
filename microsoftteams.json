@@ -1,5 +1,5 @@
 {
-    "appid": "6ba1906f-5899-44df-bb65-1bee4df8ca3c",
+    "appid": "7ba1906f-5899-44df-bb65-1bee4df8ca3c",
     "name": "Microsoft Teams",
     "description": "This app integrates with Microsoft Teams to support various generic and investigative actions",
     "type": "information",
@@ -9,8 +9,16 @@
     "product_name": "Teams",
     "product_version_regex": ".*",
     "publisher": "Splunk",
+    "contributors": [
+        {
+            "name": "Dallan Wagner"
+        },
+        {
+            "name": "Mhike Funderburk"
+        }
+    ],
     "license": "Copyright (c) 2019-2022 Splunk Inc.",
-    "app_version": "2.4.0",
+    "app_version": "2.4.1",
     "utctime_updated": "2022-01-14T23:54:39.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
