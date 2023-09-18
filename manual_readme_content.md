@@ -147,7 +147,7 @@ administrator privileges. After logging in, review the requested permissions lis
 
     -   URL for the asset will be in the following format:
 
-        **https//\<splunk_soar_host>/apps/\<app_id>/asset/\<asset_id>/**
+        **https://\<splunk_soar_host>/apps/\<app_id>/asset/\<asset_id>/**
 
     -   For example, the splunk_soar_host, app_id and asset_id as highlighted below.
 
