@@ -1,6 +1,6 @@
 # File: microsoftteams_consts.py
 #
-# Copyright (c) 2019-2022 Splunk Inc.
+# Copyright (c) 2019-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,14 +26,12 @@ MSTEAMS_MSGRAPH_GROUPS_ENDPOINT = '/groups'
 MSTEAMS_MSGRAPH_TEAMS_ENDPOINT = '/groups?$filter=resourceProvisioningOptions/Any(x:x eq \'Team\')'
 MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT = '/users'
 MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT = '/teams/{group_id}/channels'
-MSTEAMS_MSGRAPH_SEND_MESSAGE_ENDPOINT = '/teams/{group_id}/channels/{channel_id}/messages'
+MSTEAMS_MSGRAPH_SEND_MSG_ENDPOINT = '/teams/{group_id}/channels/{channel_id}/messages'
 MSTEAMS_MSGRAPH_CALENDER_EVENT_ENDPOINT = '/me/calendar/events'
 MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT = '/me/onlineMeetings'
 MSTEAMS_TC_FILE = 'oauth_task.out'
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
-MSTEAMS_REST_REQUEST_SCOPE = 'offline_access group.readwrite.all user.readwrite.all'
-MSTEAMS_TOKEN_EXPIRED = 'Access token has expired'
 MSTEAMS_TOKEN_NOT_AVAILABLE_MSG = 'Token not available. Please run test connectivity first.'
 MSTEAMS_BASE_URL_NOT_FOUND_MSG = 'Phantom Base URL not found in System Settings. ' \
                                 'Please specify this value in System Settings.'
@@ -44,9 +42,9 @@ MSTEAMS_ADMIN_CONSENT_FAILED_MSG = 'Admin consent not received'
 MSTEAMS_ADMIN_CONSENT_PASSED_MSG = 'Admin consent Received'
 MSTEAMS_AUTHORIZE_USER_MSG = 'Please authorize user in a separate tab using URL'
 MSTEAMS_AUTHORIZE_WAIT_MSG = 'Waiting for authorization to complete'
-MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your Phantom instance, check whether you have:  '\
+MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG = 'If authorization URL fails to communicate with your SOAR instance, check whether you have:  '\
                                 ' 1. Specified the Web Redirect URL of your App -- The Redirect URL should be <POST URL>/result . '\
-                                ' 2. Configured the base URL of your Phantom Instance at Administration -> Company Settings -> Info'
+                                ' 2. Configured the base URL of your SOAR Instance at Administration -> Company Settings -> Info'
 MSTEAMS_CODE_RECEIVED_MSG = 'Code Received'
 MSTEAMS_MAKING_CONNECTION_MSG = 'Making Connection...'
 MSTEAMS_REST_URL_NOT_AVAILABLE_MSG = 'Rest URL not available. Error: {error}'
@@ -55,11 +53,11 @@ MSTEAMS_GENERATING_ACCESS_TOKEN_MSG = 'Generating access token'
 MSTEAMS_CURRENT_USER_INFO_MSG = 'Getting info about the current user to verify token'
 MSTEAMS_GOT_CURRENT_USER_INFO_MSG = 'Got current user info'
 MSTEAMS_INVALID_CHANNEL_MSG = 'Channel {channel_id} does not belongs to group {group_id}'
-MSTEAMS_STATE_FILE_CORRUPT_ERR = "Error occurred while loading the state file due to it's unexpected format. " \
+MSTEAMS_STATE_FILE_CORRUPT_ERROR = "Error occurred while loading the state file due to it's unexpected format. " \
     "Resetting the state file with the default format. Please test the connectivity."
 MSTEAMS_JSON_GROUP_ID = 'group_id'
 MSTEAMS_JSON_CHANNEL_ID = 'channel_id'
-MSTEAMS_JSON_MESSAGE = 'message'
+MSTEAMS_JSON_MSG = 'message'
 MSTEAMS_JSON_SUBJECT = 'subject'
 MSTEAMS_JSON_CALENDAR = 'add_calendar_event'
 MSTEAMS_JSON_DESCRIPTION = 'description'
@@ -74,11 +72,15 @@ MSTEAMS_ACCESS_TOKEN_STRING = 'access_token'
 MSTEAMS_REFRESH_TOKEN_STRING = 'refresh_token'
 MSTEAMS_CONFIG_CLIENT_SECRET = 'client_secret'  # pragma: allowlist secret
 MSTEAMS_CONFIG_TIMEZONE = 'timezone'
+MSTEAMS_CONFIG_SCOPE = 'scope'
 MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
 MSTEAMS_DEFAULT_TIMEOUT = 30
 
 # For encryption and decryption
 MSTEAMS_ENCRYPT_TOKEN = "Encrypting the {} token"
 MSTEAMS_DECRYPT_TOKEN = "Decrypting the {} token"
-MSTEAMS_ENCRYPTION_ERR = "Error occurred while encrypting the state file"
-MSTEAMS_DECRYPTION_ERR = "Error occurred while decrypting the state file"
+MSTEAMS_ENCRYPTION_ERROR = "Error occurred while encrypting the state file"
+MSTEAMS_DECRYPTION_ERROR = "Error occurred while decrypting the state file"
+
+# Constants relating to '_get_error_message_from_exception'
+ERROR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
