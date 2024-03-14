@@ -1,6 +1,6 @@
 # File: microsoftteams_connector.py
 #
-# Copyright (c) 2019-2023 Splunk Inc.
+# Copyright (c) 2019-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -661,6 +661,7 @@ class MicrosoftTeamConnector(BaseConnector):
             self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(e, self)))
             return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
 
+        action_result.set_status(phantom.APP_SUCCESS, status_message="New access token successfully generated.")
         return phantom.APP_SUCCESS
 
     def _handle_test_connectivity(self, param):
