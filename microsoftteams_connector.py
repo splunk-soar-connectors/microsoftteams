@@ -21,6 +21,7 @@ import os
 import pwd
 import sys
 import time
+from typing import Any, Optional
 
 import encryption_helper
 import phantom.app as phantom
@@ -337,7 +338,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Status code: {}. Empty response and no information in the header".format(
             response.status_code)), None)
 
-    def _process_html_response(self, response, action_result):
+    def _process_html_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
         """ This function is used to process html response.
 
         :param response: response data
@@ -367,7 +368,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _process_json_response(self, response, action_result):
+    def _process_json_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
         """ This function is used to process json response.
 
         :param response: response data
@@ -396,7 +397,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _process_response(self, response, action_result):
+    def _process_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
         """ This function is used to process html response.
 
         :param response: response data
@@ -437,7 +438,15 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _update_request(self, action_result, endpoint, headers=None, params=None, data=None, method='get'):
+    def _update_request(
+        self,
+        action_result,
+        endpoint,
+        headers=None,
+        params=None,
+        data=None,
+        method='get'
+    ) -> tuple[bool, Optional[Any]]:
         """ This function is used to update the headers with access_token before making REST call.
 
         :param endpoint: REST endpoint that needs to appended to the service address
@@ -485,29 +494,53 @@ class MicrosoftTeamConnector(BaseConnector):
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'})
 
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=endpoint, headers=headers,
-                                                  params=params, data=data, method=method)
+        status, resp_json = self._make_rest_call(
+            action_result=action_result,
+            endpoint=endpoint,
+            headers=headers,
+            params=params,
+            data=data,
+            method=method
+        )
 
         message = action_result.get_message().lower()
 
-        # If token is expired, generate new token
-        if "token" in message and "expired" in message:
-            status = self._generate_new_access_token(action_result=action_result, data=token_data)
+        if phantom.is_fail(status):
+            # If token is expired, generate new token
+            if "token" in message and "expired" in message:
+                status = self._generate_new_access_token(action_result=action_result, data=token_data)
 
-            if phantom.is_fail(status):
+                if phantom.is_fail(status):
+                    return action_result.get_status(), None
+
+                headers.update({'Authorization': 'Bearer {0}'.format(self._access_token)})
+
+                status, resp_json = self._make_rest_call(
+                    action_result=action_result,
+                    endpoint=endpoint,
+                    headers=headers,
+                    params=params,
+                    data=data,
+                    method=method
+                )
+
+                if phantom.is_fail(status):
+                    return action_result.get_status(), None
+            else:
                 return action_result.get_status(), None
-
-            headers.update({'Authorization': 'Bearer {0}'.format(self._access_token)})
-
-            ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=endpoint, headers=headers,
-                                                      params=params, data=data, method=method)
-
-        if phantom.is_fail(ret_val):
-            return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
 
-    def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", verify=True):
+    def _make_rest_call(
+        self,
+        endpoint,
+        action_result,
+        headers=None,
+        params=None,
+        data=None,
+        method="get",
+        verify=True
+    ) -> RetVal[bool, Optional[Any]]:
         """ Function that makes the REST call to the app.
 
         :param endpoint: REST endpoint that needs to appended to the service address
@@ -545,10 +578,10 @@ class MicrosoftTeamConnector(BaseConnector):
         asset_id = self.get_asset_id()
         rest_endpoint = MSTEAMS_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
         url = '{}{}'.format(self.get_phantom_base_url() + 'rest', rest_endpoint)
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
+        status, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
 
-        if phantom.is_fail(ret_val):
-            return ret_val, None
+        if phantom.is_fail(status):
+            return status, None
 
         asset_name = resp_json.get('name')
         if not asset_name:
@@ -564,9 +597,9 @@ class MicrosoftTeamConnector(BaseConnector):
         base url of phantom
         """
         url = '{}{}'.format(self.get_phantom_base_url() + 'rest', MSTEAMS_PHANTOM_SYS_INFO_URL)
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
-        if phantom.is_fail(ret_val):
-            return ret_val, None
+        status, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
+        if phantom.is_fail(status):
+            return status, None
 
         phantom_base_url = resp_json.get('base_url')
         if not phantom_base_url:
@@ -601,7 +634,7 @@ class MicrosoftTeamConnector(BaseConnector):
                                                                 asset_name)
         return phantom.APP_SUCCESS, url_to_app_rest
 
-    def _generate_new_access_token(self, action_result, data):
+    def _generate_new_access_token(self, action_result, data) -> bool:
         """ This function is used to generate new access token using the code obtained on authorization.
 
         :param action_result: object of ActionResult class
@@ -611,9 +644,13 @@ class MicrosoftTeamConnector(BaseConnector):
 
         req_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, MSTEAMS_SERVER_TOKEN_URL.format(tenant_id=self._tenant))
 
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url,
-                                                  data=urllib.urlencode(data), method="post")
-        if phantom.is_fail(ret_val):
+        status, resp_json = self._make_rest_call(
+            action_result=action_result,
+            endpoint=req_url,
+            data=urllib.urlencode(data),
+            method="post"
+        )
+        if phantom.is_fail(status):
             return action_result.get_status()
 
         self._access_token = resp_json[MSTEAMS_ACCESS_TOKEN_STRING]
@@ -661,8 +698,7 @@ class MicrosoftTeamConnector(BaseConnector):
             self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(e, self)))
             return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
 
-        action_result.set_status(phantom.APP_SUCCESS, status_message="New access token successfully generated.")
-        return phantom.APP_SUCCESS
+        return action_result.set_status(phantom.APP_SUCCESS, status_message=MSTEAMS_TOKEN_GENERATED_MSG)
 
     def _handle_test_connectivity(self, param):
         """ Testing of given credentials and obtaining authorization/admin consent for all other actions.
@@ -753,9 +789,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
         url = '{}{}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
-        ret_val, response = self._update_request(action_result=action_result, endpoint=url)
+        status, response = self._update_request(action_result=action_result, endpoint=url)
 
-        if phantom.is_fail(ret_val):
+        if phantom.is_fail(status):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
             return action_result.get_status()
 
@@ -852,9 +888,9 @@ class MicrosoftTeamConnector(BaseConnector):
         while True:
 
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
 
-            if phantom.is_fail(ret_val):
+            if phantom.is_fail(status):
                 return action_result.get_status()
 
             for user in response.get('value', []):
@@ -870,7 +906,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _verify_parameters(self, group_id, channel_id, action_result):
+    def _verify_parameters(self, group_id, channel_id, action_result) -> bool:
         """ This function is used to verify that the provided group_id is valid and channel_id belongs
         to that group_id.
 
@@ -885,9 +921,9 @@ class MicrosoftTeamConnector(BaseConnector):
 
         while True:
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
 
-            if phantom.is_fail(ret_val):
+            if phantom.is_fail(status):
                 return action_result.get_status()
 
             for channel in response.get('value', []):
@@ -936,10 +972,10 @@ class MicrosoftTeamConnector(BaseConnector):
         }
 
         # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
                                                  data=json.dumps(data))
 
-        if phantom.is_fail(ret_val):
+        if phantom.is_fail(status):
             error_message = action_result.get_message()
             if 'teamId' in error_message:
                 error_message = error_message.replace('teamId', "'group_id'")
@@ -966,9 +1002,9 @@ class MicrosoftTeamConnector(BaseConnector):
         while True:
 
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
 
-            if phantom.is_fail(ret_val):
+            if phantom.is_fail(status):
                 error_message = action_result.get_message()
                 if 'teamId' in error_message:
                     error_message = error_message.replace('teamId', "'group_id'")
@@ -1001,9 +1037,9 @@ class MicrosoftTeamConnector(BaseConnector):
         while True:
 
             # make rest call using refresh token
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
 
-            if phantom.is_fail(ret_val):
+            if phantom.is_fail(status):
                 return action_result.get_status()
 
             for group in response.get('value', []):
@@ -1033,9 +1069,9 @@ class MicrosoftTeamConnector(BaseConnector):
         while True:
 
             # make rest call using refresh token
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
 
-            if phantom.is_fail(ret_val):
+            if phantom.is_fail(status):
                 return action_result.get_status()
 
             for team in response.get('value', []):
@@ -1111,10 +1147,10 @@ class MicrosoftTeamConnector(BaseConnector):
                     "attendees": attendees_list
                 })
         # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
                                                  data=json.dumps(data))
 
-        if phantom.is_fail(ret_val):
+        if phantom.is_fail(status):
             return action_result.get_status()
 
         action_result.add_data(response)
