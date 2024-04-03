@@ -508,12 +508,13 @@ class MicrosoftTeamConnector(BaseConnector):
         if phantom.is_fail(status):
             # If token is expired, generate new token
             if "token" in message and "expired" in message:
+                self.debug_print(MSTEAMS_TOKEN_EXPIRED_MSG)
                 status = self._generate_new_access_token(action_result=action_result, data=token_data)
 
                 if phantom.is_fail(status):
                     return action_result.get_status(), None
 
-                headers.update({'Authorization': 'Bearer {0}'.format(self._access_token)})
+                headers['Authorization'] = f"Bearer {self._access_token}"
 
                 status, resp_json = self._make_rest_call(
                     action_result=action_result,
