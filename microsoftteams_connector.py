@@ -503,11 +503,11 @@ class MicrosoftTeamConnector(BaseConnector):
             method=method
         )
 
-        message = action_result.get_message().lower()
+        action_result_message = action_result.get_message().lower()
 
         if phantom.is_fail(status):
             # If token is expired, generate new token
-            if "token" in message and "expired" in message:
+            if self._is_token_expired(action_result_message):
                 self.debug_print(MSTEAMS_TOKEN_EXPIRED_MSG)
                 status = self._generate_new_access_token(action_result=action_result, data=token_data)
 
@@ -531,6 +531,9 @@ class MicrosoftTeamConnector(BaseConnector):
                 return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
+
+    def _is_token_expired(self, action_result_message: str) -> bool:
+        return MSTEAMS_TOKEN_EXPIRED_MARKER in action_result_message
 
     def _make_rest_call(
         self,
