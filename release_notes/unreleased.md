@@ -1,1 +1,2 @@
 **Unreleased**
+* Fixed a bug that caused duplication of 'send message' actions [PAPP-33380]
