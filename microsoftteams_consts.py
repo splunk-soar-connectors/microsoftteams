@@ -1,6 +1,6 @@
 # File: microsoftteams_consts.py
 #
-# Copyright (c) 2019-2023 Splunk Inc.
+# Copyright (c) 2019-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ MSTEAMS_GENERATING_ACCESS_TOKEN_MSG = 'Generating access token'
 MSTEAMS_CURRENT_USER_INFO_MSG = 'Getting info about the current user to verify token'
 MSTEAMS_GOT_CURRENT_USER_INFO_MSG = 'Got current user info'
 MSTEAMS_INVALID_CHANNEL_MSG = 'Channel {channel_id} does not belongs to group {group_id}'
+MSTEAMS_TOKEN_EXPIRED_MSG = 'Current access token has expired. New one will be generated.'
+MSTEAMS_TOKEN_EXPIRED_MARKER = 'the token is expired'
+MSTEAMS_TOKEN_GENERATED_MSG = 'New access token successfully generated.'
 MSTEAMS_STATE_FILE_CORRUPT_ERROR = "Error occurred while loading the state file due to it's unexpected format. " \
     "Resetting the state file with the default format. Please test the connectivity."
 MSTEAMS_JSON_GROUP_ID = 'group_id'
