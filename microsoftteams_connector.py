@@ -61,7 +61,7 @@ def _handle_login_redirect(request, key):
     return response
 
 
-def _get_error_message_from_exception(self, e):
+def _get_error_message_from_exception(e, app_connector):
     """
     Get appropriate error message from the exception.
     :param e: Exception object
@@ -71,7 +71,7 @@ def _get_error_message_from_exception(self, e):
     error_code = None
     error_msg = ERROR_MSG_UNAVAILABLE
 
-    self.error_print("Error occurred.", e)
+    app_connector.error_print("Error occurred.", e)
 
     try:
         if hasattr(e, "args"):
@@ -81,7 +81,7 @@ def _get_error_message_from_exception(self, e):
             elif len(e.args) == 1:
                 error_msg = e.args[0]
     except Exception as e:
-        self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
+        app_connector.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
     if not error_code:
         error_text = "Error Message: {}".format(error_msg)
@@ -1249,14 +1249,14 @@ class MicrosoftTeamConnector(BaseConnector):
             if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING):
                 self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_ACCESS_TOKEN_STRING] = self.encrypt_state(self._access_token, "access")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, self._get_error_message_from_exception(e)))
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, _get_error_message_from_exception(e, self)))
             return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
 
         try:
             if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING):
                 self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_REFRESH_TOKEN_STRING] = self.encrypt_state(self._refresh_token, "refresh")
         except Exception as e:
-            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, self._get_error_message_from_exception(e)))
+            self.debug_print("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, self._get_error_message_from_exception(e, self)))
             return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
         self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         # Save the state, this data is saved across actions and app upgrades
