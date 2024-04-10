@@ -1,2 +1,1 @@
 **Unreleased**
-* Fixed error message handling function
