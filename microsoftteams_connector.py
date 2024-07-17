@@ -21,6 +21,7 @@ import os
 import pwd
 import sys
 import time
+import re
 
 import encryption_helper
 import phantom.app as phantom
@@ -1254,6 +1255,61 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_response(self, param):
+        """ This function is used to send the message in a group.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
+        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
+        wait_for_replay_in_minutes = int(param.get('wait_time', 1))
+        wait_for_replay_in_seconds = wait_for_replay_in_minutes * 60
+
+        endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
+
+        body_content: dict = None
+
+        while wait_for_replay_in_seconds != 0:
+
+            time.sleep(5)
+            # make rest call
+            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+
+            if phantom.is_fail(ret_val):
+                return action_result.set_status(phantom.APP_ERROR, response.text)
+            
+            try:
+                body_content = next(filter(lambda x: message_id == x.get('attachments', [''])[0].get('id', None), response.get('value')))
+                break
+            except:
+                wait_for_replay_in_seconds -= 5
+        
+        if body_content is None:
+            return action_result.set_status(phantom.APP_ERROR, f'After {wait_for_replay_in_minutes} min action did not find an reply for {message_id} message')
+        
+        response_message_id = body_content.get('id')
+        response_endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
+        reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method='get')
+
+        if phantom.is_fail(reply_ret_val):
+            return action_result.set_status(phantom.APP_ERROR, reply_response.text)
+        
+        try:
+            text = re.search(r'<\/attachment>\n(?P<body_content>.*)\n', reply_response.get('body',{}).get('content', None)).group('body_content')
+            reply_response['body'].update({'message_reply' : text })
+
+        except Exception as exc:
+            return action_result.set_status(phantom.APP_ERROR, f'Cannot find message text in body.content object. {exc}')
+
+        action_result.add_data(reply_response)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -1276,6 +1332,7 @@ class MicrosoftTeamConnector(BaseConnector):
             'create_meeting': self._handle_create_meeting,
             'get_channel_message': self._handle_get_channel_message,
             'get_chat_message': self._handle_get_chat_message,
+            'get_response': self._handle_get_response,
         }
 
         action = self.get_action_identifier()

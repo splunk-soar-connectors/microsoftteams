@@ -177,11 +177,15 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [get admin consent](#action-get-admin-consent) - Get the admin consent for a non\-admin user  
 [list users](#action-list-users) - List all users  
-[send message](#action-send-message) - Send a message to a channel of a group  
+[send channel message](#action-send-channel-message) - Send a message to a channel of a group  
 [list channels](#action-list-channels) - Lists all channels of a group  
 [list groups](#action-list-groups) - List all Azure Groups  
 [list teams](#action-list-teams) - List all Microsoft Teams  
 [create meeting](#action-create-meeting) - Create a microsoft teams meeting  
+[send chat message](#action-get-channel-message) - Send a message to the chat  
+[get channel message](#action-get-channel-message) - Get a message from the channel  
+[get chat message](#action-get-chat-message) - Get a message from the chat  
+[get response message](#action-get-response-message) - Get response on message in a chat  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -287,7 +291,7 @@ action\_result\.message | string |
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
-## action: 'send message'
+## action: 'send channel message'
 Send a message to a channel of a group
 
 Type: **generic**  
@@ -595,3 +599,196 @@ action\_result\.summary | string |
 action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
+
+## action: 'send chat message'
+Send message to the chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message** |  required  | Message to send (HTML is supported) | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
+
+## action: 'get channel message'
+Get a message from the channel
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group\_id** |  required  | ID of the group | string | 
+**channel\_id** |  required  | ID of the channel | string | 
+**message\_id** |  required  | ID of the message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.channel\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.eventDetail\.\@odata\.type | string | 
+action\_result\.data\.eventDetail\.visibleHistoryStartDateTime | string | 
+action\_result\.data\.eventDetail\.members\.*\.id| string | 
+action\_result\.data\.eventDetail\.members\.*\.displayName| string | 
+action\_result\.data\.eventDetail\.members\.*\.userIdentityType| string | 
+action\_result\.data\.eventDetail\.members\.*\.tenantId| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.device| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.user| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.\@odata.type| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.id| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.displayName| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.applicationIdentityType| string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
+
+## action: 'get chat message'
+Get a message from the chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message\_id** |  required  | ID of the message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.\@odata\.type | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.from\.user\.tenantId | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+
+## action: 'get response message'
+Get response on message in a chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message\_id** |  required  | ID of the message | string | 
+**wait\_time** |  optional  | The amount of time in minutes to wait for response | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.parameter\.wait\_time | numeric | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.body\.message\_reply | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.\@odata\.type | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.from\.user\.tenantId | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
