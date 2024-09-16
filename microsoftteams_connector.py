@@ -41,24 +41,24 @@ except ImportError:
 
 
 def _handle_login_redirect(request, key):
-    """ This function is used to redirect login request to microsoft login page.
+    """This function is used to redirect login request to microsoft login page.
 
     :param request: Data given to REST endpoint
     :param key: Key to search in state file
     :return: response authorization_url/admin_consent_url
     """
 
-    asset_id = request.GET.get('asset_id')
+    asset_id = request.GET.get("asset_id")
     if not asset_id:
-        return HttpResponse('ERROR: Asset ID not found in URL', content_type="text/plain", status=400)
+        return HttpResponse("ERROR: Asset ID not found in URL", content_type="text/plain", status=400)
     state = _load_app_state(asset_id)
     if not state:
-        return HttpResponse('ERROR: Invalid asset_id', content_type="text/plain", status=400)
+        return HttpResponse("ERROR: Invalid asset_id", content_type="text/plain", status=400)
     url = state.get(key)
     if not url:
-        return HttpResponse('App state is invalid, {key} not found.'.format(key=key), content_type="text/plain", status=400)
+        return HttpResponse("App state is invalid, {key} not found.".format(key=key), content_type="text/plain", status=400)
     response = HttpResponse(status=302)
-    response['Location'] = url
+    response["Location"] = url
     return response
 
 
@@ -93,7 +93,7 @@ def _get_error_message_from_exception(e, app_connector):
 
 
 def _load_app_state(asset_id, app_connector=None):
-    """ This function is used to load the current state file.
+    """This function is used to load the current state file.
 
     :param asset_id: asset_id
     :param app_connector: Object of app_connector class
@@ -103,35 +103,35 @@ def _load_app_state(asset_id, app_connector=None):
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
+            app_connector.debug_print("In _load_app_state: Invalid asset_id")
         return {}
 
     app_dir = os.path.dirname(os.path.abspath(__file__))
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
+    state_file = "{0}/{1}_state.json".format(app_dir, asset_id)
     real_state_file_path = os.path.abspath(state_file)
     if not os.path.dirname(real_state_file_path) == app_dir:
         if app_connector:
-            app_connector.debug_print('In _load_app_state: Invalid asset_id')
+            app_connector.debug_print("In _load_app_state: Invalid asset_id")
         return {}
 
     state = {}
     try:
-        with open(real_state_file_path, 'r') as state_file_obj:
+        with open(real_state_file_path, "r") as state_file_obj:
             state_file_data = state_file_obj.read()
             state = json.loads(state_file_data)
     except Exception as e:
         if app_connector:
             error_text = _get_error_message_from_exception(e, app_connector)
-            app_connector.debug_print('In _load_app_state: {}'.format(error_text))
+            app_connector.debug_print("In _load_app_state: {}".format(error_text))
 
     if app_connector:
-        app_connector.debug_print('Loaded state: ', state)
+        app_connector.debug_print("Loaded state: ", state)
 
     return state
 
 
 def _save_app_state(state, asset_id, app_connector=None):
-    """ This function is used to save current state in file.
+    """This function is used to save current state in file.
 
     :param state: Dictionary which contains data to write in state file
     :param asset_id: asset_id
@@ -142,94 +142,94 @@ def _save_app_state(state, asset_id, app_connector=None):
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print('In _save_app_state: Invalid asset_id')
+            app_connector.debug_print("In _save_app_state: Invalid asset_id")
         return {}
 
     app_dir = os.path.split(__file__)[0]
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
+    state_file = "{0}/{1}_state.json".format(app_dir, asset_id)
 
     real_state_file_path = os.path.abspath(state_file)
     if not os.path.dirname(real_state_file_path) == app_dir:
         if app_connector:
-            app_connector.debug_print('In _save_app_state: Invalid asset_id')
+            app_connector.debug_print("In _save_app_state: Invalid asset_id")
         return {}
 
     if app_connector:
-        app_connector.debug_print('Saving state: ', state)
+        app_connector.debug_print("Saving state: ", state)
 
     try:
-        with open(real_state_file_path, 'w+') as state_file_obj:
+        with open(real_state_file_path, "w+") as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
         error_text = _get_error_message_from_exception(e, app_connector)
         if app_connector:
-            app_connector.debug_print('Unable to save state file: {}'.format(error_text))
-        print('Unable to save state file: {}'.format(error_text))
+            app_connector.debug_print("Unable to save state file: {}".format(error_text))
+        print("Unable to save state file: {}".format(error_text))
         return phantom.APP_ERROR
 
     return phantom.APP_SUCCESS
 
 
 def _handle_login_response(request):
-    """ This function is used to get the login response of authorization request from microsoft login page.
+    """This function is used to get the login response of authorization request from microsoft login page.
 
     :param request: Data given to REST endpoint
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get('state')
+    asset_id = request.GET.get("state")
     if not asset_id:
-        return HttpResponse('ERROR: Asset ID not found in URL\n{}'.format(json.dumps(request.GET)), content_type="text/plain", status=400)
+        return HttpResponse("ERROR: Asset ID not found in URL\n{}".format(json.dumps(request.GET)), content_type="text/plain", status=400)
 
     # Check for error in URL
-    error = request.GET.get('error')
-    error_description = request.GET.get('error_description')
+    error = request.GET.get("error")
+    error_description = request.GET.get("error_description")
 
     # If there is an error in response
     if error:
-        message = 'Error: {0}'.format(error)
+        message = "Error: {0}".format(error)
         if error_description:
-            message = '{0} Details: {1}'.format(message, error_description)
-        return HttpResponse('Server returned {0}'.format(message), content_type="text/plain", status=400)
+            message = "{0} Details: {1}".format(message, error_description)
+        return HttpResponse("Server returned {0}".format(message), content_type="text/plain", status=400)
 
-    code = request.GET.get('code')
-    admin_consent = request.GET.get('admin_consent')
+    code = request.GET.get("code")
+    admin_consent = request.GET.get("admin_consent")
 
     # If none of the code or admin_consent is available
     if not (code or admin_consent):
-        return HttpResponse('Error while authenticating\n{0}'.format(json.dumps(request.GET)), content_type="text/plain", status=400)
+        return HttpResponse("Error while authenticating\n{0}".format(json.dumps(request.GET)), content_type="text/plain", status=400)
 
     state = _load_app_state(asset_id)
 
     # If value of admin_consent is available
     if admin_consent:
-        if admin_consent == 'True':
+        if admin_consent == "True":
             admin_consent = True
         else:
             admin_consent = False
 
-        state['admin_consent'] = admin_consent
+        state["admin_consent"] = admin_consent
         _save_app_state(state, asset_id, None)
 
         # If admin_consent is True
         if admin_consent:
-            return HttpResponse('Admin Consent received. Please close this window.', content_type="text/plain")
-        return HttpResponse('Admin Consent declined. Please close this window and try again later.', content_type="text/plain", status=400)
+            return HttpResponse("Admin Consent received. Please close this window.", content_type="text/plain")
+        return HttpResponse("Admin Consent declined. Please close this window and try again later.", content_type="text/plain", status=400)
 
     # If value of admin_consent is not available, value of code is available
-    state['code'] = code
+    state["code"] = code
     try:
-        state['code'] = MicrosoftTeamConnector().encrypt_state(code, "code")
+        state["code"] = MicrosoftTeamConnector().encrypt_state(code, "code")
         state[MSTEAMS_STATE_IS_ENCRYPTED] = True
     except Exception as e:
         return HttpResponse("{}: {}".format(MSTEAMS_ENCRYPTION_ERROR, str(e)), content_type="text/plain", status=400)
     _save_app_state(state, asset_id, None)
 
-    return HttpResponse('Code received. Please close this window, the action will continue to get new token.', content_type="text/plain")
+    return HttpResponse("Code received. Please close this window, the action will continue to get new token.", content_type="text/plain")
 
 
 def _handle_rest_request(request, path_parts):
-    """ Handle requests for authorization.
+    """Handle requests for authorization.
 
     :param request: Data given to REST endpoint
     :param path_parts: parts of the URL passed
@@ -237,52 +237,52 @@ def _handle_rest_request(request, path_parts):
     """
 
     if len(path_parts) < 2:
-        return HttpResponse('error: True, message: Invalid REST endpoint request', content_type="text/plain", status=404)
+        return HttpResponse("error: True, message: Invalid REST endpoint request", content_type="text/plain", status=404)
 
     call_type = path_parts[1]
 
     # To handle admin_consent request in get_admin_consent action
-    if call_type == 'admin_consent':
-        return _handle_login_redirect(request, 'admin_consent_url')
+    if call_type == "admin_consent":
+        return _handle_login_redirect(request, "admin_consent_url")
 
     # To handle authorize request in test connectivity action
-    if call_type == 'start_oauth':
-        return _handle_login_redirect(request, 'authorization_url')
+    if call_type == "start_oauth":
+        return _handle_login_redirect(request, "authorization_url")
 
     # To handle response from microsoft login page
-    if call_type == 'result':
+    if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get('state')
+        asset_id = request.GET.get("state")
         if asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
-            auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, asset_id, MSTEAMS_TC_FILE)
+            auth_status_file_path = "{0}/{1}_{2}".format(app_dir, asset_id, MSTEAMS_TC_FILE)
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
             if not os.path.dirname(real_auth_status_file_path) == app_dir:
                 return HttpResponse("Error: Invalid asset_id", content_type="text/plain", status=400)
-            open(auth_status_file_path, 'w').close()
+            open(auth_status_file_path, "w").close()
             try:
-                uid = pwd.getpwnam('apache').pw_uid
-                gid = grp.getgrnam('phantom').gr_gid
+                uid = pwd.getpwnam("apache").pw_uid
+                gid = grp.getgrnam("phantom").gr_gid
                 os.chown(auth_status_file_path, uid, gid)
-                os.chmod(auth_status_file_path, '0664')
+                os.chmod(auth_status_file_path, "0664")
             except Exception:
                 pass
 
         return return_val
-    return HttpResponse('error: Invalid endpoint', content_type="text/plain", status=404)
+    return HttpResponse("error: Invalid endpoint", content_type="text/plain", status=404)
 
 
 def _get_dir_name_from_app_name(app_name):
-    """ Get name of the directory for the app.
+    """Get name of the directory for the app.
 
     :param app_name: Name of the application for which directory name is required
     :return: app_name: Name of the directory for the application
     """
 
-    app_name = ''.join([x for x in app_name if x.isalnum()])
+    app_name = "".join([x for x in app_name if x.isalnum()])
     app_name = app_name.lower()
     if not app_name:
-        app_name = 'app_for_phantom'
+        app_name = "app_for_phantom"
     return app_name
 
 
@@ -309,23 +309,23 @@ class MicrosoftTeamConnector(BaseConnector):
         self._scope = None
 
     def encrypt_state(self, encrypt_var, token_name):
-        """ Handle encryption of token.
+        """Handle encryption of token.
         :param encrypt_var: Variable needs to be encrypted
         :return: encrypted variable
         """
-        self.debug_print(MSTEAMS_ENCRYPT_TOKEN.format(token_name))   # nosemgrep
+        self.debug_print(MSTEAMS_ENCRYPT_TOKEN.format(token_name))  # nosemgrep
         return encryption_helper.encrypt(encrypt_var, self.asset_id)
 
     def decrypt_state(self, decrypt_var, token_name):
-        """ Handle decryption of token.
+        """Handle decryption of token.
         :param decrypt_var: Variable needs to be decrypted
         :return: decrypted variable
         """
-        self.debug_print(MSTEAMS_DECRYPT_TOKEN.format(token_name))    # nosemgrep
+        self.debug_print(MSTEAMS_DECRYPT_TOKEN.format(token_name))  # nosemgrep
         return encryption_helper.decrypt(decrypt_var, self.asset_id)
 
     def _process_empty_response(self, response, action_result):
-        """ This function is used to process empty response.
+        """This function is used to process empty response.
 
         :param response: response data
         :param action_result: object of Action Result
@@ -336,11 +336,15 @@ class MicrosoftTeamConnector(BaseConnector):
         if response.status_code in [200, 204]:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Status code: {}. Empty response and no information in the header".format(
-            response.status_code)), None)
+        return RetVal(
+            action_result.set_status(
+                phantom.APP_ERROR, "Status code: {}. Empty response and no information in the header".format(response.status_code)
+            ),
+            None,
+        )
 
     def _process_html_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
-        """ This function is used to process html response.
+        """This function is used to process html response.
 
         :param response: response data
         :param action_result: object of Action Result
@@ -356,21 +360,20 @@ class MicrosoftTeamConnector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
             error_text = soup.text
-            split_lines = error_text.split('\n')
+            split_lines = error_text.split("\n")
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = '\n'.join(split_lines)
+            error_text = "\n".join(split_lines)
         except Exception:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
-                                                                      error_text)
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
-        message = message.replace('{', '{{').replace('}', '}}')
+        message = message.replace("{", "{{").replace("}", "}}")
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_json_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
-        """ This function is used to process json response.
+        """This function is used to process json response.
 
         :param response: response data
         :param action_result: object of Action Result
@@ -388,18 +391,18 @@ class MicrosoftTeamConnector(BaseConnector):
         if 200 <= response.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
-        error_message = response.text.replace('{', '{{').replace('}', '}}')
+        error_message = response.text.replace("{", "{{").replace("}", "}}")
         message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, error_message)
 
         # Show only error message if available
-        if isinstance(resp_json.get('error', {}), dict) and resp_json.get('error', {}).get('message'):
-            error_message = resp_json['error']['message']
+        if isinstance(resp_json.get("error", {}), dict) and resp_json.get("error", {}).get("message"):
+            error_message = resp_json["error"]["message"]
             message = "Error from server. Status Code: {0} Data from server: {1}".format(response.status_code, error_message)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_response(self, response, action_result) -> RetVal[bool, Optional[Any]]:
-        """ This function is used to process html response.
+        """This function is used to process html response.
 
         :param response: response data
         :param action_result: object of Action Result
@@ -407,25 +410,25 @@ class MicrosoftTeamConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': response.status_code})
-            action_result.add_debug_data({'r_text': response.text})
-            action_result.add_debug_data({'r_headers': response.headers})
+        if hasattr(action_result, "add_debug_data"):
+            action_result.add_debug_data({"r_status_code": response.status_code})
+            action_result.add_debug_data({"r_text": response.text})
+            action_result.add_debug_data({"r_headers": response.headers})
 
         # Process each 'Content-Type' of response separately
 
         # Process a json response
-        if 'json' in response.headers.get('Content-Type', ''):
+        if "json" in response.headers.get("Content-Type", ""):
             return self._process_json_response(response, action_result)
 
-        if 'text/javascript' in response.headers.get('Content-Type', ''):
+        if "text/javascript" in response.headers.get("Content-Type", ""):
             return self._process_json_response(response, action_result)
 
         # Process an HTML response, Do this no matter what the API talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if 'html' in response.headers.get('Content-Type', ''):
+        if "html" in response.headers.get("Content-Type", ""):
             return self._process_html_response(response, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
@@ -433,22 +436,13 @@ class MicrosoftTeamConnector(BaseConnector):
             return self._process_empty_response(response, action_result)
 
         # everything else is actually an error at this point
-        error_message = response.text.replace('{', '{{').replace('}', '}}')
-        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-            response.status_code, error_message)
+        error_message = response.text.replace("{", "{{").replace("}", "}}")
+        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(response.status_code, error_message)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _update_request(
-        self,
-        action_result,
-        endpoint,
-        headers=None,
-        params=None,
-        data=None,
-        method='get'
-    ) -> tuple[bool, Optional[Any]]:
-        """ This function is used to update the headers with access_token before making REST call.
+    def _update_request(self, action_result, endpoint, headers=None, params=None, data=None, method="get") -> tuple[bool, Optional[Any]]:
+        """This function is used to update the headers with access_token before making REST call.
 
         :param endpoint: REST endpoint that needs to appended to the service address
         :param action_result: object of ActionResult class
@@ -463,9 +457,9 @@ class MicrosoftTeamConnector(BaseConnector):
         # In pagination, URL of next page contains complete URL
         # So no need to modify them
         if endpoint.startswith(MSTEAMS_MSGRAPH_TEAMS_ENDPOINT):
-            endpoint = '{0}{1}'.format(MSTEAMS_MSGRAPH_BETA_API_BASE_URL, endpoint)
+            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_BETA_API_BASE_URL, endpoint)
         elif not endpoint.startswith(MSTEAMS_MSGRAPH_API_BASE_URL):
-            endpoint = '{0}{1}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, endpoint)
+            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_API_BASE_URL, endpoint)
 
         if headers is None:
             headers = {}
@@ -473,11 +467,11 @@ class MicrosoftTeamConnector(BaseConnector):
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
         token_data = {
-            'client_id': self._client_id,
-            'scope': self._scope,
-            'client_secret': self._client_secret,
-            'grant_type': MSTEAMS_REFRESH_TOKEN_STRING,
-            'refresh_token': self._refresh_token
+            "client_id": self._client_id,
+            "scope": self._scope,
+            "client_secret": self._client_secret,
+            "grant_type": MSTEAMS_REFRESH_TOKEN_STRING,
+            "refresh_token": self._refresh_token,
         }
 
         if not self._access_token:
@@ -491,17 +485,12 @@ class MicrosoftTeamConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status(), None
 
-        headers.update({'Authorization': 'Bearer {0}'.format(self._access_token),
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'})
+        headers.update(
+            {"Authorization": "Bearer {0}".format(self._access_token), "Accept": "application/json", "Content-Type": "application/json"}
+        )
 
         status, resp_json = self._make_rest_call(
-            action_result=action_result,
-            endpoint=endpoint,
-            headers=headers,
-            params=params,
-            data=data,
-            method=method
+            action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
         )
 
         action_result_message = action_result.get_message().lower()
@@ -515,15 +504,10 @@ class MicrosoftTeamConnector(BaseConnector):
                 if phantom.is_fail(status):
                     return action_result.get_status(), None
 
-                headers['Authorization'] = f"Bearer {self._access_token}"
+                headers["Authorization"] = f"Bearer {self._access_token}"
 
                 status, resp_json = self._make_rest_call(
-                    action_result=action_result,
-                    endpoint=endpoint,
-                    headers=headers,
-                    params=params,
-                    data=data,
-                    method=method
+                    action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
                 )
 
                 if phantom.is_fail(status):
@@ -537,16 +521,9 @@ class MicrosoftTeamConnector(BaseConnector):
         return MSTEAMS_TOKEN_EXPIRED_MARKER in action_result_message
 
     def _make_rest_call(
-        self,
-        endpoint,
-        action_result,
-        headers=None,
-        params=None,
-        data=None,
-        method="get",
-        verify=True
+        self, endpoint, action_result, headers=None, params=None, data=None, method="get", verify=True
     ) -> RetVal[bool, Optional[Any]]:
-        """ Function that makes the REST call to the app.
+        """Function that makes the REST call to the app.
 
         :param endpoint: REST endpoint that needs to appended to the service address
         :param action_result: object of ActionResult class
@@ -574,7 +551,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return self._process_response(r, action_result)
 
     def _get_asset_name(self, action_result):
-        """ Get name of the asset using Phantom URL.
+        """Get name of the asset using Phantom URL.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message), asset name
@@ -582,31 +559,30 @@ class MicrosoftTeamConnector(BaseConnector):
 
         asset_id = self.get_asset_id()
         rest_endpoint = MSTEAMS_PHANTOM_ASSET_INFO_URL.format(asset_id=asset_id)
-        url = '{}{}'.format(self.get_phantom_base_url() + 'rest', rest_endpoint)
+        url = "{}{}".format(self.get_phantom_base_url() + "rest", rest_endpoint)
         status, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
 
         if phantom.is_fail(status):
             return status, None
 
-        asset_name = resp_json.get('name')
+        asset_name = resp_json.get("name")
         if not asset_name:
-            return action_result.set_status(phantom.APP_ERROR, 'Asset Name for id: {0} not found.'.format(asset_id),
-                                            None)
+            return action_result.set_status(phantom.APP_ERROR, "Asset Name for id: {0} not found.".format(asset_id), None)
         return phantom.APP_SUCCESS, asset_name
 
     def _get_phantom_base_url_ms(self, action_result):
-        """ Get base url of phantom.
+        """Get base url of phantom.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
         base url of phantom
         """
-        url = '{}{}'.format(self.get_phantom_base_url() + 'rest', MSTEAMS_PHANTOM_SYS_INFO_URL)
+        url = "{}{}".format(self.get_phantom_base_url() + "rest", MSTEAMS_PHANTOM_SYS_INFO_URL)
         status, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
         if phantom.is_fail(status):
             return status, None
 
-        phantom_base_url = resp_json.get('base_url')
+        phantom_base_url = resp_json.get("base_url")
         if not phantom_base_url:
             return action_result.set_status(phantom.APP_ERROR, MSTEAMS_BASE_URL_NOT_FOUND_MSG), None
 
@@ -615,7 +591,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return phantom.APP_SUCCESS, phantom_base_url
 
     def _get_app_rest_url(self, action_result):
-        """ Get URL for making rest calls.
+        """Get URL for making rest calls.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
@@ -630,31 +606,25 @@ class MicrosoftTeamConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
-        self.save_progress('Using Phantom base URL as: {0}'.format(phantom_base_url))
+        self.save_progress("Using Phantom base URL as: {0}".format(phantom_base_url))
         app_json = self.get_app_json()
-        app_name = app_json['name']
+        app_name = app_json["name"]
 
         app_dir_name = _get_dir_name_from_app_name(app_name)
-        url_to_app_rest = '{0}/rest/handler/{1}_{2}/{3}'.format(phantom_base_url, app_dir_name, app_json['appid'],
-                                                                asset_name)
+        url_to_app_rest = "{0}/rest/handler/{1}_{2}/{3}".format(phantom_base_url, app_dir_name, app_json["appid"], asset_name)
         return phantom.APP_SUCCESS, url_to_app_rest
 
     def _generate_new_access_token(self, action_result, data) -> bool:
-        """ This function is used to generate new access token using the code obtained on authorization.
+        """This function is used to generate new access token using the code obtained on authorization.
 
         :param action_result: object of ActionResult class
         :param data: Data to send in REST call
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS
         """
 
-        req_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, MSTEAMS_SERVER_TOKEN_URL.format(tenant_id=self._tenant))
+        req_url = "{}{}".format(MSTEAMS_LOGIN_BASE_URL, MSTEAMS_SERVER_TOKEN_URL.format(tenant_id=self._tenant))
 
-        status, resp_json = self._make_rest_call(
-            action_result=action_result,
-            endpoint=req_url,
-            data=urllib.urlencode(data),
-            method="post"
-        )
+        status, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=urllib.urlencode(data), method="post")
         if phantom.is_fail(status):
             return action_result.get_status()
 
@@ -690,9 +660,11 @@ class MicrosoftTeamConnector(BaseConnector):
         # after successful generation of new token are same or not.
 
         try:
-            if self._access_token != self.decrypt_state(self._state.get(MSTEAMS_TOKEN_STRING, {}).get
-                    (MSTEAMS_ACCESS_TOKEN_STRING), "access") or self._refresh_token != self.decrypt_state(self._state.get
-                    (MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING), "refresh"):
+            if self._access_token != self.decrypt_state(
+                self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_ACCESS_TOKEN_STRING), "access"
+            ) or self._refresh_token != self.decrypt_state(
+                self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING), "refresh"
+            ):
                 message = "Error occurred while saving the newly generated access or "
                 message += "refresh token (in place of the expired token) in the state file."
                 message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
@@ -706,7 +678,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, status_message=MSTEAMS_TOKEN_GENERATED_MSG)
 
     def _handle_test_connectivity(self, param):
-        """ Testing of given credentials and obtaining authorization/admin consent for all other actions.
+        """Testing of given credentials and obtaining authorization/admin consent for all other actions.
 
         :param param: (not used in this method)
         :return: status success/failure
@@ -722,8 +694,8 @@ class MicrosoftTeamConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
         # Append /result to create redirect_uri
-        redirect_uri = '{0}/result'.format(app_rest_url)
-        app_state['redirect_uri'] = redirect_uri
+        redirect_uri = "{0}/result".format(app_rest_url)
+        app_state["redirect_uri"] = redirect_uri
 
         self.save_progress(MSTEAMS_OAUTH_URL_MSG)
         self.save_progress(redirect_uri)
@@ -731,20 +703,24 @@ class MicrosoftTeamConnector(BaseConnector):
         # Authorization URL used to make request for getting code which is used to generate access token
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
-        authorization_url = MSTEAMS_AUTHORIZE_URL.format(tenant_id=self._tenant, client_id=self._client_id,
-                                                         redirect_uri=redirect_uri, state=self.get_asset_id(),
-                                                         response_type='code',
-                                                         scope=self._scope)
-        authorization_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, authorization_url)
+        authorization_url = MSTEAMS_AUTHORIZE_URL.format(
+            tenant_id=self._tenant,
+            client_id=self._client_id,
+            redirect_uri=redirect_uri,
+            state=self.get_asset_id(),
+            response_type="code",
+            scope=self._scope,
+        )
+        authorization_url = "{}{}".format(MSTEAMS_LOGIN_BASE_URL, authorization_url)
 
-        app_state['authorization_url'] = authorization_url
+        app_state["authorization_url"] = authorization_url
 
         # URL which would be shown to the user
-        url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
+        url_for_authorize_request = "{0}/start_oauth?asset_id={1}&".format(app_rest_url, self.get_asset_id())
         _save_app_state(app_state, self.get_asset_id(), self)
 
         self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
-        self.save_progress(url_for_authorize_request)   # nosemgrep
+        self.save_progress(url_for_authorize_request)  # nosemgrep
         self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
         self.save_progress(MSTEAMS_AUTHORIZE_WAIT_MSG)
 
@@ -758,17 +734,17 @@ class MicrosoftTeamConnector(BaseConnector):
             return action_result.get_status()
 
         # Empty message to override last message of waiting
-        self.send_progress('')
+        self.send_progress("")
         self.save_progress(MSTEAMS_CODE_RECEIVED_MSG)
         self._state = _load_app_state(self.get_asset_id(), self)
 
         # if code is not available in the state file
-        if not self._state or not self._state.get('code'):
+        if not self._state or not self._state.get("code"):
             return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
         if self._state.get(MSTEAMS_STATE_IS_ENCRYPTED):
             try:
-                current_code = self.decrypt_state(self._state['code'], "code")
+                current_code = self.decrypt_state(self._state["code"], "code")
             except Exception as e:
                 self.debug_print("{}: {}".format(MSTEAMS_DECRYPTION_ERROR, _get_error_message_from_exception(e, self)))
                 return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
@@ -777,12 +753,12 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
 
         data = {
-            'client_id': self._client_id,
-            'scope': self._scope,
-            'client_secret': self._client_secret,
-            'grant_type': 'authorization_code',
-            'redirect_uri': redirect_uri,
-            'code': current_code
+            "client_id": self._client_id,
+            "scope": self._scope,
+            "client_secret": self._client_secret,
+            "grant_type": "authorization_code",
+            "redirect_uri": redirect_uri,
+            "code": current_code,
         }
         # for first time access, new access token is generated
         ret_val = self._generate_new_access_token(action_result=action_result, data=data)
@@ -793,7 +769,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
-        url = '{}{}'.format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
+        url = "{}{}".format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
         status, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(status):
@@ -805,7 +781,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _wait(self, action_result):
-        """ This function is used to hold the action till user login.
+        """This function is used to hold the action till user login.
 
         :param action_result: Object of ActionResult class
         :return: status (success/failed)
@@ -813,7 +789,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         app_dir = os.path.dirname(os.path.abspath(__file__))
         # file to check whether the request has been granted or not
-        auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, self.get_asset_id(), MSTEAMS_TC_FILE)
+        auth_status_file_path = "{0}/{1}_{2}".format(app_dir, self.get_asset_id(), MSTEAMS_TC_FILE)
         time_out = False
 
         # wait-time while request is being granted
@@ -825,12 +801,12 @@ class MicrosoftTeamConnector(BaseConnector):
             time.sleep(MSTEAMS_TC_STATUS_SLEEP)
 
         if not time_out:
-            return action_result.set_status(phantom.APP_ERROR, status_message='Timeout. Please try again later.')
-        self.send_progress('Authenticated')
+            return action_result.set_status(phantom.APP_ERROR, status_message="Timeout. Please try again later.")
+        self.send_progress("Authenticated")
         return phantom.APP_SUCCESS
 
     def _handle_get_admin_consent(self, param):
-        """ This function is used to get the consent from admin.
+        """This function is used to get the consent from admin.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -841,27 +817,29 @@ class MicrosoftTeamConnector(BaseConnector):
 
         ret_val, app_rest_url = self._get_app_rest_url(action_result)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR,
-                                            status_message="Unable to get the URL to the app's REST Endpoint. "
-                                                           "Error: {0}".format(action_result.get_message()))
-        redirect_uri = '{0}/result'.format(app_rest_url)
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                status_message="Unable to get the URL to the app's REST Endpoint. " "Error: {0}".format(action_result.get_message()),
+            )
+        redirect_uri = "{0}/result".format(app_rest_url)
 
         # Store admin_consent_url to state file so that we can access it from _handle_rest_request
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
-        admin_consent_url = MSTEAMS_ADMIN_CONSENT_URL.format(tenant_id=self._tenant, client_id=self._client_id,
-                                                             redirect_uri=redirect_uri, state=self.get_asset_id())
-        admin_consent_url = '{}{}'.format(MSTEAMS_LOGIN_BASE_URL, admin_consent_url)
-        self._state['admin_consent_url'] = admin_consent_url
+        admin_consent_url = MSTEAMS_ADMIN_CONSENT_URL.format(
+            tenant_id=self._tenant, client_id=self._client_id, redirect_uri=redirect_uri, state=self.get_asset_id()
+        )
+        admin_consent_url = "{}{}".format(MSTEAMS_LOGIN_BASE_URL, admin_consent_url)
+        self._state["admin_consent_url"] = admin_consent_url
 
-        url_to_show = '{0}/admin_consent?asset_id={1}&'.format(app_rest_url, self.get_asset_id())
+        url_to_show = "{0}/admin_consent?asset_id={1}&".format(app_rest_url, self.get_asset_id())
         _save_app_state(self._state, self.get_asset_id(), self)
 
-        self.save_progress('Waiting to receive the admin consent')
-        self.debug_print('Waiting to receive the admin consent')
+        self.save_progress("Waiting to receive the admin consent")
+        self.debug_print("Waiting to receive the admin consent")
 
-        self.save_progress('{0}{1}'.format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
-        self.debug_print('{0}{1}'.format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
+        self.save_progress("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
+        self.debug_print("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
 
@@ -872,13 +850,13 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self._state = _load_app_state(self.get_asset_id(), self)
 
-        if not self._state or not self._state.get('admin_consent'):
+        if not self._state or not self._state.get("admin_consent"):
             return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_ADMIN_CONSENT_FAILED_MSG)
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message=MSTEAMS_ADMIN_CONSENT_PASSED_MSG)
 
     def _handle_list_users(self, param):
-        """ This function is used to list all the users.
+        """This function is used to list all the users.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -898,7 +876,7 @@ class MicrosoftTeamConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status()
 
-            for user in response.get('value', []):
+            for user in response.get("value", []):
                 action_result.add_data(user)
 
             if not response.get(MSTEAMS_NEXT_LINK_STRING):
@@ -907,12 +885,12 @@ class MicrosoftTeamConnector(BaseConnector):
             endpoint = response[MSTEAMS_NEXT_LINK_STRING]
 
         summary = action_result.update_summary({})
-        summary['total_users'] = action_result.get_data_size()
+        summary["total_users"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _verify_parameters(self, group_id, channel_id, action_result) -> bool:
-        """ This function is used to verify that the provided group_id is valid and channel_id belongs
+        """This function is used to verify that the provided group_id is valid and channel_id belongs
         to that group_id.
 
         :param group_id: ID of group
@@ -931,8 +909,8 @@ class MicrosoftTeamConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status()
 
-            for channel in response.get('value', []):
-                channel_list.append(channel['id'])
+            for channel in response.get("value", []):
+                channel_list.append(channel["id"])
 
             if not response.get(MSTEAMS_NEXT_LINK_STRING):
                 break
@@ -940,13 +918,14 @@ class MicrosoftTeamConnector(BaseConnector):
             endpoint = response[MSTEAMS_NEXT_LINK_STRING]
 
         if channel_id not in channel_list:
-            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_INVALID_CHANNEL_MSG.format(
-                channel_id=channel_id, group_id=group_id))
+            return action_result.set_status(
+                phantom.APP_ERROR, status_message=MSTEAMS_INVALID_CHANNEL_MSG.format(channel_id=channel_id, group_id=group_id)
+            )
 
         return phantom.APP_SUCCESS
 
     def _handle_send_channel_message(self, param):
-        """ This function is used to send the message in a group.
+        """This function is used to send the message in a group.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -963,35 +942,29 @@ class MicrosoftTeamConnector(BaseConnector):
 
         if phantom.is_fail(status):
             error_message = action_result.get_message()
-            if 'teamId' in error_message:
-                error_message = error_message.replace('teamId', "'group_id'")
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         endpoint = MSTEAMS_MSGRAPH_CHANNEL_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
 
-        data = {
-            "body": {
-                "contentType": "html",
-                "content": message
-            }
-        }
+        data = {"body": {"contentType": "html", "content": message}}
 
         # make rest call
-        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
-                                                 data=json.dumps(data))
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
 
         if phantom.is_fail(status):
             error_message = action_result.get_message()
-            if 'teamId' in error_message:
-                error_message = error_message.replace('teamId', "'group_id'")
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         action_result.add_data(response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent')
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
 
     def _handle_send_chat_message(self, param):
-        """ This function is used to send chat message in specified chat.
+        """This function is used to send chat message in specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1005,16 +978,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
         endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
-        data = {
-            "body": {
-                "contentType": "html",
-                "content": message
-            }
-        }
+        data = {"body": {"contentType": "html", "content": message}}
 
         # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
-                                                 data=json.dumps(data))
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
 
         if phantom.is_fail(ret_val):
             error_message = action_result.get_message()
@@ -1022,10 +989,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
         action_result.add_data(response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent')
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
 
     def _handle_list_channels(self, param):
-        """ This function is used to list all the channels of the particular group.
+        """This function is used to list all the channels of the particular group.
 
         :param param: Dictionary of input parameters
         :return: status phantom.APP_SUCCESS/phantom.APP_ERROR
@@ -1045,11 +1012,11 @@ class MicrosoftTeamConnector(BaseConnector):
 
             if phantom.is_fail(status):
                 error_message = action_result.get_message()
-                if 'teamId' in error_message:
-                    error_message = error_message.replace('teamId', "'group_id'")
+                if "teamId" in error_message:
+                    error_message = error_message.replace("teamId", "'group_id'")
                 return action_result.set_status(phantom.APP_ERROR, error_message)
 
-            for channel in response.get('value', []):
+            for channel in response.get("value", []):
                 action_result.add_data(channel)
 
             if not response.get(MSTEAMS_NEXT_LINK_STRING):
@@ -1058,12 +1025,12 @@ class MicrosoftTeamConnector(BaseConnector):
             endpoint = response[MSTEAMS_NEXT_LINK_STRING]
 
         summary = action_result.update_summary({})
-        summary['total_channels'] = action_result.get_data_size()
+        summary["total_channels"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_list_groups(self, param):
-        """ This function is used to list all the groups for Microsoft Team.
+        """This function is used to list all the groups for Microsoft Team.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1081,7 +1048,7 @@ class MicrosoftTeamConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status()
 
-            for group in response.get('value', []):
+            for group in response.get("value", []):
                 action_result.add_data(group)
 
             if not response.get(MSTEAMS_NEXT_LINK_STRING):
@@ -1090,12 +1057,12 @@ class MicrosoftTeamConnector(BaseConnector):
             endpoint = response[MSTEAMS_NEXT_LINK_STRING]
 
         summary = action_result.update_summary({})
-        summary['total_groups'] = action_result.get_data_size()
+        summary["total_groups"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_list_teams(self, param):
-        """ This function is used to list all the teams for Microsoft Team.
+        """This function is used to list all the teams for Microsoft Team.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1113,7 +1080,7 @@ class MicrosoftTeamConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status()
 
-            for team in response.get('value', []):
+            for team in response.get("value", []):
                 action_result.add_data(team)
 
             if not response.get(MSTEAMS_NEXT_LINK_STRING):
@@ -1122,12 +1089,12 @@ class MicrosoftTeamConnector(BaseConnector):
             endpoint = response[MSTEAMS_NEXT_LINK_STRING]
 
         summary = action_result.update_summary({})
-        summary['total_teams'] = action_result.get_data_size()
+        summary["total_teams"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_create_meeting(self, param):
-        """ This function is used to create meeting for Microsoft Teams.
+        """This function is used to create meeting for Microsoft Teams.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1140,9 +1107,7 @@ class MicrosoftTeamConnector(BaseConnector):
         subject = param.get(MSTEAMS_JSON_SUBJECT)
         data = {}
         if subject:
-            data.update({
-                "subject": subject
-            })
+            data.update({"subject": subject})
         if not use_calendar:
             endpoint = MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT
         else:
@@ -1156,48 +1121,29 @@ class MicrosoftTeamConnector(BaseConnector):
                 attendees = [value.strip() for value in attendees.split(",")]
                 attendees = list(filter(None, attendees))
                 for attendee in attendees:
-                    attendee_dict = {"emailAddress": {
-                        "address": attendee
-                    }}
+                    attendee_dict = {"emailAddress": {"address": attendee}}
                     attendees_list.append(attendee_dict)
-            data.update({ "isOnlineMeeting": True })
+            data.update({"isOnlineMeeting": True})
             if description:
-                data.update({
-                    "body": {
-                        "content": description
-                    }
-                })
+                data.update({"body": {"content": description}})
             if start_time:
-                data.update({
-                    "start": {
-                        "dateTime": start_time,
-                        "timeZone": self._timezone
-                    }
-                })
+                data.update({"start": {"dateTime": start_time, "timeZone": self._timezone}})
             if end_time:
-                data.update({
-                    "end": {
-                        "dateTime": end_time,
-                        "timeZone": self._timezone
-                    }
-                })
+                data.update({"end": {"dateTime": end_time, "timeZone": self._timezone}})
             if attendees_list:
-                data.update({
-                    "attendees": attendees_list
-                })
+                data.update({"attendees": attendees_list})
         # make rest call
-        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
-                                                 data=json.dumps(data))
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
 
         if phantom.is_fail(status):
             return action_result.get_status()
 
         action_result.add_data(response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, status_message='Meeting Created Successfully')
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Meeting Created Successfully")
 
     def _handle_get_channel_message(self, param):
-        """ This function is used to get the message of group.
+        """This function is used to get the message of group.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1214,19 +1160,19 @@ class MicrosoftTeamConnector(BaseConnector):
 
         if phantom.is_fail(status):
             error_message = action_result.get_message()
-            if 'teamId' in error_message:
-                error_message = error_message.replace('teamId', "'group_id'")
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
 
         # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
         if phantom.is_fail(ret_val):
             error_message = action_result.get_message()
-            if 'teamId' in error_message:
-                error_message = error_message.replace('teamId', "'group_id'")
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         action_result.add_data(response)
@@ -1234,7 +1180,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_chat_message(self, param):
-        """ This function is used to get the message of the specified chat.
+        """This function is used to get the message of the specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1249,7 +1195,7 @@ class MicrosoftTeamConnector(BaseConnector):
         endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
 
         # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR)
@@ -1259,7 +1205,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_response(self, param):
-        """ This function is used to get reply message from chat.
+        """This function is used to get reply message from chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1270,7 +1216,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
         message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
-        wait_for_replay_in_seconds = int(param.get('wait_time', 1)) * 60
+        wait_for_replay_in_seconds = int(param.get("wait_time", 1)) * 60
 
         endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
@@ -1280,42 +1226,46 @@ class MicrosoftTeamConnector(BaseConnector):
 
             time.sleep(5)
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method='get')
+            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
             if phantom.is_fail(ret_val):
                 return action_result.set_status(phantom.APP_ERROR, response.text)
 
             try:
-                body_content = next(filter(lambda x: message_id == x.get('attachments', [''])[0].get('id', None), response.get('value')))
+                body_content = next(filter(lambda x: message_id == x.get("attachments", [""])[0].get("id", None), response.get("value")))
                 break
             except:
                 wait_for_replay_in_seconds -= 5
 
         if body_content is None:
-            return action_result.set_status(phantom.APP_ERROR, f'After {wait_for_replay_in_minutes} min \
-                                            action did not find an reply for {message_id} message')
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"After {wait_for_replay_in_minutes} min \
+                                            action did not find an reply for {message_id} message",
+            )
 
-        response_message_id = body_content.get('id')
+        response_message_id = body_content.get("id")
         response_endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
-        reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method='get')
+        reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method="get")
 
         if phantom.is_fail(reply_ret_val):
             return action_result.set_status(phantom.APP_ERROR, reply_response.text)
 
         try:
-            text = re.search(
-                r'<\/attachment>\n(?P<body_content>.*)\n', reply_response.get('body', {}).get('content', None)).group('body_content')
-            reply_response['body'].update({'message_reply': text })
+            text = re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply_response.get("body", {}).get("content", None)).group(
+                "body_content"
+            )
+            reply_response["body"].update({"message_reply": text})
 
         except Exception as exc:
-            return action_result.set_status(phantom.APP_ERROR, f'Cannot find message text in body.content object. {exc}')
+            return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
 
         action_result.add_data(reply_response)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
-        """ This function gets current action identifier and calls member function of its own to handle the action.
+        """This function gets current action identifier and calls member function of its own to handle the action.
 
         :param param: dictionary which contains information about the actions to be executed
         :return: status success/failure
@@ -1325,18 +1275,18 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # Dictionary mapping each action with its corresponding actions
         action_mapping = {
-            'test_connectivity': self._handle_test_connectivity,
-            'send_channel_message': self._handle_send_channel_message,
-            'send_chat_message': self._handle_send_chat_message,
-            'list_groups': self._handle_list_groups,
-            'list_teams': self._handle_list_teams,
-            'list_users': self._handle_list_users,
-            'list_channels': self._handle_list_channels,
-            'get_admin_consent': self._handle_get_admin_consent,
-            'create_meeting': self._handle_create_meeting,
-            'get_channel_message': self._handle_get_channel_message,
-            'get_chat_message': self._handle_get_chat_message,
-            'get_response': self._handle_get_response,
+            "test_connectivity": self._handle_test_connectivity,
+            "send_channel_message": self._handle_send_channel_message,
+            "send_chat_message": self._handle_send_chat_message,
+            "list_groups": self._handle_list_groups,
+            "list_teams": self._handle_list_teams,
+            "list_users": self._handle_list_users,
+            "list_channels": self._handle_list_channels,
+            "get_admin_consent": self._handle_get_admin_consent,
+            "create_meeting": self._handle_create_meeting,
+            "get_channel_message": self._handle_get_channel_message,
+            "get_chat_message": self._handle_get_chat_message,
+            "get_response": self._handle_get_response,
         }
 
         action = self.get_action_identifier()
@@ -1349,7 +1299,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_execution_status
 
     def initialize(self):
-        """ This is an optional function that can be implemented by the AppConnector derived class. Since the
+        """This is an optional function that can be implemented by the AppConnector derived class. Since the
         configuration dictionary is already validated by the time this function is called, it's a good place to do any
         extra initialization of any internal modules. This function MUST return a value of either phantom.APP_SUCCESS or
         phantom.APP_ERROR. If this function returns phantom.APP_ERROR, then AppConnector::handle_action will not get
@@ -1395,7 +1345,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def finalize(self):
-        """ This function gets called once all the param dictionary elements are looped over and no more handle_action
+        """This function gets called once all the param dictionary elements are looped over and no more handle_action
         calls are left to be made. It gives the AppConnector a chance to loop through all the results that were
         accumulated by multiple handle_action function calls and create any summary if required. Another usage is
         cleanup, disconnect from remote devices, etc.
@@ -1422,7 +1372,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     import argparse
 
@@ -1432,10 +1382,10 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
 
-    argparser.add_argument('input_test_json', help='Input Test JSON file')
-    argparser.add_argument('-u', '--username', help='username', required=False)
-    argparser.add_argument('-p', '--password', help='password', required=False)
-    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
+    argparser.add_argument("input_test_json", help="Input Test JSON file")
+    argparser.add_argument("-u", "--username", help="username", required=False)
+    argparser.add_argument("-p", "--password", help="password", required=False)
+    argparser.add_argument("-v", "--verify", action="store_true", help="verify", required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
@@ -1448,27 +1398,29 @@ if __name__ == '__main__':
 
         # User specified a username but not a password, so ask
         import getpass
+
         password = getpass.getpass("Password: ")
 
     if username and password:
         try:
             print("Accessing the Login page")
             r = requests.get(BaseConnector._get_phantom_base_url() + "login", verify=verify, timeout=MSTEAMS_DEFAULT_TIMEOUT)
-            csrftoken = r.cookies['csrftoken']
+            csrftoken = r.cookies["csrftoken"]
 
             data = dict()
-            data['username'] = username
-            data['password'] = password
-            data['csrfmiddlewaretoken'] = csrftoken
+            data["username"] = username
+            data["password"] = password
+            data["csrfmiddlewaretoken"] = csrftoken
 
             headers = dict()
-            headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
-            headers['Referer'] = BaseConnector._get_phantom_base_url() + 'login'
+            headers["Cookie"] = "csrftoken={}".format(csrftoken)
+            headers["Referer"] = BaseConnector._get_phantom_base_url() + "login"
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(BaseConnector._get_phantom_base_url() + "login", verify=verify, data=data,
-                headers=headers, timeout=MSTEAMS_DEFAULT_TIMEOUT)
-            session_id = r2.cookies['sessionid']
+            r2 = requests.post(
+                BaseConnector._get_phantom_base_url() + "login", verify=verify, data=data, headers=headers, timeout=MSTEAMS_DEFAULT_TIMEOUT
+            )
+            session_id = r2.cookies["sessionid"]
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: {}".format(str(e)))
             sys.exit(1)
@@ -1486,7 +1438,7 @@ if __name__ == '__main__':
         connector.print_progress_message = True
 
         if session_id is not None:
-            in_json['user_session_token'] = session_id
+            in_json["user_session_token"] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
