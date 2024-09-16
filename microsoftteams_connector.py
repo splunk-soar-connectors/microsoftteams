@@ -70,7 +70,7 @@ def _get_error_message_from_exception(e, app_connector):
     """
 
     error_code = None
-    error_msg = ERROR_MESSAGE_UNAVAILABLE
+    error_message = ERROR_MESSAGE_UNAVAILABLE
 
     app_connector.error_print("Error occurred.", e)
 
@@ -78,16 +78,16 @@ def _get_error_message_from_exception(e, app_connector):
         if hasattr(e, "args"):
             if len(e.args) > 1:
                 error_code = e.args[0]
-                error_msg = e.args[1]
+                error_message = e.args[1]
             elif len(e.args) == 1:
-                error_msg = e.args[0]
+                error_message = e.args[0]
     except Exception as e:
         app_connector.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
     if not error_code:
-        error_text = "Error Message: {}".format(error_msg)
+        error_text = "Error Message: {}".format(error_message)
     else:
-        error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+        error_text = "Error Code: {}. Error Message: {}".format(error_code, error_message)
 
     return error_text
 
@@ -456,10 +456,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # In pagination, URL of next page contains complete URL
         # So no need to modify them
-        if endpoint.startswith(MSTEAMS_MSGRAPH_TEAMS_ENDPOINT):
-            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_BETA_API_BASE_URL, endpoint)
-        elif not endpoint.startswith(MSTEAMS_MSGRAPH_API_BASE_URL):
-            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_API_BASE_URL, endpoint)
+        if endpoint.startswith(MSTEAMS_MS_GRAPH_TEAMS_ENDPOINT):
+            endpoint = "{0}{1}".format(MSTEAMS_MS_GRAPH_BETA_API_BASE_URL, endpoint)
+        elif not endpoint.startswith(MSTEAMS_MS_GRAPH_API_BASE_URL):
+            endpoint = "{0}{1}".format(MSTEAMS_MS_GRAPH_API_BASE_URL, endpoint)
 
         if headers is None:
             headers = {}
@@ -769,7 +769,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MESSAGE)
 
-        url = "{}{}".format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
+        url = "{}{}".format(MSTEAMS_MS_GRAPH_API_BASE_URL, MSTEAMS_MS_GRAPH_SELF_ENDPOINT)
         status, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(status):
@@ -866,7 +866,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT
+        endpoint = MSTEAMS_MS_GRAPH_LIST_USERS_ENDPOINT
 
         while True:
 
@@ -899,7 +899,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status (success/failed)
         """
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
+        endpoint = MSTEAMS_MS_GRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
         channel_list = []
 
         while True:
@@ -946,7 +946,7 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_CHANNEL_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
+        endpoint = MSTEAMS_MS_GRAPH_CHANNEL_SEND_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -976,7 +976,7 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
         message = param.get(MSTEAMS_JSON_MESSAGE)
 
-        endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -1003,7 +1003,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
+        endpoint = MSTEAMS_MS_GRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
 
         while True:
 
@@ -1038,7 +1038,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        endpoint = MSTEAMS_MSGRAPH_GROUPS_ENDPOINT
+        endpoint = MSTEAMS_MS_GRAPH_GROUPS_ENDPOINT
 
         while True:
 
@@ -1070,7 +1070,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-        endpoint = MSTEAMS_MSGRAPH_TEAMS_ENDPOINT
+        endpoint = MSTEAMS_MS_GRAPH_TEAMS_ENDPOINT
 
         while True:
 
@@ -1109,9 +1109,9 @@ class MicrosoftTeamConnector(BaseConnector):
         if subject:
             data.update({"subject": subject})
         if not use_calendar:
-            endpoint = MSTEAMS_MSGRAPH_ONLINE_MEETING_ENDPOINT
+            endpoint = MSTEAMS_MS_GRAPH_ONLINE_MEETING_ENDPOINT
         else:
-            endpoint = MSTEAMS_MSGRAPH_CALENDER_EVENT_ENDPOINT
+            endpoint = MSTEAMS_MS_GRAPH_CALENDER_EVENT_ENDPOINT
             description = param.get(MSTEAMS_JSON_DESCRIPTION)
             start_time = param.get(MSTEAMS_JSON_START_TIME)
             end_time = param.get(MSTEAMS_JSON_END_TIME)
@@ -1164,7 +1164,7 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
+        endpoint = MSTEAMS_MS_GRAPH_GET_CHANNEL_MESSAGE_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1192,7 +1192,7 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
         message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
+        endpoint = MSTEAMS_MS_GRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1218,7 +1218,7 @@ class MicrosoftTeamConnector(BaseConnector):
         message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
         wait_for_replay_in_seconds = int(param.get("wait_time", 1)) * 60
 
-        endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
         body_content: dict = None
 
@@ -1245,7 +1245,7 @@ class MicrosoftTeamConnector(BaseConnector):
             )
 
         response_message_id = body_content.get("id")
-        response_endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
+        response_endpoint = MSTEAMS_MS_GRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
         reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method="get")
 
         if phantom.is_fail(reply_ret_val):
