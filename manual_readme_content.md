@@ -53,7 +53,9 @@ This app requires creating an app in the Azure Active Directory.
         | OnlineMeetings.ReadWrite  | create meeting | Allows an app to create, read online meetings on behalf of the signed-in user. | No
         | Calendars.ReadWrite  | create meeting (while add_calendar_event parameter is set to True) | Allows the app to create, read, update, and delete events in user calendars. | No
         | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
-        | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | ChannelMessage.Send  | send channel message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | Chat.Read, Chat.ReadWrite | get chat message | Read single message or message reply in chat, on behalf of the signed-in user. | No
+        | ChatMessage.Send | send chat message | Allows an app to send new chat message in specified chat in Microsoft Teams, on behalf of the signed-in user. | No
         | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
 
 

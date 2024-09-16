@@ -19,9 +19,10 @@ import grp
 import json
 import os
 import pwd
+import re
 import sys
 import time
-import re
+from typing import Any, Optional
 
 import encryption_helper
 import phantom.app as phantom
@@ -954,9 +955,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = param[MSTEAMS_JSON_GROUP_ID]
-        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
-        message = param[MSTEAMS_JSON_MSG]
+        group_id = param.get(MSTEAMS_JSON_GROUP_ID)
+        channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
+        message = param.get(MSTEAMS_JSON_MESSAGE)
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -988,9 +989,9 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent')
-    
-    def _handle_send_message(self, param):
-        """ This function is used to send the message in a group.
+
+    def _handle_send_chat_message(self, param):
+        """ This function is used to send chat message in specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -999,8 +1000,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
-        message = param[MSTEAMS_JSON_MESSAGE]
+        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
+        message = param.get(MSTEAMS_JSON_MESSAGE)
 
         endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
@@ -1196,7 +1197,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, status_message='Meeting Created Successfully')
 
     def _handle_get_channel_message(self, param):
-        """ This function is used to send the message in a group.
+        """ This function is used to get the message of group.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1205,9 +1206,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_GROUP_ID], self)
-        channel_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHANNEL_ID], self)
-        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
+        group_id = param.get(MSTEAMS_JSON_GROUP_ID)
+        channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
+        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -1231,9 +1232,9 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def _handle_get_chat_message(self, param):
-        """ This function is used to send the message in a group.
+        """ This function is used to get the message of the specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1242,8 +1243,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
-        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
+        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
+        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
 
         endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
 
@@ -1258,7 +1259,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_response(self, param):
-        """ This function is used to send the message in a group.
+        """ This function is used to get reply message from chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1267,10 +1268,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_CHAT_ID], self)
-        message_id = _handle_py_ver_compat_for_input_str(self._python_version, param[MSTEAMS_JSON_MESSAGE_ID], self)
-        wait_for_replay_in_minutes = int(param.get('wait_time', 1))
-        wait_for_replay_in_seconds = wait_for_replay_in_minutes * 60
+        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
+        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
+        wait_for_replay_in_seconds = int(param.get('wait_time', 1)) * 60
 
         endpoint = MSTEAMS_MSGRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
@@ -1284,26 +1284,28 @@ class MicrosoftTeamConnector(BaseConnector):
 
             if phantom.is_fail(ret_val):
                 return action_result.set_status(phantom.APP_ERROR, response.text)
-            
+
             try:
                 body_content = next(filter(lambda x: message_id == x.get('attachments', [''])[0].get('id', None), response.get('value')))
                 break
             except:
                 wait_for_replay_in_seconds -= 5
-        
+
         if body_content is None:
-            return action_result.set_status(phantom.APP_ERROR, f'After {wait_for_replay_in_minutes} min action did not find an reply for {message_id} message')
-        
+            return action_result.set_status(phantom.APP_ERROR, f'After {wait_for_replay_in_minutes} min \
+                                            action did not find an reply for {message_id} message')
+
         response_message_id = body_content.get('id')
         response_endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
         reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method='get')
 
         if phantom.is_fail(reply_ret_val):
             return action_result.set_status(phantom.APP_ERROR, reply_response.text)
-        
+
         try:
-            text = re.search(r'<\/attachment>\n(?P<body_content>.*)\n', reply_response.get('body',{}).get('content', None)).group('body_content')
-            reply_response['body'].update({'message_reply' : text })
+            text = re.search(
+                r'<\/attachment>\n(?P<body_content>.*)\n', reply_response.get('body', {}).get('content', None)).group('body_content')
+            reply_response['body'].update({'message_reply': text })
 
         except Exception as exc:
             return action_result.set_status(phantom.APP_ERROR, f'Cannot find message text in body.content object. {exc}')
@@ -1325,7 +1327,7 @@ class MicrosoftTeamConnector(BaseConnector):
         action_mapping = {
             'test_connectivity': self._handle_test_connectivity,
             'send_channel_message': self._handle_send_channel_message,
-            'send_chat_message': self._handle_send_message,
+            'send_chat_message': self._handle_send_chat_message,
             'list_groups': self._handle_list_groups,
             'list_teams': self._handle_list_teams,
             'list_users': self._handle_list_users,

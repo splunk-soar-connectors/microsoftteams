@@ -10,11 +10,11 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2024 Splunk Inc.",
-    "app_version": "2.5.2",
+    "app_version": "2.6.0",
     "utctime_updated": "2024-04-10T10:46:03.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "6.1.1",
+    "min_phantom_version": "6.2.1",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
@@ -558,8 +558,7 @@
                     "column_name": "Message",
                     "column_order": 2,
                     "example_values": [
-                        "This is a test message",
-                        "<a href=\"https://www.google.com\"> Test link </a>"
+                        "This is a test message"
                     ]
                 },
                 {
@@ -684,6 +683,42 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.@odata.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "#microsoft.graph.teamworkUserIdentity"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.teamId",
+                    "data_type": "string",
+                    "example_values": [
+                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.channelId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.subject",
                     "data_type": "string"
                 },
@@ -777,12 +812,11 @@
                     "column_name": "Message",
                     "column_order": 1,
                     "example_values": [
-                        "This is a test message",
-                        "<a href=\"https://www.google.com\"> Test link </a>"
+                        "This is a test message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.@odata.context",
+                    "data_path": "action_result.data.*.@odata.context",
                     "data_type": "string",
                     "example_values": [
                         "https://test.link.com/beta/$metadata#chatThreads/$entity"
@@ -792,68 +826,97 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.content",
+                    "data_path": "action_result.data.*.body.content",
                     "data_type": "string",
                     "example_values": [
                         "test message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.contentType",
+                    "data_path": "action_result.data.*.body.contentType",
                     "data_type": "string",
                     "example_values": [
                         "text"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.createdDateTime",
+                    "data_path": "action_result.data.*.createdDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.deletedDateTime",
+                    "data_path": "action_result.data.*.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.@odata.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "#microsoft.graph.teamworkUserIdentity"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_c29a5259-8d15-4c73-9c3a-2382146ae3cb@unq.gbl.spaces"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.etag",
+                    "data_path": "action_result.data.*.channelIdentity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.deletedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
                         "1615528921352"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.application",
+                    "data_path": "action_result.data.*.from.application",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.device",
+                    "data_path": "action_result.data.*.from.device",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.user.displayName",
+                    "data_path": "action_result.data.*.from.user.displayName",
                     "data_type": "string",
                     "example_values": [
                         "Test User"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.id",
+                    "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
                         "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.userIdentityType",
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
                     "data_type": "string",
                     "example_values": [
                         "aadUser"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "1517826451101"
@@ -862,52 +925,88 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.importance",
+                    "data_path": "action_result.data.*.importance",
                     "data_type": "string",
                     "example_values": [
                         "normal"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_path": "action_result.data.*.lastEditedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.locale",
+                    "data_path": "action_result.data.*.locale",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.messageType",
+                    "data_path": "action_result.data.*.messageType",
                     "data_type": "string",
                     "example_values": [
                         "message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.policyViolation",
+                    "data_path": "action_result.data.*.policyViolation",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.replyToId",
+                    "data_path": "action_result.data.*.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.@odata.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "#microsoft.graph.teamworkUserIdentity"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.subject",
+                    "data_path": "action_result.data.*.eventDetail",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.summary",
+                    "data_path": "action_result.data.*.channelIdentity.teamId",
+                    "data_type": "string",
+                    "example_values": [
+                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.channelId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.replyToId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.webUrl",
+                    "data_path": "action_result.data.*.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
                 },
                 {
@@ -995,6 +1094,28 @@
                 {
                     "data_path": "action_result.data.*.email",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isArchived",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2020-07-13T12:39:21.573Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -1112,6 +1233,10 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.uniqueName",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.expirationDateTime",
                     "data_type": "string"
                 },
@@ -1136,7 +1261,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.isAssignableToRole",
-                    "data_type": "string"
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.mail",
@@ -1206,7 +1331,7 @@
                 },
                 {
                     "data_path": "action_result.data.*.onPremisesSyncEnabled",
-                    "data_type": "string"
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.preferredDataLocation",
@@ -2340,9 +2465,9 @@
         {
             "action": "get channel message",
             "description": "Get message in a channel",
-            "type": "generic",
+            "type": "investigate",
             "identifier": "get_channel_message",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "group_id": {
                     "description": "ID of group",
@@ -2370,7 +2495,6 @@
                     "required": true,
                     "order": 2
                 }
-                
             },
             "output": [
                 {
@@ -2408,8 +2532,6 @@
                 {
                     "data_path": "action_result.parameter.message_id",
                     "data_type": "string",
-                    "column_name": "Message ID",
-                    "column_order": 2,
                     "example_values": [
                         "1688719160710"
                     ]
@@ -2425,149 +2547,271 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.content",
+                    "data_path": "action_result.data.*.body.content",
                     "data_type": "string",
                     "example_values": [
                         "test message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.contentType",
+                    "data_path": "action_result.data.body.*.contentType",
                     "data_type": "string",
                     "example_values": [
                         "text"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.createdDateTime",
+                    "data_path": "action_result.data.*.createdDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.deletedDateTime",
+                    "data_path": "action_result.data.*.deletedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.etag",
+                    "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
                         "1615528921352"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.@odata.type",
+                    "data_path": "action_result.data.*.eventDetail.@odata.type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.visibleHistoryStartDateTime",
+                    "data_path": "action_result.data.*.eventDetail.visibleHistoryStartDateTime",
                     "data_type": "string",
                     "example_values": [
                         "0001-01-01T00:00:00Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.members.*.id",
+                    "data_path": "action_result.data.*.eventDetail.members.*.id",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.members.*.displayName",
+                    "data_path": "action_result.data.*.eventDetail.members.*.displayName",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.members.*.userIdentityType",
+                    "data_path": "action_result.data.*.eventDetail.members.*.userIdentityType",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.members.*.tenantId",
+                    "data_path": "action_result.data.*.eventDetail.members.*.tenantId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.device",
+                    "data_path": "action_result.data.*.eventDetail.initiator.device",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.user",
+                    "data_path": "action_result.data.*.eventDetail.initiator.user",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.application",
+                    "data_path": "action_result.data.*.eventDetail.initiator.application",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.application.@odata.type",
+                    "data_path": "action_result.data.*.eventDetail.initiator.application.@odata.type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.application.id",
+                    "data_path": "action_result.data.*.eventDetail.initiator.application.id",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.application.displayName",
+                    "data_path": "action_result.data.*.eventDetail.initiator.application.displayName",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.eventDetail.initiator.application.applicationIdentityType",
+                    "data_path": "action_result.data.*.eventDetail.initiator.application.applicationIdentityType",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.id",
+                    "data_path": "action_result.data.*.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.@odata.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "#microsoft.graph.teamworkUserIdentity"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.teamId",
+                    "data_type": "string",
+                    "example_values": [
+                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.channelId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "1517826451101"
                     ],
                     "column_name": "Message ID",
-                    "column_order": 3
+                    "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.importance",
+                    "data_path": "action_result.data.*.importance",
                     "data_type": "string",
                     "example_values": [
                         "normal"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_path": "action_result.data.*.lastEditedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.locale",
+                    "data_path": "action_result.data.*.locale",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.messageType",
+                    "data_path": "action_result.data.*.messageType",
                     "data_type": "string",
                     "example_values": [
                         "message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.policyViolation",
+                    "data_path": "action_result.data.*.policyViolation",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.replyToId",
+                    "data_path": "action_result.data.*.replyToId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.subject",
+                    "data_path": "action_result.data.*.subject",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.summary",
+                    "data_path": "action_result.data.*.summary",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.webUrl",
+                    "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "html"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.tenantId",
+                    "data_type": "string",
+                    "example_values": [
+                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.@odata.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "#microsoft.graph.teamworkUserIdentity"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Herman Edwards"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
+                    "data_type": "string",
+                    "example_values": [
+                        "aadUser"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.from.device",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.application",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.teamId",
+                    "data_type": "string",
+                    "example_values": [
+                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity.channelId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:0c83d103ad5a4985bd70635bcee64f34@thread.tacv2"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -2589,9 +2833,9 @@
         {
             "action": "get chat message",
             "description": "Get message in a chat",
-            "type": "generic",
+            "type": "investigate",
             "identifier": "get_chat_message",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "chat_id": {
                     "description": "ID of chat",
@@ -2609,7 +2853,6 @@
                     "required": true,
                     "order": 1
                 }
-                
             },
             "output": [
                 {
@@ -2627,7 +2870,7 @@
                         "ms teams chat id"
                     ],
                     "column_name": "Chat ID",
-                    "column_order": 1,
+                    "column_order": 0,
                     "example_values": [
                         "19:1c06006a-1885-401b-8dd2-b23e21dd4fe1_cbb6948d-8c5c-41e7-82e7-d6abeeac89ae@unq.gbl.spaces"
                     ]
@@ -2635,8 +2878,6 @@
                 {
                     "data_path": "action_result.parameter.message_id",
                     "data_type": "string",
-                    "column_name": "Message ID",
-                    "column_order": 2,
                     "example_values": [
                         "1688719160710"
                     ]
@@ -2652,134 +2893,200 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.content",
+                    "data_path": "action_result.data.*.body.content",
                     "data_type": "string",
                     "example_values": [
                         "test message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.contentType",
+                    "data_path": "action_result.data.*.body.contentType",
                     "data_type": "string",
                     "example_values": [
                         "text"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.createdDateTime",
+                    "data_path": "action_result.data.*.createdDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.deletedDateTime",
+                    "data_path": "action_result.data.*.deletedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.etag",
+                    "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
                         "1615528921352"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.application",
+                    "data_path": "action_result.data.*.from.application",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.device",
+                    "data_path": "action_result.data.*.from.device",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.user.@odata.type",
+                    "data_path": "action_result.data.*.from.user.@odata.type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.user.displayName",
+                    "data_path": "action_result.data.*.from.user.displayName",
                     "data_type": "string",
                     "example_values": [
                         "Test User"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.id",
+                    "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
                         "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.userIdentityType",
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
                     "data_type": "string",
                     "example_values": [
                         "aadUser"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.tenantId",
+                    "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
                         "aadUser"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "1517826451101"
                     ],
                     "column_name": "Message ID",
-                    "column_order": 3
+                    "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.importance",
+                    "data_path": "action_result.data.*.importance",
                     "data_type": "string",
                     "example_values": [
                         "normal"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_path": "action_result.data.*.lastEditedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.locale",
+                    "data_path": "action_result.data.*.locale",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.messageType",
+                    "data_path": "action_result.data.*.messageType",
                     "data_type": "string",
                     "example_values": [
                         "message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.policyViolation",
+                    "data_path": "action_result.data.*.policyViolation",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.replyToId",
+                    "data_path": "action_result.data.*.replyToId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.subject",
+                    "data_path": "action_result.data.*.subject",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.summary",
+                    "data_path": "action_result.data.*.summary",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.webUrl",
+                    "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_ee5ed51e-c624-4f05-bda0-e96f09817c9a@unq.gbl.spaces"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1722330920117"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"140fe46d-819d-4b6d-b7ef-1c0a8270f4f0\",\"id\":\"eeb3645f-df19-47a1-8e8c-fcd234cb5f6f\",\"displayName\":\"Herman Edwards\"}}}"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.contentUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.teamsAppId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "messageReference"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.thumbnailUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -2801,9 +3108,9 @@
         {
             "action": "get response message",
             "description": "Get response on message in a chat",
-            "type": "generic",
+            "type": "investigate",
             "identifier": "get_response",
-            "read_only": false,
+            "read_only": true,
             "parameters": {
                 "chat_id": {
                     "description": "ID of chat",
@@ -2831,7 +3138,6 @@
                         10
                     ]
                 }
-                
             },
             "output": [
                 {
@@ -2857,11 +3163,15 @@
                 {
                     "data_path": "action_result.parameter.message_id",
                     "data_type": "string",
-                    "column_name": "Message ID",
-                    "column_order": 1,
                     "example_values": [
                         "1688719160710"
                     ]
+                },
+                {
+                    "data_path":"action_result.parameter.wait_time",
+                    "data_type":"numeric",
+                    "column_name":"Wait time",
+                    "column_order":"2"
                 },
                 {
                     "data_path": "action_result.data.*.@odata.context",
@@ -2874,141 +3184,207 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.content",
+                    "data_path": "action_result.data.*.body.content",
                     "data_type": "string",
                     "example_values": [
                         "test message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.contentType",
+                    "data_path": "action_result.data.*.body.contentType",
                     "data_type": "string",
                     "example_values": [
                         "text"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.body.message_reply",
+                    "data_path": "action_result.data.*.body.message_reply",
                     "data_type": "string",
                     "example_values": [
                         "try it"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.createdDateTime",
+                    "data_path": "action_result.data.*.createdDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.deletedDateTime",
+                    "data_path": "action_result.data.*.deletedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.etag",
+                    "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
                         "1615528921352"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.application",
+                    "data_path": "action_result.data.*.from.application",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.device",
+                    "data_path": "action_result.data.*.from.device",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.user.@odata.type",
+                    "data_path": "action_result.data.*.from.user.@odata.type",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.from.user.displayName",
+                    "data_path": "action_result.data.*.from.user.displayName",
                     "data_type": "string",
                     "example_values": [
                         "Test User"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.id",
+                    "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
                         "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.userIdentityType",
+                    "data_path": "action_result.data.*.from.user.userIdentityType",
                     "data_type": "string",
                     "example_values": [
                         "aadUser"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.from.user.tenantId",
+                    "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
                         "aadUser"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
                         "1517826451101"
                     ],
                     "column_name": "Response message ID",
-                    "column_order": 2
+                    "column_order": 1
                 },
                 {
-                    "data_path": "action_result.data.importance",
+                    "data_path": "action_result.data.*.importance",
                     "data_type": "string",
                     "example_values": [
                         "normal"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.lastEditedDateTime",
+                    "data_path": "action_result.data.*.lastEditedDateTime",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.lastModifiedDateTime",
+                    "data_path": "action_result.data.*.lastModifiedDateTime",
                     "data_type": "string",
                     "example_values": [
                         "2021-03-12T06:02:01.352Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.locale",
+                    "data_path": "action_result.data.*.locale",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.messageType",
+                    "data_path": "action_result.data.*.messageType",
                     "data_type": "string",
                     "example_values": [
                         "message"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.policyViolation",
+                    "data_path": "action_result.data.*.policyViolation",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.replyToId",
+                    "data_path": "action_result.data.*.replyToId",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.subject",
+                    "data_path": "action_result.data.*.subject",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.summary",
+                    "data_path": "action_result.data.*.summary",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.webUrl",
+                    "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.chatId",
+                    "data_type": "string",
+                    "example_values": [
+                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_ee5ed51e-c624-4f05-bda0-e96f09817c9a@unq.gbl.spaces"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "1722330920117"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.content",
+                    "data_type": "string",
+                    "example_values": [
+                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"140fe46d-819d-4b6d-b7ef-1c0a8270f4f0\",\"id\":\"eeb3645f-df19-47a1-8e8c-fcd234cb5f6f\",\"displayName\":\"Herman Edwards\"}}}"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.contentUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.teamsAppId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.contentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "messageReference"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments.*.thumbnailUrl",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.eventDetail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.channelIdentity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3029,27 +3405,9 @@
         }
     ],
     "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
-            }
-        ]
+        "wheel": []
     },
     "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.5-py3-none-any.whl"
-            }
-        ]
+        "wheel": []
     }
 }
