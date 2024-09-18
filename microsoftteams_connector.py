@@ -925,7 +925,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def _handle_send_channel_message(self, param):
-        """This function is used to send the message in a group.
+        """This function is used to Sends a message to a specified channel in a Microsoft Teams group.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -964,7 +964,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
 
     def _handle_send_chat_message(self, param):
-        """This function is used to send chat message in specified chat.
+        """This function is used Sends a message to a specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1143,7 +1143,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Meeting Created Successfully")
 
     def _handle_get_channel_message(self, param):
-        """This function is used to get the message of group.
+        """This function is used to get message from specified channel in a Microsoft Teams group.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1180,7 +1180,7 @@ class MicrosoftTeamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_chat_message(self, param):
-        """This function is used to get the message of the specified chat.
+        """This function is used to get the message from the specified chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1216,11 +1216,12 @@ class MicrosoftTeamConnector(BaseConnector):
 
         chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
         message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
-        wait_for_replay_in_seconds = int(param.get("wait_time", 1)) * 60
+        wait_for_replay_in_minutes = int(param.get("wait_time", 1))
+        wait_for_replay_in_seconds = wait_for_replay_in_minutes * 60
 
         endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
-        body_content: dict = None
+        all_replies = []
 
         while wait_for_replay_in_seconds != 0:
 
@@ -1232,35 +1233,35 @@ class MicrosoftTeamConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, response.text)
 
             try:
-                body_content = next(filter(lambda x: message_id == x.get("attachments", [""])[0].get("id", None), response.get("value")))
-                break
-            except:
-                wait_for_replay_in_seconds -= 5
+                matching_replies = list(
+                    filter(
+                        lambda x: any(attachment.get("id") == message_id for attachment in x.get("attachments", [])), response.get("value", [])
+                    )
+                )
+                if matching_replies:
+                    all_replies.extend(matching_replies)
+                    break
+            except Exception as exc:
+                return action_result.set_status(phantom.APP_ERROR, f"An error occurred: {exc}")
 
-        if body_content is None:
+            wait_for_replay_in_seconds -= 5
+
+        if not all_replies:
             return action_result.set_status(
                 phantom.APP_ERROR,
                 f"After {wait_for_replay_in_minutes} min \
                                             action did not find an reply for {message_id} message",
             )
 
-        response_message_id = body_content.get("id")
-        response_endpoint = MSTEAMS_MS_GRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=response_message_id)
-        reply_ret_val, reply_response = self._update_request(endpoint=response_endpoint, action_result=action_result, method="get")
-
-        if phantom.is_fail(reply_ret_val):
-            return action_result.set_status(phantom.APP_ERROR, reply_response.text)
-
-        try:
-            text = re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply_response.get("body", {}).get("content", None)).group(
-                "body_content"
-            )
-            reply_response["body"].update({"message_reply": text})
-
-        except Exception as exc:
-            return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
-
-        action_result.add_data(reply_response)
+        for reply in all_replies:
+            try:
+                text = ""
+                if re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply.get("body", {}).get("content", None)):
+                    text = re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply.get("body", {}).get("content", None)).group("body_content")
+                reply.get("body").update({"message_reply": text})
+                action_result.add_data(reply)
+            except Exception as exc:
+                return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
 
         return action_result.set_status(phantom.APP_SUCCESS)
 

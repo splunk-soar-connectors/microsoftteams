@@ -3169,9 +3169,7 @@
                 },
                 {
                     "data_path":"action_result.parameter.wait_time",
-                    "data_type":"numeric",
-                    "column_name":"Wait time",
-                    "column_order":"2"
+                    "data_type":"numeric"
                 },
                 {
                     "data_path": "action_result.data.*.@odata.context",
@@ -3200,6 +3198,8 @@
                 {
                     "data_path": "action_result.data.*.body.message_reply",
                     "data_type": "string",
+                    "column_name": "Message Reply",
+                    "column_order": 2,
                     "example_values": [
                         "try it"
                     ]
