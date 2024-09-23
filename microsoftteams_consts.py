@@ -66,6 +66,8 @@ MSTEAMS_STATE_FILE_CORRUPT_ERROR = (
     "Error occurred while loading the state file due to it's unexpected format. "
     "Resetting the state file with the default format. Please test the connectivity."
 )
+MSTEAMS_GET_RESPONSE_WAIT_TIME_INVALID = "{} Invalid wait time provided. Must be one of [1, 5, 10]. Default is 1 minute."
+MSTEAMS_GET_RESPONSE_WAIT_TIME_LIST = [1, 5, 10]
 MSTEAMS_JSON_GROUP_ID = "group_id"
 MSTEAMS_JSON_CHANNEL_ID = "channel_id"
 MSTEAMS_JSON_MESSAGE = "message"

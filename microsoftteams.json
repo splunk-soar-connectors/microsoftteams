@@ -3108,6 +3108,7 @@
         {
             "action": "get response message",
             "description": "Get response on message in a chat",
+            "verbose":"Get response action retrieves replies from chat message. It can only find replies if they exist in the most recent 50 messages.",
             "type": "investigate",
             "identifier": "get_response",
             "read_only": true,

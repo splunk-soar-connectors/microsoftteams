@@ -1198,14 +1198,14 @@ class MicrosoftTeamConnector(BaseConnector):
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR)
+            return action_result.set_status(phantom.APP_ERROR, action_result.get_message())
 
         action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_response(self, param):
-        """This function is used to get reply message from chat.
+        """This function is used to get reply messages from chat.
 
         :param param: Dictionary of input parameters
         :return: status success/failure
@@ -1216,10 +1216,14 @@ class MicrosoftTeamConnector(BaseConnector):
 
         chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
         message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
-        wait_for_replay_in_minutes = int(param.get("wait_time", 1))
-        wait_for_replay_in_seconds = wait_for_replay_in_minutes * 60
+        wait_for_replay_in_minutes = param.get("wait_time", 1)
+        if wait_for_replay_in_minutes not in MSTEAMS_GET_RESPONSE_WAIT_TIME_LIST:
+            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_GET_RESPONSE_WAIT_TIME_INVALID.format(wait_for_replay_in_minutes))
+        wait_for_replay_in_seconds = int(wait_for_replay_in_minutes) * 60
 
         endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
+
+        params = {"$top": 50}
 
         all_replies = []
 
@@ -1227,10 +1231,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
             time.sleep(5)
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
+            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get", params=params)
 
             if phantom.is_fail(ret_val):
-                return action_result.set_status(phantom.APP_ERROR, response.text)
+                return action_result.set_status(phantom.APP_ERROR, action_result.get_message())
 
             try:
                 matching_replies = list(
