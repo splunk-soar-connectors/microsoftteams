@@ -10,7 +10,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2024 Splunk Inc.",
-    "app_version": "2.6.0",
+    "app_version": "3.0.0",
     "utctime_updated": "2024-04-10T10:46:03.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
@@ -537,7 +537,7 @@
                     "column_name": "Channel ID",
                     "column_order": 1,
                     "example_values": [
-                        "cd6f5efb-39f8-492e-80cd-c228c211cf17"
+                        "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
                     ]
                 },
                 {
@@ -549,7 +549,7 @@
                     "column_name": "Group ID",
                     "column_order": 0,
                     "example_values": [
-                        "594101ba-1fde-482d-8e24-3bbab23a3ca8"
+                        "caf444a0-0e0e-426b-98ea-db67ff6b0b25"
                     ]
                 },
                 {
@@ -626,7 +626,7 @@
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
@@ -686,7 +686,7 @@
                     "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -708,7 +708,7 @@
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
                     "example_values": [
-                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                        "hfyr6hdhyr6s-d42a-452b-9155-379764077e25"
                     ]
                 },
                 {
@@ -803,7 +803,7 @@
                     "column_name": "Chat ID",
                     "column_order": 0,
                     "example_values": [
-                        "19:2da4c29f6d7041eca70b638b43d45437@thread.v2"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
@@ -850,7 +850,7 @@
                     "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -864,7 +864,7 @@
                     "data_path": "action_result.data.*.chatId",
                     "data_type": "string",
                     "example_values": [
-                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_c29a5259-8d15-4c73-9c3a-2382146ae3cb@unq.gbl.spaces"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
@@ -883,7 +883,7 @@
                     "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
-                        "1615528921352"
+                        "161552892746472"
                     ]
                 },
                 {
@@ -905,7 +905,7 @@
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
@@ -919,7 +919,7 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "1517826451101"
+                        "1517453451101"
                     ],
                     "column_name": "Message ID",
                     "column_order": 2
@@ -961,7 +961,7 @@
                     "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -983,14 +983,14 @@
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
                     "example_values": [
-                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                        "hfyr6hdhyr6s-d42a-452b-9155-379764077e25"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.channelId",
                     "data_type": "string",
                     "example_values": [
-                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
+                        "10:364736645363546811c658217ea8f23@thread.tacv2"
                     ]
                 },
                 {
@@ -1781,8 +1781,8 @@
                     "data_path": "action_result.data.*.@odata.context",
                     "data_type": "string",
                     "example_values": [
-                        "https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity",
-                        "https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity"
+                        "https://graph.microsoft.com/v1.0/$metadata#users('hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity",
+                        "https://graph.microsoft.com/v1.0/$metadata#users('hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity"
                     ],
                     "contains": [
                         "url"
@@ -2239,14 +2239,14 @@
                     "data_path": "action_result.data.*.participants.organizer.identity.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.participants.organizer.identity.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -2514,7 +2514,7 @@
                     "column_name": "Channel ID",
                     "column_order": 1,
                     "example_values": [
-                        "cd6f5efb-39f8-492e-80cd-c228c211cf17"
+                        "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
                     ]
                 },
                 {
@@ -2526,7 +2526,7 @@
                     "column_name": "Group ID",
                     "column_order": 0,
                     "example_values": [
-                        "594101ba-1fde-482d-8e24-3bbab23a3ca8"
+                        "caf444a0-0e0e-426b-98ea-db67ff6b0b25"
                     ]
                 },
                 {
@@ -2637,7 +2637,7 @@
                     "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -2659,14 +2659,14 @@
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
                     "example_values": [
-                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                        "hfyr6hdhyr6s-d42a-452b-9155-379764077e25"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.channelId",
                     "data_type": "string",
                     "example_values": [
-                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
+                        "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
                     ]
                 },
                 {
@@ -2738,14 +2738,14 @@
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.from.user.tenantId",
                     "data_type": "string",
                     "example_values": [
-                        "140fe46d-819d-4b6d-b7ef-1c0a8270f4f0"
+                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
                     ]
                 },
                 {
@@ -2759,7 +2759,7 @@
                     "data_path": "action_result.data.*.from.user.displayName",
                     "data_type": "string",
                     "example_values": [
-                        "Herman Edwards"
+                        "Test User"
                     ]
                 },
                 {
@@ -2789,14 +2789,14 @@
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
                     "example_values": [
-                        "b6d16fc6-d42a-452b-9155-379764077e25"
+                        "hfyr6hdhyr6s-d42a-452b-9155-379764077e25"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.channelId",
                     "data_type": "string",
                     "example_values": [
-                        "19:0c83d103ad5a4985bd70635bcee64f34@thread.tacv2"
+                        "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
                     ]
                 },
                 {
@@ -2872,14 +2872,14 @@
                     "column_name": "Chat ID",
                     "column_order": 0,
                     "example_values": [
-                        "19:1c06006a-1885-401b-8dd2-b23e21dd4fe1_cbb6948d-8c5c-41e7-82e7-d6abeeac89ae@unq.gbl.spaces"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
                     "data_type": "string",
                     "example_values": [
-                        "1688719160710"
+                        "1688719160100"
                     ]
                 },
                 {
@@ -2921,7 +2921,7 @@
                     "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
-                        "1615528921352"
+                        "1615528921765"
                     ]
                 },
                 {
@@ -2947,7 +2947,7 @@
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
@@ -3026,14 +3026,14 @@
                     "data_path": "action_result.data.*.chatId",
                     "data_type": "string",
                     "example_values": [
-                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_ee5ed51e-c624-4f05-bda0-e96f09817c9a@unq.gbl.spaces"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.attachments.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "1722330920117"
+                        "1722330920100"
                     ]
                 },
                 {
@@ -3044,7 +3044,7 @@
                     "data_path": "action_result.data.*.attachments.*.content",
                     "data_type": "string",
                     "example_values": [
-                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"140fe46d-819d-4b6d-b7ef-1c0a8270f4f0\",\"id\":\"eeb3645f-df19-47a1-8e8c-fcd234cb5f6f\",\"displayName\":\"Herman Edwards\"}}}"
+                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0\",\"id\":\"hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f\",\"displayName\":\"Test User\"}}}"
                     ]
                 },
                 {
@@ -3128,16 +3128,6 @@
                     "data_type": "string",
                     "required": true,
                     "order": 1
-                },
-                "wait_time": {
-                    "description": "The amount of time in minutes to wait for response",
-                    "data_type": "numeric",
-                    "order": 2,
-                    "value_list": [
-                        1,
-                        5,
-                        10
-                    ]
                 }
             },
             "output": [
@@ -3158,19 +3148,15 @@
                     "column_name": "Chat ID",
                     "column_order": 0,
                     "example_values": [
-                        "19:1c06006a-1885-401b-8dd2-b23e21dd4fe1_cbb6948d-8c5c-41e7-82e7-d6abeeac89ae@unq.gbl.spaces"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
                     "data_type": "string",
                     "example_values": [
-                        "1688719160710"
+                        "1688719160711"
                     ]
-                },
-                {
-                    "data_path":"action_result.parameter.wait_time",
-                    "data_type":"numeric"
                 },
                 {
                     "data_path": "action_result.data.*.@odata.context",
@@ -3220,7 +3206,7 @@
                     "data_path": "action_result.data.*.etag",
                     "data_type": "string",
                     "example_values": [
-                        "1615528921352"
+                        "1615528921100"
                     ]
                 },
                 {
@@ -3246,7 +3232,7 @@
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
                     "example_values": [
-                        "eeb3645f-df19-47a1-8e8c-fcd234cb5f6f"
+                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
                     ]
                 },
                 {
@@ -3278,6 +3264,13 @@
                     "example_values": [
                         "normal"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.contain_attachment",
+                    "data_type": "string",
+                    "column_name": "Contain Attchment?",
+                    "column_order": 3
+
                 },
                 {
                     "data_path": "action_result.data.*.lastEditedDateTime",
@@ -3325,7 +3318,7 @@
                     "data_path": "action_result.data.*.chatId",
                     "data_type": "string",
                     "example_values": [
-                        "19:eeb3645f-df19-47a1-8e8c-fcd234cb5f6f_ee5ed51e-c624-4f05-bda0-e96f09817c9a@unq.gbl.spaces"
+                        "10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces"
                     ]
                 },
                 {
@@ -3343,7 +3336,7 @@
                     "data_path": "action_result.data.*.attachments.*.content",
                     "data_type": "string",
                     "example_values": [
-                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"140fe46d-819d-4b6d-b7ef-1c0a8270f4f0\",\"id\":\"eeb3645f-df19-47a1-8e8c-fcd234cb5f6f\",\"displayName\":\"Herman Edwards\"}}}"
+                        "{\"messageId\":\"1722330920117\",\"messagePreview\":\"How are you?\",\"messageSender\":{\"application\":null,\"device\":null,\"user\":{\"userIdentityType\":\"aadUser\",\"tenantId\":\"149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0\",\"id\":\"eeb3645f-df19-47a1-8e8c-fcd234cbuste\",\"displayName\":\"Test User\"}}}"
                     ]
                 },
                 {

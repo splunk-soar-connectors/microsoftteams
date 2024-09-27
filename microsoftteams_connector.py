@@ -934,9 +934,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = param.get(MSTEAMS_JSON_GROUP_ID)
-        channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
-        message = param.get(MSTEAMS_JSON_MESSAGE)
+        group_id = param[MSTEAMS_JSON_GROUP_ID]
+        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
+        message = param[MSTEAMS_JSON_MESSAGE]
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -973,8 +973,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
-        message = param.get(MSTEAMS_JSON_MESSAGE)
+        chat_id = param[MSTEAMS_JSON_CHAT_ID]
+        message = param[MSTEAMS_JSON_MESSAGE]
 
         endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
@@ -1152,9 +1152,9 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = param.get(MSTEAMS_JSON_GROUP_ID)
-        channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
-        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
+        group_id = param[MSTEAMS_JSON_GROUP_ID]
+        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
+        message_id = param[MSTEAMS_JSON_MESSAGE_ID]
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -1189,8 +1189,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
-        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
+        chat_id = param[MSTEAMS_JSON_CHAT_ID]
+        message_id = param[MSTEAMS_JSON_MESSAGE_ID]
 
         endpoint = MSTEAMS_MS_GRAPH_GET_CHAT_MESSAGE_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
 
@@ -1214,47 +1214,59 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
-        message_id = param.get(MSTEAMS_JSON_MESSAGE_ID)
-        wait_for_replay_in_minutes = param.get("wait_time", 1)
-        if wait_for_replay_in_minutes not in MSTEAMS_GET_RESPONSE_WAIT_TIME_LIST:
-            return action_result.set_status(phantom.APP_ERROR, MSTEAMS_GET_RESPONSE_WAIT_TIME_INVALID.format(wait_for_replay_in_minutes))
-        wait_for_replay_in_seconds = int(wait_for_replay_in_minutes) * 60
+        chat_id = param[MSTEAMS_JSON_CHAT_ID]
+        message_id = param[MSTEAMS_JSON_MESSAGE_ID]
 
         endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
 
-        params = {"$top": 50}
+        endpoint += "?$orderby=createdDateTime+desc&$top=50"
 
         all_replies = []
 
-        while wait_for_replay_in_seconds != 0:
+        while True:
 
-            time.sleep(5)
             # make rest call
-            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get", params=params)
+            ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
             if phantom.is_fail(ret_val):
                 return action_result.set_status(phantom.APP_ERROR, action_result.get_message())
 
+            replies = response.get("value", [])
+
+            if not replies:
+                return action_result.set_status(phantom.APP_ERROR, action_result.get_message())
+
+            message_list = []
+
             try:
-                matching_replies = list(
-                    filter(
-                        lambda x: any(attachment.get("id") == message_id for attachment in x.get("attachments", [])), response.get("value", [])
-                    )
-                )
-                if matching_replies:
-                    all_replies.extend(matching_replies)
-                    break
+                for reply in replies:
+                    message_list.append(reply.get("id"))
+                    attachments = reply.get("attachments", [])
+                    attachment_count = len(attachments)
+
+                    if attachment_count > 0:
+                        attachment_ids = {attachment.get("id") for attachment in attachments}
+                        is_found = message_id in attachment_ids
+
+                        if is_found:
+                            reply.update({"contain_attachment": "Yes" if attachment_count > 1 else "No"})
+                            all_replies.append(reply)
+
             except Exception as exc:
                 return action_result.set_status(phantom.APP_ERROR, f"An error occurred: {exc}")
 
-            wait_for_replay_in_seconds -= 5
+            if message_id in message_list:
+                break
+
+            if response.get(MSTEAMS_NEXT_LINK_STRING):
+                endpoint = response.get(MSTEAMS_NEXT_LINK_STRING)
+            else:
+                break
 
         if not all_replies:
             return action_result.set_status(
                 phantom.APP_ERROR,
-                f"After {wait_for_replay_in_minutes} min \
-                                            action did not find an reply for {message_id} message",
+                f"get response action did not find reply for {message_id} message",
             )
 
         for reply in all_replies:

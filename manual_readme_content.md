@@ -13,6 +13,13 @@
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
+## Playbook Backward Compatibility
+
+- The existing action 'send message' has been renamed to 'send channel message.' Hence, it is requested the end-user to please update their existing playbooks by  modifying the action name accordingly.
+
+     - Update the 'send message' action name to 'send channel message'.
+
+
 ## Note
 
 -   For an admin user, you can run the test connectivity directly.
