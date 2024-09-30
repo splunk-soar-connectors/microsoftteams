@@ -1177,7 +1177,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         action_result.add_data(response)
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message successfully retrieved")
 
     def _handle_get_chat_message(self, param):
         """This function is used to get the message from the specified chat.
@@ -1202,7 +1202,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         action_result.add_data(response)
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message successfully retrieved")
 
     def _handle_get_response(self, param):
         """This function is used to get reply messages from chat.
@@ -1279,7 +1279,7 @@ class MicrosoftTeamConnector(BaseConnector):
             except Exception as exc:
                 return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
 
-        return action_result.set_status(phantom.APP_SUCCESS)
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Successfully found a reply to the message")
 
     def handle_action(self, param):
         """This function gets current action identifier and calls member function of its own to handle the action.
