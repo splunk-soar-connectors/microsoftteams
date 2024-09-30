@@ -3268,7 +3268,7 @@
                 {
                     "data_path": "action_result.data.*.contain_attachment",
                     "data_type": "string",
-                    "column_name": "Contain Attchment?",
+                    "column_name": "Contain Attachment?",
                     "column_order": 3
 
                 },
