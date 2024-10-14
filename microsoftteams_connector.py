@@ -1245,10 +1245,9 @@ class MicrosoftTeamConnector(BaseConnector):
                     attachment_count = len(attachments)
 
                     if attachment_count > 0:
-                        attachment_ids = {attachment.get("id") for attachment in attachments}
-                        is_found = message_id in attachment_ids
+                        attachment_ids = [attachment.get("id") for attachment in attachments]
 
-                        if is_found:
+                        if message_id in attachment_ids:
                             reply.update({"contain_attachment": "Yes" if attachment_count > 1 else "No"})
                             all_replies.append(reply)
 
@@ -1271,11 +1270,15 @@ class MicrosoftTeamConnector(BaseConnector):
 
         for reply in all_replies:
             try:
-                text = ""
-                if re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply.get("body", {}).get("content", None)):
-                    text = re.search(r"<\/attachment>\n(?P<body_content>.*)\n", reply.get("body", {}).get("content", None)).group("body_content")
-                reply.get("body").update({"message_reply": text})
+                body = reply.get("body")
+
+                if body is None or body.get("content") is None:
+                    continue
+
+                text = re.findall(r"</attachment>\n(.*?)\n<p>", body.get("content"))
+                reply.get("body").update({"message_reply": "".join(text).strip()})
                 action_result.add_data(reply)
+
             except Exception as exc:
                 return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
 
