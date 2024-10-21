@@ -727,6 +727,281 @@
             "versions": "EQ(*)"
         },
         {
+            "action": "list chats",
+            "description": "List chats for the authenticated user",
+            "type": "investigate",
+            "identifier": "list_chats",
+            "read_only": true,
+            "parameters": {
+                "user": {
+                    "description": "Filter chats containing a specific user (by email or user id)",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "order": 1
+                },
+                "chat_type": {
+                    "description": "Filter chats by type (e.g., oneOnOne, group, meeting)",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "value_list": ["oneOnOne", "group", "meeting"],
+                    "order": 2
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "column_name": "Chat ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.topic",
+                    "data_type": "string",
+                    "column_name": "Topic",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string",
+                    "column_name": "Created On",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.lastUpdatedDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.chatType",
+                    "data_type": "string",
+                    "column_name": "Chat Type",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.webUrl",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.tenantId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_chats",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "send direct message",
+            "description": "Send a direct message to a user",
+            "type": "generic",
+            "identifier": "send_direct_message",
+            "read_only": false,
+            "parameters": {
+                "user_id": {
+                    "description": "ID of the user to send a direct message to",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": ["ms teams user id"]
+                },
+                "message": {
+                    "description": "Message content to send",
+                    "data_type": "string",
+                    "required": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "contains": ["ms teams user id"]
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "contains": ["ms teams message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.id",
+                    "data_type": "string",
+                    "contains": ["ms teams user id"]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.displayName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.content",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.contentType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "send chat message",
+            "description": "Send a message to a specific chat",
+            "type": "generic",
+            "identifier": "send_chat_message",
+            "read_only": false,
+            "parameters": {
+                "chat_id": {
+                    "description": "ID of the chat to send the message to",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": ["ms teams chat id"]
+                },
+                "message": {
+                    "description": "Message content to send",
+                    "data_type": "string",
+                    "required": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.chat_id",
+                    "data_type": "string",
+                    "contains": ["ms teams chat id"]
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "contains": ["ms teams message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.createdDateTime",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.id",
+                    "data_type": "string",
+                    "contains": ["ms teams user id"]
+                },
+                {
+                    "data_path": "action_result.data.*.from.user.displayName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.content",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.body.contentType",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
             "action": "list channels",
             "description": "Lists all channels of a group",
             "type": "investigate",
