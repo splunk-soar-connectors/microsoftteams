@@ -1161,6 +1161,176 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message='Meeting Created Successfully')
 
+    def _handle_list_chats(self, param):
+        """ This function is used to list all chats for the current user with optional filters.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_filter = param.get(MSTEAMS_JSON_USER_FILTER)
+        chat_type_filter = param.get(MSTEAMS_JSON_CHAT_TYPE_FILTER)
+
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT
+
+        while True:
+            # make rest call
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+
+            if phantom.is_fail(status):
+                return action_result.get_status()
+
+            for chat in response.get('value', []):
+                # Filters
+                if chat_type_filter and chat_type_filter != chat.get('chatType', ''):
+                    continue
+
+                if user_filter:
+                    user_match = False
+                    for member in chat.get('members', []):
+                        user_id = member.get('userId', '')
+                        email = member.get('email', '')
+                        if user_filter in user_id or user_filter in email:
+                            user_match = True
+                            break
+                    if not user_match:
+                        continue
+
+                action_result.add_data(chat)
+
+            if not response.get(MSTEAMS_NEXT_LINK_STRING):
+                break
+
+            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+
+        summary = action_result.update_summary({})
+        summary['total_chats'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _send_chat_message(self, action_result, chat_id, message):
+        """ This function is used to send a message to a chat.
+
+        :param action_result: Object of ActionResult class
+        :param chat_id: ID of the chat
+        :param message: Message to be sent
+        :return: status success/failure, response
+        """
+        endpoint = f'/chats/{chat_id}/messages'
+
+        data = {
+            "body": {
+                "contentType": "html",
+                "content": message
+            }
+        }
+
+        # make rest call
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method='post',
+                                                data=json.dumps(data))
+
+        if phantom.is_fail(status):
+            return action_result.get_status(), None
+
+        return phantom.APP_SUCCESS, response
+
+    def _handle_send_chat_message(self, param):
+        """ This function is used to send a message to a chat.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        chat_id = param[MSTEAMS_JSON_CHAT_ID]
+        message = param[MSTEAMS_JSON_MSG]
+
+        status, response = self._send_chat_message(action_result, chat_id, message)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent to chat successfully')
+
+    def _handle_send_direct_message(self, param):
+        """ This function is used to send a direct message to a user.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param[MSTEAMS_JSON_USER_ID]
+        message = param[MSTEAMS_JSON_MSG]
+
+        # Get our ID
+        status, me_response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_ME_ENDPOINT, action_result=action_result)
+
+        if phantom.is_fail(status):
+            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve current user information")
+
+        current_user_id = me_response.get('id')
+        if not current_user_id:
+            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve current user ID")
+
+        # Get chats and find our 1:1 with user
+        status, response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT, action_result=action_result)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        chat_id = None
+        for chat in response.get('value', []):
+            if chat.get('chatType') == 'oneOnOne':
+                members = chat.get('members', [])
+                if len(members) == 2 and any(member.get('userId') == user_id for member in members):
+                    chat_id = chat.get('id')
+                    break
+
+        if not chat_id:
+            # Create new chat if none exists
+            create_chat_endpoint = '/chats'
+            create_chat_data = {
+                "chatType": "oneOnOne",
+                "members": [
+                    {
+                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                        "roles": ["owner"],
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{current_user_id}')"
+                    },
+                    {
+                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                        "roles": ["owner"],
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{user_id}')"
+                    }
+                ]
+            }
+            status, response = self._update_request(endpoint=create_chat_endpoint, action_result=action_result, method='post', data=json.dumps(create_chat_data))
+
+            if phantom.is_fail(status):
+                return action_result.get_status()
+
+            chat_id = response.get('id')
+
+        # Send chat message now
+        status, response = self._send_chat_message(action_result, chat_id, message)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message='Message sent to user successfully')
+
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -1174,10 +1344,13 @@ class MicrosoftTeamConnector(BaseConnector):
         action_mapping = {
             'test_connectivity': self._handle_test_connectivity,
             'send_message': self._handle_send_message,
+            'send_direct_message': self._handle_send_direct_message,
+            'send_chat_message': self._handle_send_chat_message,
             'list_groups': self._handle_list_groups,
             'list_teams': self._handle_list_teams,
             'list_users': self._handle_list_users,
             'list_channels': self._handle_list_channels,
+            'list_chats': self._handle_list_chats,
             'get_admin_consent': self._handle_get_admin_consent,
             'create_meeting': self._handle_create_meeting
         }
