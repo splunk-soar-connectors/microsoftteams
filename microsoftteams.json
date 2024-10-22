@@ -10,11 +10,11 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2019-2024 Splunk Inc.",
-    "app_version": "2.5.2",
+    "app_version": "2.6.2",
     "utctime_updated": "2024-04-10T10:46:03.000000Z",
     "package_name": "phantom_microsoftteams",
     "main_module": "microsoftteams_connector.py",
-    "min_phantom_version": "6.1.1",
+    "min_phantom_version": "6.2.2",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
     "python_version": "3",
@@ -755,11 +755,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.user_id",
-                    "data_type": "string",
-                    "contains": [
-                        "ms teams user id"
-                    ]
+                    "data_path": "action_result.parameter.user",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
