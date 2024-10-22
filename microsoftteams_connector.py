@@ -1174,6 +1174,9 @@ class MicrosoftTeamConnector(BaseConnector):
         user_filter = param.get(MSTEAMS_JSON_USER_FILTER)
         chat_type_filter = param.get(MSTEAMS_JSON_CHAT_TYPE_FILTER)
 
+        if chat_type_filter and chat_type_filter not in MSTEAMS_VALID_CHAT_TYPES:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid chat type filter")
+
         endpoint = MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT
 
         while True:

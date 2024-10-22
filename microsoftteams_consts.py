@@ -87,6 +87,8 @@ MSTEAMS_CONFIG_SCOPE = 'scope'
 MSTEAMS_NEXT_LINK_STRING = '@odata.nextLink'
 MSTEAMS_DEFAULT_TIMEOUT = 30
 
+MSTEAMS_VALID_CHAT_TYPES = ["oneOnOne", "group", "meeting", "unknownFutureValue"]
+
 # For encryption and decryption
 MSTEAMS_ENCRYPT_TOKEN = "Encrypting the {} token"
 MSTEAMS_DECRYPT_TOKEN = "Decrypting the {} token"
