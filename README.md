@@ -2,11 +2,11 @@
 # Microsoft Teams
 
 Publisher: Splunk  
-Connector Version: 2.5.2  
+Connector Version: 2.6.2  
 Product Vendor: Microsoft  
 Product Name: Teams  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.1.1  
+Minimum Product Version: 6.2.2  
 
 This app integrates with Microsoft Teams to support various generic and investigative actions
 
@@ -67,6 +67,7 @@ This app requires creating an app in the Azure Active Directory.
         | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
         | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
         | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
+        | Chat.ReadWrite | read and send chat messages | Allows the app to read and send messages in chats on behalf of the signed-in user. | No |
 
 
         After making these changes, click **Add permissions** at the bottom of the screen, then
@@ -219,6 +220,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user  
 [list users](#action-list-users) - List all users  
 [send message](#action-send-message) - Send a message to a channel of a group  
+[list chats](#action-list-chats) - List chats for the authenticated user  
+[send direct message](#action-send-direct-message) - Send a direct message to a user  
+[send chat message](#action-send-chat-message) - Send a message to a specific chat  
 [list channels](#action-list-channels) - Lists all channels of a group  
 [list groups](#action-list-groups) - List all Azure Groups  
 [list teams](#action-list-teams) - List all Microsoft Teams  
@@ -375,6 +379,144 @@ action_result.summary | string |  |
 action_result.message | string |  |   Message sent 
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
+
+## action: 'list chats'
+List chats for the authenticated user
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user** |  optional  | Filter chats containing a specific user (by email or user id) | string | 
+**chat_type** |  optional  | Filter chats by type (e.g., oneOnOne, group, meeting) | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.user | string |  |  
+action_result.data.\*.id | string |  `ms teams chat id`  |  
+action_result.data.\*.topic | string |  |  
+action_result.data.\*.createdDateTime | string |  |  
+action_result.data.\*.lastUpdatedDateTime | string |  |  
+action_result.data.\*.chatType | string |  |  
+action_result.data.\*.webUrl | string |  `url`  |  
+action_result.data.\*.tenantId | string |  |  
+action_result.data.\*.viewpoint.isHidden | boolean |  |  
+action_result.data.\*.viewpoint.lastMessageReadDateTime | string |  |  
+action_result.data.\*.onlineMeetingInfo.joinWebUrl | string |  `url`  |  
+action_result.data.\*.onlineMeetingInfo.conferenceId | string |  |  
+action_result.data.\*.onlineMeetingInfo.joinUrl | string |  `url`  |  
+action_result.data.\*.onlineMeetingInfo.phones | string |  |  
+action_result.data.\*.onlineMeetingInfo.quickDial | string |  |  
+action_result.data.\*.onlineMeetingInfo.tollFreeNumbers | string |  |  
+action_result.data.\*.onlineMeetingInfo.tollNumber | string |  |  
+action_result.summary.total_chats | numeric |  |  
+action_result.message | string |  |  
+summary.total_objects | numeric |  |  
+summary.total_objects_successful | numeric |  |    
+
+## action: 'send direct message'
+Send a direct message to a user
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user_id** |  required  | ID of the user to send a direct message to | string |  `ms teams user id` 
+**message** |  required  | Message content to send | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.user_id | string |  `ms teams user id`  |  
+action_result.parameter.message | string |  |  
+action_result.data.\*.id | string |  `ms teams message id`  |  
+action_result.data.\*.chatId | string |  `ms teams chat id`  |  
+action_result.data.\*.createdDateTime | string |  |  
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |  
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.etag | string |  |  
+action_result.data.\*.importance | string |  |  
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |  
+action_result.data.\*.replyToId | string |  `ms teams message id`  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  `url`  |  
+action_result.data.\*.from.user.id | string |  `ms teams user id`  |  
+action_result.data.\*.from.user.displayName | string |  |  
+action_result.data.\*.body.content | string |  |  
+action_result.data.\*.body.contentType | string |  |  
+action_result.data.\*.attachments.\*.content | string |  |  
+action_result.data.\*.attachments.\*.contentType | string |  |  
+action_result.data.\*.attachments.\*.contentUrl | string |  `url`  |  
+action_result.data.\*.attachments.\*.id | string |  `ms teams attachment id`  |  
+action_result.data.\*.attachments.\*.name | string |  |  
+action_result.data.\*.attachments.\*.teamsAppId | string |  |  
+action_result.data.\*.attachments.\*.thumbnailUrl | string |  `url`  |  
+action_result.data.\*.channelIdentity.channelId | string |  `ms teams channel id`  |  
+action_result.data.\*.channelIdentity.teamId | string |  `ms teams team id`  |  
+action_result.summary | string |  |  
+action_result.message | string |  |  
+summary.total_objects | numeric |  |  
+summary.total_objects_successful | numeric |  |    
+
+## action: 'send chat message'
+Send a message to a specific chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat_id** |  required  | ID of the chat to send the message to | string |  `ms teams chat id` 
+**message** |  required  | Message content to send | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.chat_id | string |  `ms teams chat id`  |  
+action_result.parameter.message | string |  |  
+action_result.data.\*.id | string |  `ms teams message id`  |  
+action_result.data.\*.chatId | string |  `ms teams chat id`  |  
+action_result.data.\*.createdDateTime | string |  |  
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |  
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.etag | string |  |  
+action_result.data.\*.importance | string |  |  
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |  
+action_result.data.\*.replyToId | string |  `ms teams message id`  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  `url`  |  
+action_result.data.\*.from.user.id | string |  `ms teams user id`  |  
+action_result.data.\*.from.user.displayName | string |  |  
+action_result.data.\*.body.content | string |  |  
+action_result.data.\*.body.contentType | string |  |  
+action_result.data.\*.attachments.\*.content | string |  |  
+action_result.data.\*.attachments.\*.contentType | string |  |  
+action_result.data.\*.attachments.\*.contentUrl | string |  `url`  |  
+action_result.data.\*.attachments.\*.id | string |  `ms teams attachment id`  |  
+action_result.data.\*.attachments.\*.name | string |  |  
+action_result.data.\*.attachments.\*.teamsAppId | string |  |  
+action_result.data.\*.attachments.\*.thumbnailUrl | string |  `url`  |  
+action_result.data.\*.channelIdentity.channelId | string |  `ms teams channel id`  |  
+action_result.data.\*.channelIdentity.teamId | string |  `ms teams team id`  |  
+action_result.summary | string |  |  
+action_result.message | string |  |  
+summary.total_objects | numeric |  |  
+summary.total_objects_successful | numeric |  |    
 
 ## action: 'list channels'
 Lists all channels of a group
@@ -543,7 +685,7 @@ action_result.data.\*.attendees.\*.status.time | string |  |   0001-01-01T00:00:
 action_result.data.\*.attendees.\*.type | string |  |   required 
 action_result.data.\*.body.content | string |  |  
 action_result.data.\*.body.contentType | string |  |   html 
-action_result.data.\*.bodyPreview | string |  |   .........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT 
+action_result.data.\*.bodyPreview | string |  |   .........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtY 
 action_result.data.\*.changeKey | string |  |   07XhOkNngkCkqoNfY+k/jQAFHNmDaQ== 
 action_result.data.\*.createdDateTime | string |  |   2022-04-22T10:51:54.9092527Z 
 action_result.data.\*.end.dateTime | string |  |   2022-04-23T12:40:00.0000000 
