@@ -728,18 +728,18 @@
         },
         {
             "action": "list chats",
-            "description": "List chats for the authenticated user",
+            "description": "List chats for authenticated user",
             "type": "investigate",
             "identifier": "list_chats",
             "read_only": true,
             "parameters": {
                 "user": {
-                    "description": "Filter chats containing a specific user (by email or user id)",
+                    "description": "Filter chats containing specific user (by email or user id)",
                     "data_type": "string",
                     "order": 0
                 },
                 "chat_type": {
-                    "description": "Filter chats by type (e.g., oneOnOne, group, meeting)",
+                    "description": "Filter chats by type",
                     "data_type": "string",
                     "value_list": ["oneOnOne", "group", "meeting", "unknownFutureValue"],
                     "order": 1
@@ -868,7 +868,7 @@
             "read_only": false,
             "parameters": {
                 "user_id": {
-                    "description": "ID of the user to send a direct message to",
+                    "description": "ID of the user to send direct message to",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -1046,13 +1046,13 @@
         },
         {
             "action": "send chat message",
-            "description": "Send a message to a specific chat",
+            "description": "Send a message to specific chat",
             "type": "generic",
             "identifier": "send_chat_message",
             "read_only": false,
             "parameters": {
                 "chat_id": {
-                    "description": "ID of the chat to send the message to",
+                    "description": "ID of the chat to send message to",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -2021,7 +2021,7 @@
                     "data_path": "action_result.data.*.bodyPreview",
                     "data_type": "string",
                     "example_values": [
-                        ".........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtY"
+                        ".........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT"
                     ]
                 },
                 {
