@@ -1169,12 +1169,12 @@ class MicrosoftTeamConnector(BaseConnector):
     def _send_chat_message(self, action_result, chat_id, message):
         """This function is used to send a message to a chat.
 
-        :param action_result: Object of ActionResult class
-        :param chat_id: ID of the chat
+        :param action_result: ActionResult object
+        :param chat_id: ID of desired chat
         :param message: Message to be sent
-        :return: status success/failure, response
+        :return: status success/failure
         """
-        endpoint = f"/chats/{chat_id}/messages"
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
 
         data = {"body": {"contentType": "html", "content": message}}
 
