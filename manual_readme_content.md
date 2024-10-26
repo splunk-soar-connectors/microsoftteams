@@ -55,6 +55,7 @@ This app requires creating an app in the Azure Active Directory.
         | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
         | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
         | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
+        | Chat.ReadWrite | read and send chat messages | Allows the app to read and send messages in chats on behalf of the signed-in user. | No |
 
 
         After making these changes, click **Add permissions** at the bottom of the screen, then
