@@ -456,10 +456,11 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # In pagination, URL of next page contains complete URL
         # So no need to modify them
-        if endpoint.startswith(MSTEAMS_MS_GRAPH_TEAMS_ENDPOINT):
-            endpoint = "{0}{1}".format(MSTEAMS_MS_GRAPH_BETA_API_BASE_URL, endpoint)
-        elif not endpoint.startswith(MSTEAMS_MS_GRAPH_API_BASE_URL):
-            endpoint = "{0}{1}".format(MSTEAMS_MS_GRAPH_API_BASE_URL, endpoint)
+
+        if endpoint.startswith(MSTEAMS_MSGRAPH_TEAMS_ENDPOINT):
+            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_BETA_API_BASE_URL, endpoint)
+        elif not endpoint.startswith(MSTEAMS_MSGRAPH_API_BASE_URL):
+            endpoint = "{0}{1}".format(MSTEAMS_MSGRAPH_API_BASE_URL, endpoint)
 
         if headers is None:
             headers = {}
@@ -719,10 +720,10 @@ class MicrosoftTeamConnector(BaseConnector):
         url_for_authorize_request = "{0}/start_oauth?asset_id={1}&".format(app_rest_url, self.get_asset_id())
         _save_app_state(app_state, self.get_asset_id(), self)
 
-        self.save_progress(MSTEAMS_AUTHORIZE_USER_MESSAGE)
+        self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
         self.save_progress(url_for_authorize_request)  # nosemgrep
-        self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MESSAGE)
-        self.save_progress(MSTEAMS_AUTHORIZE_WAIT_MESSAGE)
+        self.save_progress(MSTEAMS_AUTHORIZE_TROUBLESHOOT_MSG)
+        self.save_progress(MSTEAMS_AUTHORIZE_WAIT_MSG)
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
 
@@ -735,12 +736,12 @@ class MicrosoftTeamConnector(BaseConnector):
 
         # Empty message to override last message of waiting
         self.send_progress("")
-        self.save_progress(MSTEAMS_CODE_RECEIVED_MESSAGE)
+        self.save_progress(MSTEAMS_CODE_RECEIVED_MSG)
         self._state = _load_app_state(self.get_asset_id(), self)
 
         # if code is not available in the state file
         if not self._state or not self._state.get("code"):
-            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MESSAGE)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
 
         if self._state.get(MSTEAMS_STATE_IS_ENCRYPTED):
             try:
@@ -769,7 +770,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MESSAGE)
 
-        url = "{}{}".format(MSTEAMS_MS_GRAPH_API_BASE_URL, MSTEAMS_MS_GRAPH_SELF_ENDPOINT)
+        url = "{}{}".format(MSTEAMS_MSGRAPH_API_BASE_URL, MSTEAMS_MSGRAPH_SELF_ENDPOINT)
         status, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(status):
@@ -838,8 +839,8 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress("Waiting to receive the admin consent")
         self.debug_print("Waiting to receive the admin consent")
 
-        self.save_progress("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MESSAGE, url_to_show))
-        self.debug_print("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MESSAGE, url_to_show))
+        self.save_progress("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
+        self.debug_print("{0}{1}".format(MSTEAMS_ADMIN_CONSENT_MSG, url_to_show))
 
         time.sleep(MSTEAMS_AUTHORIZE_WAIT_TIME)
 
@@ -851,7 +852,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self._state = _load_app_state(self.get_asset_id(), self)
 
         if not self._state or not self._state.get("admin_consent"):
-            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_ADMIN_CONSENT_FAILED_MESSAGE)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_ADMIN_CONSENT_FAILED_MSG)
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message=MSTEAMS_ADMIN_CONSENT_PASSED_MESSAGE)
 
@@ -919,7 +920,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         if channel_id not in channel_list:
             return action_result.set_status(
-                phantom.APP_ERROR, status_message=MSTEAMS_INVALID_CHANNEL_MESSAGE.format(channel_id=channel_id, group_id=group_id)
+                phantom.APP_ERROR, status_message=MSTEAMS_INVALID_CHANNEL_MSG.format(channel_id=channel_id, group_id=group_id)
             )
 
         return phantom.APP_SUCCESS
@@ -957,34 +958,6 @@ class MicrosoftTeamConnector(BaseConnector):
             error_message = action_result.get_message()
             if "teamId" in error_message:
                 error_message = error_message.replace("teamId", "'group_id'")
-            return action_result.set_status(phantom.APP_ERROR, error_message)
-
-        action_result.add_data(response)
-
-        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
-
-    def _handle_send_chat_message(self, param):
-        """This function is used Sends a message to a specified chat.
-
-        :param param: Dictionary of input parameters
-        :return: status success/failure
-        """
-
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        chat_id = param[MSTEAMS_JSON_CHAT_ID]
-        message = param[MSTEAMS_JSON_MESSAGE]
-
-        endpoint = MSTEAMS_MS_GRAPH_CHAT_SEND_MESSAGE_ENDPOINT.format(chat_id=chat_id)
-
-        data = {"body": {"contentType": "html", "content": message}}
-
-        # make rest call
-        ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
-
-        if phantom.is_fail(ret_val):
-            error_message = action_result.get_message()
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         action_result.add_data(response)
@@ -1144,14 +1117,14 @@ class MicrosoftTeamConnector(BaseConnector):
 
     def _handle_get_channel_message(self, param):
         """This function is used to get message from specified channel in a Microsoft Teams group.
-
+        
         :param param: Dictionary of input parameters
         :return: status success/failure
         """
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
-
+        
         group_id = param[MSTEAMS_JSON_GROUP_ID]
         channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
         message_id = param[MSTEAMS_JSON_MESSAGE_ID]
@@ -1203,10 +1176,10 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message successfully retrieved")
-
+      
     def _handle_get_response(self, param):
         """This function is used to get reply messages from chat.
-
+        
         :param param: Dictionary of input parameters
         :return: status success/failure
         """
@@ -1283,6 +1256,176 @@ class MicrosoftTeamConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, f"Cannot find message text in body.content object. {exc}")
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Successfully found a reply to the message")
+      
+    def _handle_list_chats(self, param):
+        """This function is used to list all chats for the current user with optional filters.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_filter = param.get(MSTEAMS_JSON_USER_FILTER)
+        chat_type_filter = param.get(MSTEAMS_JSON_CHAT_TYPE_FILTER)
+
+        if chat_type_filter and chat_type_filter not in MSTEAMS_VALID_CHAT_TYPES:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid chat type filter")
+
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT
+
+        while True:
+            # make rest call
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+
+            if phantom.is_fail(status):
+                return action_result.get_status()
+
+            for chat in response.get("value", []):
+                # Filters
+                if chat_type_filter and chat_type_filter != chat.get("chatType", ""):
+                    continue
+
+                if user_filter:
+                    user_match = False
+                    for member in chat.get("members", []):
+                        user_id = member.get("userId", "")
+                        email = member.get("email", "")
+                        if user_filter in user_id or user_filter in email:
+                            user_match = True
+                            break
+                    if not user_match:
+                        continue
+
+                action_result.add_data(chat)
+
+            if not response.get(MSTEAMS_NEXT_LINK_STRING):
+                break
+
+            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+
+        summary = action_result.update_summary({})
+        summary["total_chats"] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _send_chat_message(self, action_result, chat_id, message):
+        """This function is used to send a message to a chat.
+
+        :param action_result: ActionResult object
+        :param chat_id: ID of desired chat
+        :param message: Message to be sent
+        :return: status success/failure
+        """
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
+
+        data = {"body": {"contentType": "html", "content": message}}
+
+        # make rest call
+        status, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
+
+        if phantom.is_fail(status):
+            return action_result.get_status(), None
+
+        return phantom.APP_SUCCESS, response
+
+    def _handle_send_chat_message(self, param):
+        """This function is used to send a message to a chat.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        chat_id = param[MSTEAMS_JSON_CHAT_ID]
+
+        message = param[MSTEAMS_JSON_MSG]
+
+        status, response = self._send_chat_message(action_result, chat_id, message)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent to chat successfully")
+
+    def _handle_send_direct_message(self, param):
+        """This function is used to send a direct message to a user.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param[MSTEAMS_JSON_USER_ID]
+        message = param[MSTEAMS_JSON_MSG]
+
+        # Get our ID
+        status, me_response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_ME_ENDPOINT, action_result=action_result)
+
+        if phantom.is_fail(status):
+            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve current user information")
+
+        current_user_id = me_response.get("id")
+        if not current_user_id:
+            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve current user ID")
+
+        # Get chats and find our 1:1 with user
+        status, response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT, action_result=action_result)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        chat_id = None
+        for chat in response.get("value", []):
+            if chat.get("chatType") == "oneOnOne":
+                members = chat.get("members", [])
+                if len(members) == 2 and any(member.get("userId") == user_id for member in members):
+                    chat_id = chat.get("id")
+                    break
+
+        if not chat_id:
+            # Create new chat if none exists
+            create_chat_endpoint = "/chats"
+            create_chat_data = {
+                "chatType": "oneOnOne",
+                "members": [
+                    {
+                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                        "roles": ["owner"],
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{current_user_id}')",
+                    },
+                    {
+                        "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                        "roles": ["owner"],
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{user_id}')",
+                    },
+                ],
+            }
+            status, response = self._update_request(
+                endpoint=create_chat_endpoint, action_result=action_result, method="post", data=json.dumps(create_chat_data)
+            )
+
+            if phantom.is_fail(status):
+                return action_result.get_status()
+
+            chat_id = response.get("id")
+
+        # Send chat message now
+        status, response = self._send_chat_message(action_result, chat_id, message)
+
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent to user successfully")
 
     def handle_action(self, param):
         """This function gets current action identifier and calls member function of its own to handle the action.
@@ -1297,6 +1440,7 @@ class MicrosoftTeamConnector(BaseConnector):
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
             "send_channel_message": self._handle_send_channel_message,
+            "send_direct_message": self._handle_send_direct_message,
             "send_chat_message": self._handle_send_chat_message,
             "list_groups": self._handle_list_groups,
             "list_teams": self._handle_list_teams,
@@ -1307,6 +1451,7 @@ class MicrosoftTeamConnector(BaseConnector):
             "get_channel_message": self._handle_get_channel_message,
             "get_chat_message": self._handle_get_chat_message,
             "get_response": self._handle_get_response,
+            "list_chats": self._handle_list_chats,
         }
 
         action = self.get_action_identifier()
