@@ -74,7 +74,7 @@ MSTEAMS_GET_RESPONSE_WAIT_TIME_INVALID = "{} Invalid wait time provided. Must be
 MSTEAMS_GET_RESPONSE_WAIT_TIME_LIST = [1, 5, 10]
 MSTEAMS_JSON_GROUP_ID = "group_id"
 MSTEAMS_JSON_CHANNEL_ID = "channel_id"
-MSTEAMS_JSON_MESSAGE_ID = "message_id"
+MSTEAMS_JSON_MSG_ID = "message_id"
 MSTEAMS_JSON_CHAT_ID = "chat_id"
 MSTEAMS_JSON_USER_ID = "user_id"
 MSTEAMS_JSON_USER_FILTER = "user"
@@ -107,4 +107,4 @@ MSTEAMS_ENCRYPTION_ERROR = "Error occurred while encrypting the state file"
 MSTEAMS_DECRYPTION_ERROR = "Error occurred while decrypting the state file"
 
 # Constants relating to '_get_error_message_from_exception'
-ERROR_MESSAGE_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
+ERROR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
