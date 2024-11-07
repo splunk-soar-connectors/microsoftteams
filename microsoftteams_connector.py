@@ -70,7 +70,7 @@ def _get_error_message_from_exception(e, app_connector):
     """
 
     error_code = None
-    error_message = ERROR_MESSAGE_UNAVAILABLE
+    error_message = ERROR_MSG_UNAVAILABLE
 
     app_connector.error_print("Error occurred.", e)
 
@@ -1127,7 +1127,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
         channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
-        message_id = param[MSTEAMS_JSON_MESSAGE_ID]
+        message_id = param[MSTEAMS_JSON_MSG_ID]
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -1163,7 +1163,7 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
-        message_id = param[MSTEAMS_JSON_MESSAGE_ID]
+        message_id = param[MSTEAMS_JSON_MSG_ID]
 
         endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MSG_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
 
