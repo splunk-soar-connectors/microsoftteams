@@ -1,3 +1,3 @@
 **Unreleased**
 * Updated action name 'send message' to 'send channel message'.
-* Added new actions - 'get chat message', 'get channel message', 'send chat message', 'get response message'.
+* Added new actions - 'get chat message', 'get channel message', 'get response message'.
