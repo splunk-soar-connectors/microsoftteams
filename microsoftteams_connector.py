@@ -925,7 +925,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
-    def _handle_send_channel_message(self, param):
+    def _handle_send_channel_message(self, param: dict) -> str:
         """This function is used to Sends a message to a specified channel in a Microsoft Teams group.
 
         :param param: Dictionary of input parameters
@@ -1115,7 +1115,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Meeting Created Successfully")
 
-    def _handle_get_channel_message(self, param):
+    def _handle_get_channel_message(self, param: dict) -> str:
         """This function is used to get message from specified channel in a Microsoft Teams group.
 
         :param param: Dictionary of input parameters
@@ -1152,7 +1152,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message successfully retrieved")
 
-    def _handle_get_chat_message(self, param):
+    def _handle_get_chat_message(self, param: dict) -> str:
         """This function is used to get the message from the specified chat.
 
         :param param: Dictionary of input parameters
@@ -1177,7 +1177,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message successfully retrieved")
 
-    def _handle_get_response(self, param):
+    def _handle_get_response(self, param: dict) -> str:
         """This function is used to get reply messages from chat.
 
         :param param: Dictionary of input parameters
@@ -1249,7 +1249,7 @@ class MicrosoftTeamConnector(BaseConnector):
                     continue
 
                 text = re.findall(r"</attachment>\n(.*?)\n<p>", body.get("content"))
-                reply.get("body").update({"message_reply": "".join(text).strip()})
+                reply.get("body")["message_reply"] = "".join(text).strip()
                 action_result.add_data(reply)
 
             except Exception as exc:
