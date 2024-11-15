@@ -15,10 +15,7 @@
 [comment]: # ""
 ## Playbook Backward Compatibility
 
-- With version 3.0.0 of the connector,The action 'send message' has been renamed to 'send channel message'.Therefore, we request that end-users please update their existing playbooks by modifying the action name accordingly.
-
-     - Update the 'send message' action name to 'send channel message'.
-
+- With version 3.0.0 of the connector, the 'send message' action has been renamed to 'send channel message'. Please update any existing playbooks by modifying the action name accordingly.
 
 ## Note
 

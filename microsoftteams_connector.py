@@ -1221,7 +1221,7 @@ class MicrosoftTeamConnector(BaseConnector):
                         attachment_ids = [attachment.get("id") for attachment in attachments]
 
                         if message_id in attachment_ids:
-                            reply.update({"contain_attachment": "Yes" if attachment_count > 1 else "No"})
+                            reply["contain_attachment"] = "Yes" if attachment_count > 1 else "No"
                             all_replies.append(reply)
 
             except Exception as exc:
