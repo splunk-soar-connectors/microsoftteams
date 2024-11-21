@@ -63,7 +63,7 @@ MSTEAMS_CURRENT_USER_INFO_MSG = "Getting info about the current user to verify t
 MSTEAMS_GOT_CURRENT_USER_INFO_MSG = "Got current user info"
 MSTEAMS_INVALID_CHANNEL_MSG = "Channel {channel_id} does not belongs to group {group_id}"
 MSTEAMS_TOKEN_EXPIRED_MSG = "Current access token has expired. New one will be generated."
-MSTEAMS_TOKEN_EXPIRED_MARKER = "the token is expired"
+MSTEAMS_TOKEN_EXPIRED_MARKER = "the token is expired."
 MSTEAMS_TOKEN_GENERATED_MSG = "New access token successfully generated."
 MSTEAMS_STATE_FILE_CORRUPT_ERROR = (
     "Error occurred while loading the state file due to it's unexpected format. "
