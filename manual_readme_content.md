@@ -13,6 +13,10 @@
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
+## Playbook Backward Compatibility
+
+- With version 3.0.0 of the connector, the 'send message' action has been renamed to 'send channel message'. Please update any existing playbooks by modifying the action name accordingly.
+
 ## Note
 
 -   For an admin user, you can run the test connectivity directly.
@@ -53,7 +57,9 @@ This app requires creating an app in the Azure Active Directory.
         | OnlineMeetings.ReadWrite  | create meeting | Allows an app to create, read online meetings on behalf of the signed-in user. | No
         | Calendars.ReadWrite  | create meeting (while add_calendar_event parameter is set to True) | Allows the app to create, read, update, and delete events in user calendars. | No
         | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
-        | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | ChannelMessage.Send  | send channel message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | Chat.Read, Chat.ReadWrite | get chat message | Read single message or message reply in chat, on behalf of the signed-in user. | No
+        | ChatMessage.Send | send chat message | Allows an app to send new chat message in specified chat in Microsoft Teams, on behalf of the signed-in user. | No
         | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
         | Chat.ReadWrite | read and send chat messages | Allows the app to read and send messages in chats on behalf of the signed-in user. | No |
 

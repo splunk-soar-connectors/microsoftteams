@@ -219,14 +219,17 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user  
 [list users](#action-list-users) - List all users  
-[send message](#action-send-message) - Send a message to a channel of a group  
+[send channel message](#action-send-channel-message) - Send a message to a channel of a group   
 [list chats](#action-list-chats) - List chats for authenticated user  
 [send direct message](#action-send-direct-message) - Send a direct message to a user  
 [send chat message](#action-send-chat-message) - Send a message to specific chat  
 [list channels](#action-list-channels) - Lists all channels of a group  
 [list groups](#action-list-groups) - List all Azure Groups  
 [list teams](#action-list-teams) - List all Microsoft Teams  
-[create meeting](#action-create-meeting) - Create a microsoft teams meeting  
+[create meeting](#action-create-meeting) - Create a microsoft teams meeting 
+[get channel message](#action-get-channel-message) - Get a message from the channel  
+[get chat message](#action-get-chat-message) - Get a message from the chat  
+[get response message](#action-get-response-message) - Get response on message in a chat  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -332,7 +335,7 @@ action_result.message | string |  |   Total users: 5
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
-## action: 'send message'
+## action: 'send channel message'
 Send a message to a channel of a group
 
 Type: **generic**  
@@ -666,6 +669,312 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **attendees** |  optional  | Email-id of the users to send the meeting invitation | string |  `email` 
 
 #### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.add\_calendar\_event | boolean | 
+action\_result\.parameter\.attendees | string |  `email` 
+action\_result\.parameter\.description | string | 
+action\_result\.parameter\.end\_time | string | 
+action\_result\.parameter\.start\_time | string | 
+action\_result\.parameter\.subject | string | 
+action\_result\.data\.\*\.\@odata\.context | string |  `url` 
+action\_result\.data\.\*\.\@odata\.etag | string | 
+action\_result\.data\.\*\.allowNewTimeProposals | boolean | 
+action\_result\.data\.\*\.attendees\.\*\.emailAddress\.address | string |  `email` 
+action\_result\.data\.\*\.attendees\.\*\.emailAddress\.name | string |  `email` 
+action\_result\.data\.\*\.attendees\.\*\.status\.response | string | 
+action\_result\.data\.\*\.attendees\.\*\.status\.time | string | 
+action\_result\.data\.\*\.attendees\.\*\.type | string | 
+action\_result\.data\.\*\.body\.content | string | 
+action\_result\.data\.\*\.body\.contentType | string | 
+action\_result\.data\.\*\.bodyPreview | string | 
+action\_result\.data\.\*\.changeKey | string | 
+action\_result\.data\.\*\.createdDateTime | string | 
+action\_result\.data\.\*\.end\.dateTime | string | 
+action\_result\.data\.\*\.end\.timeZone | string | 
+action\_result\.data\.\*\.hasAttachments | boolean | 
+action\_result\.data\.\*\.hideAttendees | numeric | 
+action\_result\.data\.\*\.iCalUId | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.importance | string | 
+action\_result\.data\.\*\.isAllDay | boolean | 
+action\_result\.data\.\*\.isCancelled | boolean | 
+action\_result\.data\.\*\.isDraft | boolean | 
+action\_result\.data\.\*\.isOnlineMeeting | boolean | 
+action\_result\.data\.\*\.isOrganizer | boolean | 
+action\_result\.data\.\*\.isReminderOn | boolean | 
+action\_result\.data\.\*\.lastModifiedDateTime | string | 
+action\_result\.data\.\*\.location\.displayName | string | 
+action\_result\.data\.\*\.location\.locationType | string | 
+action\_result\.data\.\*\.location\.uniqueIdType | string | 
+action\_result\.data\.\*\.occurrenceId | string | 
+action\_result\.data\.\*\.onlineMeeting\.joinUrl | string |  `url` 
+action\_result\.data\.\*\.onlineMeetingProvider | string | 
+action\_result\.data\.\*\.onlineMeetingUrl | string | 
+action\_result\.data\.\*\.organizer\.emailAddress\.address | string |  `email` 
+action\_result\.data\.\*\.organizer\.emailAddress\.name | string | 
+action\_result\.data\.\*\.originalEndTimeZone | string | 
+action\_result\.data\.\*\.originalStartTimeZone | string | 
+action\_result\.data\.\*\.recurrence | string | 
+action\_result\.data\.\*\.reminderMinutesBeforeStart | numeric | 
+action\_result\.data\.\*\.responseRequested | boolean | 
+action\_result\.data\.\*\.responseStatus\.response | string | 
+action\_result\.data\.\*\.responseStatus\.time | string | 
+action\_result\.data\.\*\.sensitivity | string | 
+action\_result\.data\.\*\.seriesMasterId | string | 
+action\_result\.data\.\*\.showAs | string | 
+action\_result\.data\.\*\.start\.dateTime | string | 
+action\_result\.data\.\*\.start\.timeZone | string | 
+action\_result\.data\.\*\.subject | string | 
+action\_result\.data\.\*\.transactionId | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.webLink | string |  `url` 
+action\_result\.data\.\*\.joinUrl | string |  `url` 
+action\_result\.data\.\*\.chatInfo\.threadId | string | 
+action\_result\.data\.\*\.chatInfo\.messageId | string | 
+action\_result\.data\.\*\.chatInfo\.replyChainMessageId | string | 
+action\_result\.data\.\*\.externalId | string | 
+action\_result\.data\.\*\.joinWebUrl | string |  `url` 
+action\_result\.data\.\*\.endDateTime | string | 
+action\_result\.data\.\*\.isBroadcast | numeric | 
+action\_result\.data\.\*\.meetingCode | string | 
+action\_result\.data\.\*\.meetingInfo | string | 
+action\_result\.data\.\*\.participants\.organizer\.upn | string |  `email` 
+action\_result\.data\.\*\.participants\.organizer\.role | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.user\.id | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.user\.tenantId | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.user\.displayName | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.user\.registrantId | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.user\.identityProvider | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.guest | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.phone | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.device | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.acsUser | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.encrypted | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.spoolUser | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.onPremises | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.application | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.applicationInstance | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.acsApplicationInstance | string | 
+action\_result\.data\.\*\.participants\.organizer\.identity\.spoolApplicationInstance | string | 
+action\_result\.data\.\*\.startDateTime | string | 
+action\_result\.data\.\*\.joinInformation\.content | string | 
+action\_result\.data\.\*\.joinInformation\.contentType | string | 
+action\_result\.data\.\*\.allowMeetingChat | string | 
+action\_result\.data\.\*\.creationDateTime | string | 
+action\_result\.data\.\*\.allowedPresenters | string | 
+action\_result\.data\.\*\.audioConferencing | string | 
+action\_result\.data\.\*\.autoAdmittedUsers | string | 
+action\_result\.data\.\*\.broadcastSettings | string | 
+action\_result\.data\.\*\.lobbyBypassSettings\.scope | boolean | 
+action\_result\.data\.\*\.lobbyBypassSettings\.isDialInBypassEnabled | boolean | 
+action\_result\.data\.\*\.recordAutomatically | boolean | 
+action\_result\.data\.\*\.isEntryExitAnnounced | boolean | 
+action\_result\.data\.\*\.joinMeetingIdSettings | string | 
+action\_result\.data\.\*\.videoTeleconferenceId | string | 
+action\_result\.data\.\*\.allowTeamworkReactions | boolean | 
+action\_result\.data\.\*\.allowAttendeeToEnableMic | boolean | 
+action\_result\.data\.\*\.allowAttendeeToEnableCamera | boolean | 
+action\_result\.data\.\*\.outerMeetingAutoAdmittedUsers | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
+
+## action: 'send chat message'
+Send message to the chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message** |  required  | Message to send (HTML is supported) | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
+
+## action: 'get channel message'
+Get a message from the channel
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group\_id** |  required  | ID of the group | string | 
+**channel\_id** |  required  | ID of the channel | string | 
+**message\_id** |  required  | ID of the message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.channel\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.eventDetail\.\@odata\.type | string | 
+action\_result\.data\.eventDetail\.visibleHistoryStartDateTime | string | 
+action\_result\.data\.eventDetail\.members\.*\.id| string | 
+action\_result\.data\.eventDetail\.members\.*\.displayName| string | 
+action\_result\.data\.eventDetail\.members\.*\.userIdentityType| string | 
+action\_result\.data\.eventDetail\.members\.*\.tenantId| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.device| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.user| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.\@odata.type| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.id| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.displayName| string | 
+action\_result\.data\.eventDetail\.initiator\.*\.application\.applicationIdentityType| string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
+
+## action: 'get chat message'
+Get a message from the chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message\_id** |  required  | ID of the message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.\@odata\.type | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.from\.user\.tenantId | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+
+## action: 'get response message'
+Get response on message in a chat
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat\_id** |  required  | ID of the chat | string | 
+**message\_id** |  required  | ID of the message | string | 
+**wait\_time** |  optional  | The amount of time in minutes to wait for response | numeric | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.chat\_id | string | 
+action\_result\.parameter\.message\_id | string | 
+action\_result\.parameter\.wait\_time | numeric | 
+action\_result\.data\.\@odata\.context | string |  `url` 
+action\_result\.data\.body\.content | string | 
+action\_result\.data\.body\.contentType | string | 
+action\_result\.data\.body\.message\_reply | string | 
+action\_result\.data\.createdDateTime | string | 
+action\_result\.data\.deletedDateTime | string | 
+action\_result\.data\.etag | string | 
+action\_result\.data\.from\.application | string | 
+action\_result\.data\.from\.device | string | 
+action\_result\.data\.from\.user\.\@odata\.type | string | 
+action\_result\.data\.from\.user\.displayName | string | 
+action\_result\.data\.from\.user\.id | string | 
+action\_result\.data\.from\.user\.userIdentityType | string | 
+action\_result\.data\.from\.user\.tenantId | string | 
+action\_result\.data\.id | string | 
+action\_result\.data\.importance | string | 
+action\_result\.data\.lastEditedDateTime | string | 
+action\_result\.data\.lastModifiedDateTime | string | 
+action\_result\.data\.locale | string | 
+action\_result\.data\.messageType | string | 
+action\_result\.data\.policyViolation | string | 
+action\_result\.data\.replyToId | string | 
+action\_result\.data\.subject | string | 
+action\_result\.data\.summary | string | 
+action\_result\.data\.webUrl | string | 
+action\_result\.summary | string | 
+action\_result\.message | string | 
+=======
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
