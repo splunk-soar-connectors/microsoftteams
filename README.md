@@ -2,11 +2,11 @@
 # Microsoft Teams
 
 Publisher: Splunk  
-Connector Version: 2.6.2  
+Connector Version: 3.0.0  
 Product Vendor: Microsoft  
 Product Name: Teams  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.2.2  
+Minimum Product Version: 6.3.0  
 
 This app integrates with Microsoft Teams to support various generic and investigative actions
 
@@ -25,6 +25,10 @@ This app integrates with Microsoft Teams to support various generic and investig
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
+## Playbook Backward Compatibility
+
+- With version 3.0.0 of the connector, the 'send message' action has been renamed to 'send channel message'. Please update any existing playbooks by modifying the action name accordingly.
+
 ## Note
 
 -   For an admin user, you can run the test connectivity directly.
@@ -65,7 +69,9 @@ This app requires creating an app in the Azure Active Directory.
         | OnlineMeetings.ReadWrite  | create meeting | Allows an app to create, read online meetings on behalf of the signed-in user. | No
         | Calendars.ReadWrite  | create meeting (while add_calendar_event parameter is set to True) | Allows the app to create, read, update, and delete events in user calendars. | No
         | Channel.ReadBasic.All  | list channels | Read channel names and channel descriptions, on behalf of the signed-in user. | No
-        | ChannelMessage.Send  | send message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | ChannelMessage.Send  | send channel message | Allows an app to send channel messages in Microsoft Teams, on behalf of the signed-in user. | No
+        | Chat.Read, Chat.ReadWrite | get chat message | Read single message or message reply in chat, on behalf of the signed-in user. | No
+        | ChatMessage.Send | send chat message | Allows an app to send new chat message in specified chat in Microsoft Teams, on behalf of the signed-in user. | No
         | GroupMember.Read.All  | list groups, list teams | Allows the app to list groups, read basic group properties and read membership of all groups the signed-in user has access to. | Yes
         | Chat.ReadWrite | read and send chat messages | Allows the app to read and send messages in chats on behalf of the signed-in user. | No |
 
@@ -219,7 +225,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user  
 [list users](#action-list-users) - List all users  
-[send message](#action-send-message) - Send a message to a channel of a group  
+[send channel message](#action-send-channel-message) - Send a message to a channel of a group  
 [list chats](#action-list-chats) - List chats for authenticated user  
 [send direct message](#action-send-direct-message) - Send a direct message to a user  
 [send chat message](#action-send-chat-message) - Send a message to specific chat  
@@ -227,6 +233,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list groups](#action-list-groups) - List all Azure Groups  
 [list teams](#action-list-teams) - List all Microsoft Teams  
 [create meeting](#action-create-meeting) - Create a microsoft teams meeting  
+[get channel message](#action-get-channel-message) - Get message in a channel  
+[get chat message](#action-get-chat-message) - Get message in a chat  
+[get response message](#action-get-response-message) - Get response on message in a chat  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -332,7 +341,7 @@ action_result.message | string |  |   Total users: 5
 summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1   
 
-## action: 'send message'
+## action: 'send channel message'
 Send a message to a channel of a group
 
 Type: **generic**  
@@ -349,9 +358,9 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.channel_id | string |  `ms teams channel id`  |   cd6f5efb-39f8-492e-80cd-c228c211cf17 
-action_result.parameter.group_id | string |  `ms teams group id`  |   594101ba-1fde-482d-8e24-3bbab23a3ca8 
-action_result.parameter.message | string |  |   This is a test message  <a href="https://www.google.com"> Test link </a> 
+action_result.parameter.channel_id | string |  `ms teams channel id`  |   10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 
+action_result.parameter.group_id | string |  `ms teams group id`  |   caf444a0-0e0e-426b-98ea-db67ff6b0b25 
+action_result.parameter.message | string |  |   This is a test message 
 action_result.data.\*.@odata.context | string |  `url`  |   https://test.link.com/beta/$metadata#chatThreads/$entity 
 action_result.data.\*.body.content | string |  |   test message 
 action_result.data.\*.body.contentType | string |  |   text 
@@ -362,7 +371,7 @@ action_result.data.\*.from.application | string |  |
 action_result.data.\*.from.conversation | string |  |  
 action_result.data.\*.from.device | string |  |  
 action_result.data.\*.from.user.displayName | string |  |   Test User 
-action_result.data.\*.from.user.id | string |  |   eeb3645f-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.from.user.id | string |  |   hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f 
 action_result.data.\*.from.user.userIdentityType | string |  |   aadUser 
 action_result.data.\*.id | string |  |   1517826451101 
 action_result.data.\*.importance | string |  |   normal 
@@ -372,6 +381,12 @@ action_result.data.\*.locale | string |  |
 action_result.data.\*.messageType | string |  |   message 
 action_result.data.\*.policyViolation | string |  |  
 action_result.data.\*.replyToId | string |  |  
+action_result.data.\*.from.user.tenantId | string |  |   149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 
+action_result.data.\*.from.user.@odata.type | string |  |   #microsoft.graph.teamworkUserIdentity 
+action_result.data.\*.chatId | string |  |  
+action_result.data.\*.eventDetail | string |  |  
+action_result.data.\*.channelIdentity.teamId | string |  |   hfyr6hdhyr6s-d42a-452b-9155-379764077e25 
+action_result.data.\*.channelIdentity.channelId | string |  |   19:391631e7f5984005811c658217ea8f23@thread.tacv2 
 action_result.data.\*.subject | string |  |  
 action_result.data.\*.summary | string |  |  
 action_result.data.\*.webUrl | string |  |  
@@ -397,6 +412,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
 action_result.parameter.user | string |  |  
+action_result.parameter.chat_type | string |  |  
 action_result.data.\*.id | string |  `ms teams chat id`  |  
 action_result.data.\*.topic | string |  |  
 action_result.data.\*.createdDateTime | string |  |  
@@ -537,6 +553,9 @@ action_result.parameter.group_id | string |  `ms teams group id`  |   caf444a0-0
 action_result.data.\*.description | string |  |   Test team 
 action_result.data.\*.displayName | string |  |   General 
 action_result.data.\*.email | string |  |  
+action_result.data.\*.tenantId | string |  |   149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 
+action_result.data.\*.isArchived | boolean |  |   True  False 
+action_result.data.\*.createdDateTime | string |  |   2020-07-13T12:39:21.573Z 
 action_result.data.\*.id | string |  `ms teams channel id`  |   78f4a378-e7d3-49c8-a8a7-645b886752d9 
 action_result.data.\*.isFavoriteByDefault | string |  |  
 action_result.data.\*.membershipType | string |  |   standard 
@@ -564,10 +583,11 @@ action_result.data.\*.createdDateTime | string |  |   2018-01-30T09:43:13Z
 action_result.data.\*.deletedDateTime | string |  |   2018-01-30T09:43:13Z 
 action_result.data.\*.description | string |  |   team2 
 action_result.data.\*.displayName | string |  |   team2 
+action_result.data.\*.uniqueName | string |  |  
 action_result.data.\*.expirationDateTime | string |  |  
 action_result.data.\*.groupTypes | string |  |   DynamicMembership 
 action_result.data.\*.id | string |  `ms teams group id`  |   594101ba-1fde-482d-8e24-3bbab23a3ca8 
-action_result.data.\*.isAssignableToRole | string |  |  
+action_result.data.\*.isAssignableToRole | boolean |  |  
 action_result.data.\*.mail | string |  `email`  |   team2@test.com 
 action_result.data.\*.mailEnabled | boolean |  |   True  False 
 action_result.data.\*.mailNickname | string |  |   team2 
@@ -579,7 +599,7 @@ action_result.data.\*.onPremisesNetBiosName | string |  |
 action_result.data.\*.onPremisesProvisioningErrors | string |  |  
 action_result.data.\*.onPremisesSamAccountName | string |  |  
 action_result.data.\*.onPremisesSecurityIdentifier | string |  |  
-action_result.data.\*.onPremisesSyncEnabled | string |  |  
+action_result.data.\*.onPremisesSyncEnabled | boolean |  |  
 action_result.data.\*.preferredDataLocation | string |  |  
 action_result.data.\*.preferredLanguage | string |  |  
 action_result.data.\*.proxyAddresses | string |  |   SMTP : team2@test.com 
@@ -675,7 +695,7 @@ action_result.parameter.description | string |  |   Test
 action_result.parameter.end_time | string |  |   2017-04-15T12:30:00  24 April, 2022 4:30 am 
 action_result.parameter.start_time | string |  |   2017-04-15T12:00:00  24 April, 2022 4 am 
 action_result.parameter.subject | string |  |   Let's go for lunch 
-action_result.data.\*.@odata.context | string |  `url`  |   https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity  https://graph.microsoft.com/v1.0/$metadata#users('eeb3645f-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity 
+action_result.data.\*.@odata.context | string |  `url`  |   https://graph.microsoft.com/v1.0/$metadata#users('hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f')/calendar/events/$entity  https://graph.microsoft.com/v1.0/$metadata#users('hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity 
 action_result.data.\*.@odata.etag | string |  |   W/"07XhOkNngkCkqoNfY+k/jQAFHNmDaQ==" 
 action_result.data.\*.allowNewTimeProposals | boolean |  |   True  False 
 action_result.data.\*.attendees.\*.emailAddress.address | string |  `email`  |   test@abc.com 
@@ -739,8 +759,8 @@ action_result.data.\*.meetingCode | string |  |   230408462435
 action_result.data.\*.meetingInfo | string |  |  
 action_result.data.\*.participants.organizer.upn | string |  `email`  |   test@abc.com 
 action_result.data.\*.participants.organizer.role | string |  |   presenter 
-action_result.data.\*.participants.organizer.identity.user.id | string |  |   eeb3645f-df19-47a1-8e8c-fcd234cb5f6f 
-action_result.data.\*.participants.organizer.identity.user.tenantId | string |  |   140fe46d-819d-4b6d-b7ef-1c0a8270f4f0 
+action_result.data.\*.participants.organizer.identity.user.id | string |  |   hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.participants.organizer.identity.user.tenantId | string |  |   149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 
 action_result.data.\*.participants.organizer.identity.user.displayName | string |  |  
 action_result.data.\*.participants.organizer.identity.user.registrantId | string |  |  
 action_result.data.\*.participants.organizer.identity.user.identityProvider | string |  |   AAD 
@@ -777,4 +797,195 @@ action_result.data.\*.outerMeetingAutoAdmittedUsers | string |  |
 action_result.summary | string |  |  
 action_result.message | string |  |   Meeting Created Successfully 
 summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1   
+
+## action: 'get channel message'
+Get message in a channel
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group_id** |  required  | ID of group | string |  `ms teams group id` 
+**channel_id** |  required  | ID of channel | string |  `ms teams channel id` 
+**message_id** |  required  | ID of message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.channel_id | string |  `ms teams channel id`  |   10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 
+action_result.parameter.group_id | string |  `ms teams group id`  |   caf444a0-0e0e-426b-98ea-db67ff6b0b25 
+action_result.parameter.message_id | string |  |   1688719160710 
+action_result.data.\*.@odata.context | string |  `url`  |   https://test.link.com/beta/$metadata#chatThreads/$entity 
+action_result.data.\*.body.content | string |  |   test message 
+action_result.data.body.\*.contentType | string |  |   text 
+action_result.data.\*.createdDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.etag | string |  |   1615528921352 
+action_result.data.\*.eventDetail.@odata.type | string |  |  
+action_result.data.\*.eventDetail.visibleHistoryStartDateTime | string |  |   0001-01-01T00:00:00Z 
+action_result.data.\*.eventDetail.members.\*.id | string |  |  
+action_result.data.\*.eventDetail.members.\*.displayName | string |  |  
+action_result.data.\*.eventDetail.members.\*.userIdentityType | string |  |  
+action_result.data.\*.eventDetail.members.\*.tenantId | string |  |  
+action_result.data.\*.eventDetail.initiator.device | string |  |  
+action_result.data.\*.eventDetail.initiator.user | string |  |  
+action_result.data.\*.eventDetail.initiator.application | string |  |  
+action_result.data.\*.eventDetail.initiator.application.@odata.type | string |  |  
+action_result.data.\*.eventDetail.initiator.application.id | string |  |  
+action_result.data.\*.eventDetail.initiator.application.displayName | string |  |  
+action_result.data.\*.eventDetail.initiator.application.applicationIdentityType | string |  |  
+action_result.data.\*.from.user.tenantId | string |  |   149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 
+action_result.data.\*.from.user.@odata.type | string |  |   #microsoft.graph.teamworkUserIdentity 
+action_result.data.\*.chatId | string |  |  
+action_result.data.\*.eventDetail | string |  |  
+action_result.data.\*.channelIdentity.teamId | string |  |   hfyr6hdhyr6s-d42a-452b-9155-379764077e25 
+action_result.data.\*.channelIdentity.channelId | string |  |   10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 
+action_result.data.\*.id | string |  |   1517826451101 
+action_result.data.\*.importance | string |  |   normal 
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |   message 
+action_result.data.\*.policyViolation | string |  |  
+action_result.data.\*.replyToId | string |  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  |  
+action_result.data.\*.body.contentType | string |  |   html 
+action_result.data.\*.from.user.id | string |  |   hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.from.user.tenantId | string |  |   149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 
+action_result.data.\*.from.user.@odata.type | string |  |   #microsoft.graph.teamworkUserIdentity 
+action_result.data.\*.from.user.displayName | string |  |   Test User 
+action_result.data.\*.from.user.userIdentityType | string |  |   aadUser 
+action_result.data.\*.from.device | string |  |  
+action_result.data.\*.from.application | string |  |  
+action_result.data.\*.chatId | string |  |  
+action_result.data.\*.eventDetail | string |  |  
+action_result.data.\*.channelIdentity.teamId | string |  |   hfyr6hdhyr6s-d42a-452b-9155-379764077e25 
+action_result.data.\*.channelIdentity.channelId | string |  |   10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 
+summary.total_objects | numeric |  |   1 
 summary.total_objects_successful | numeric |  |   1 
+action_result.summary | string |  |  
+action_result.message | string |  |   Message sent   
+
+## action: 'get chat message'
+Get message in a chat
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat_id** |  required  | ID of chat | string |  `ms teams chat id` 
+**message_id** |  required  | ID of message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.chat_id | string |  `ms teams chat id`  |   10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces 
+action_result.parameter.message_id | string |  |   1688719160100 
+action_result.data.\*.@odata.context | string |  `url`  |   https://test.link.com/beta/$metadata#chatThreads/$entity 
+action_result.data.\*.body.content | string |  |   test message 
+action_result.data.\*.body.contentType | string |  |   text 
+action_result.data.\*.createdDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.etag | string |  |   1615528921765 
+action_result.data.\*.from.application | string |  |  
+action_result.data.\*.from.device | string |  |  
+action_result.data.\*.from.user.@odata.type | string |  |  
+action_result.data.\*.from.user.displayName | string |  |   Test User 
+action_result.data.\*.from.user.id | string |  |   hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.from.user.userIdentityType | string |  |   aadUser 
+action_result.data.\*.from.user.tenantId | string |  |   aadUser 
+action_result.data.\*.id | string |  |   1517826451101 
+action_result.data.\*.importance | string |  |   normal 
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |   message 
+action_result.data.\*.policyViolation | string |  |  
+action_result.data.\*.replyToId | string |  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  |  
+action_result.data.\*.chatId | string |  |   10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces 
+action_result.data.\*.attachments.\*.id | string |  |   1722330920100 
+action_result.data.\*.attachments.\*.name | string |  |  
+action_result.data.\*.attachments.\*.content | string |  |   {"messageId":"1722330920117","messagePreview":"How are you?","messageSender":{"application":null,"device":null,"user":{"userIdentityType":"aadUser","tenantId":"149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0","id":"hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f","displayName":"Test User"}}} 
+action_result.data.\*.attachments.\*.contentUrl | string |  |  
+action_result.data.\*.attachments.\*.teamsAppId | string |  |  
+action_result.data.\*.attachments.\*.contentType | string |  |   messageReference 
+action_result.data.\*.attachments.\*.thumbnailUrl | string |  |  
+action_result.data.\*.eventDetail | string |  |  
+action_result.data.\*.channelIdentity | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 
+action_result.summary | string |  |  
+action_result.message | string |  |   Message sent   
+
+## action: 'get response message'
+Get response on message in a chat
+
+Type: **investigate**  
+Read only: **True**
+
+Get response action retrieves replies from chat message. It can only find replies if they exist in the most recent 50 messages.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**chat_id** |  required  | ID of chat | string |  `ms teams chat id` 
+**message_id** |  required  | The ID of the message to be replied to | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string |  |   success  failed 
+action_result.parameter.chat_id | string |  `ms teams chat id`  |   10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces 
+action_result.parameter.message_id | string |  |   1688719160711 
+action_result.data.\*.@odata.context | string |  `url`  |   https://test.link.com/beta/$metadata#chatThreads/$entity 
+action_result.data.\*.body.content | string |  |   test message 
+action_result.data.\*.body.contentType | string |  |   text 
+action_result.data.\*.body.message_reply | string |  |   try it 
+action_result.data.\*.createdDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.deletedDateTime | string |  |  
+action_result.data.\*.etag | string |  |   1615528921100 
+action_result.data.\*.from.application | string |  |  
+action_result.data.\*.from.device | string |  |  
+action_result.data.\*.from.user.@odata.type | string |  |  
+action_result.data.\*.from.user.displayName | string |  |   Test User 
+action_result.data.\*.from.user.id | string |  |   hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f 
+action_result.data.\*.from.user.userIdentityType | string |  |   aadUser 
+action_result.data.\*.from.user.tenantId | string |  |   aadUser 
+action_result.data.\*.id | string |  |   1517826451101 
+action_result.data.\*.importance | string |  |   normal 
+action_result.data.\*.contain_attachment | string |  |  
+action_result.data.\*.lastEditedDateTime | string |  |  
+action_result.data.\*.lastModifiedDateTime | string |  |   2021-03-12T06:02:01.352Z 
+action_result.data.\*.locale | string |  |  
+action_result.data.\*.messageType | string |  |   message 
+action_result.data.\*.policyViolation | string |  |  
+action_result.data.\*.replyToId | string |  |  
+action_result.data.\*.subject | string |  |  
+action_result.data.\*.summary | string |  |  
+action_result.data.\*.webUrl | string |  |  
+action_result.data.\*.chatId | string |  |   10:1c06006a-1885-401b-8dd2-b23e21dtest1_cbb6948d6abeeac89ae@unq.gbl.spaces 
+action_result.data.\*.attachments.\*.id | string |  |   1722330920117 
+action_result.data.\*.attachments.\*.name | string |  |  
+action_result.data.\*.attachments.\*.content | string |  |   {"messageId":"1722330920117","messagePreview":"How are you?","messageSender":{"application":null,"device":null,"user":{"userIdentityType":"aadUser","tenantId":"149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0","id":"eeb3645f-df19-47a1-8e8c-fcd234cbuste","displayName":"Test User"}}} 
+action_result.data.\*.attachments.\*.contentUrl | string |  |  
+action_result.data.\*.attachments.\*.teamsAppId | string |  |  
+action_result.data.\*.attachments.\*.contentType | string |  |   messageReference 
+action_result.data.\*.attachments.\*.thumbnailUrl | string |  |  
+action_result.data.\*.eventDetail | string |  |  
+action_result.data.\*.channelIdentity | string |  |  
+summary.total_objects | numeric |  |   1 
+summary.total_objects_successful | numeric |  |   1 
+action_result.summary | string |  |  
+action_result.message | string |  |   Message sent 
