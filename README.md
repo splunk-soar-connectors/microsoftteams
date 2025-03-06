@@ -401,7 +401,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **group_id** | required | ID of group | string | `ms teams group id` |
 **channel_id** | required | ID of channel | string | `ms teams channel id` |
 **message** | required | Message to send (Markdown is supported) | string | |
-**choices** | required | Comma-separated list of possible answers | string | |
+**choices** | optional | Comma-separated list of possible answers (if provided, the question will be presented as a series of radio buttons; if not, the question will be presented as a text box) | string | |
 
 #### Action Output
 
