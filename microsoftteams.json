@@ -805,10 +805,10 @@
                     "order": 2
                 },
                 "choices": {
-                    "description": "Comma-separated list of possible answers",
-                    "data_type": "string",
-                    "required": true,
-                    "order": 3
+                  "description": "Comma-separated list of possible answers (if provided, the question will be presented as a series of radio buttons; if not, the question will be presented as a text box)",
+                  "data_type": "string",
+                  "required": false,
+                  "order": 3
                 }
             },
             "output": [

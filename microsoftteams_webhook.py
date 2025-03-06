@@ -29,6 +29,21 @@ class SOARWebhookAdapter(BotFrameworkHttpAdapterBase):
 
 
 def create_question_card(question: str, choices: list[str]) -> Attachment:
+    if choices:
+        form = {
+            "type": "Input.ChoiceSet",
+            "id": "choice",
+            "choices": [{"title": choice, "value": choice} for choice in choices],
+            "placeholder": "Select an option",
+            "style": "expanded",
+        }
+    else:
+        form = {
+            "type": "Input.Text",
+            "id": "choice",
+            "placeholder": "Enter your response",
+        }
+
     return CardFactory.adaptive_card(
         {
             "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
@@ -46,13 +61,7 @@ def create_question_card(question: str, choices: list[str]) -> Attachment:
                     "text": question,
                     "wrap": True,
                 },
-                {
-                    "type": "Input.ChoiceSet",
-                    "id": "choice",
-                    "choices": [{"title": choice, "value": choice} for choice in choices],
-                    "placeholder": "Select an option",
-                    "style": "expanded",
-                },
+                form,
                 {
                     "type": "ActionSet",
                     "actions": [{"type": "Action.Submit", "title": "Submit"}],
