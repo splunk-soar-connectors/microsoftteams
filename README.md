@@ -205,6 +205,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user \
 [list users](#action-list-users) - List all users \
 [send channel message](#action-send-channel-message) - Send a message to a channel of a group \
+[ask question channel](#action-ask-question-channel) - Ask a question to a channel of a group \
 [list chats](#action-list-chats) - List chats for authenticated user \
 [send direct message](#action-send-direct-message) - Send a direct message to a user \
 [send chat message](#action-send-chat-message) - Send a message to specific chat \
@@ -352,6 +353,67 @@ action_result.status | string | | success failed |
 action_result.parameter.channel_id | string | `ms teams channel id` | 10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 |
 action_result.parameter.group_id | string | `ms teams group id` | caf444a0-0e0e-426b-98ea-db67ff6b0b25 |
 action_result.parameter.message | string | | This is a test message |
+action_result.data.\*.@odata.context | string | `url` | https://test.link.com/beta/$metadata#chatThreads/$entity |
+action_result.data.\*.body.content | string | | test message |
+action_result.data.\*.body.contentType | string | | text |
+action_result.data.\*.createdDateTime | string | | 2021-03-12T06:02:01.352Z |
+action_result.data.\*.deletedDateTime | string | | |
+action_result.data.\*.etag | string | | 1615528921352 |
+action_result.data.\*.from.application | string | | |
+action_result.data.\*.from.conversation | string | | |
+action_result.data.\*.from.device | string | | |
+action_result.data.\*.from.user.displayName | string | | Test User |
+action_result.data.\*.from.user.id | string | | hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f |
+action_result.data.\*.from.user.userIdentityType | string | | aadUser |
+action_result.data.\*.id | string | | 1517826451101 |
+action_result.data.\*.importance | string | | normal |
+action_result.data.\*.lastEditedDateTime | string | | |
+action_result.data.\*.lastModifiedDateTime | string | | 2021-03-12T06:02:01.352Z |
+action_result.data.\*.locale | string | | |
+action_result.data.\*.messageType | string | | message |
+action_result.data.\*.policyViolation | string | | |
+action_result.data.\*.replyToId | string | | |
+action_result.data.\*.from.user.tenantId | string | | 149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0 |
+action_result.data.\*.from.user.@odata.type | string | | #microsoft.graph.teamworkUserIdentity |
+action_result.data.\*.chatId | string | | |
+action_result.data.\*.eventDetail | string | | |
+action_result.data.\*.channelIdentity.teamId | string | | hfyr6hdhyr6s-d42a-452b-9155-379764077e25 |
+action_result.data.\*.channelIdentity.channelId | string | | 19:391631e7f5984005811c658217ea8f23@thread.tacv2 |
+action_result.data.\*.subject | string | | |
+action_result.data.\*.summary | string | | |
+action_result.data.\*.webUrl | string | | |
+action_result.summary | string | | |
+action_result.message | string | | Message sent |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'ask question channel'
+
+Ask a question to a channel of a group
+
+Type: **generic** \
+Read only: **False**
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group_id** | required | ID of group | string | `ms teams group id` |
+**channel_id** | required | ID of channel | string | `ms teams channel id` |
+**message** | required | Message to send (Markdown is supported) | string | |
+**choices** | required | Comma-separated list of possible answers | string | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failed |
+action_result.parameter.channel_id | string | `ms teams channel id` | 10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 |
+action_result.parameter.group_id | string | `ms teams group id` | caf444a0-0e0e-426b-98ea-db67ff6b0b25 |
+action_result.parameter.message | string | | What is your favorite color? |
+action_result.parameter.choices | string | | Red,Green,Blue |
+action_result.data.\*.answer | string | | Green |
+action_result.data.\*.answer_submitter | string | | John Smith |
 action_result.data.\*.@odata.context | string | `url` | https://test.link.com/beta/$metadata#chatThreads/$entity |
 action_result.data.\*.body.content | string | | test message |
 action_result.data.\*.body.contentType | string | | text |
