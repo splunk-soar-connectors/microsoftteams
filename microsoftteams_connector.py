@@ -15,6 +15,7 @@
 #
 #
 # Phantom App imports
+import asyncio
 import grp
 import json
 import os
@@ -27,12 +28,17 @@ from typing import Any, Optional
 import encryption_helper
 import phantom.app as phantom
 import requests
+from botbuilder.core import BotFrameworkAdapter, BotFrameworkAdapterSettings, TurnContext
+from botbuilder.schema import Activity, ConversationParameters, ConversationReference
+from botbuilder.schema.teams import ChannelInfo, TeamInfo, TeamsChannelAccount, TeamsChannelData, TenantInfo
 from bs4 import BeautifulSoup
 from django.http import HttpResponse
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from phantom.utils import get_list_from_string
 
 from microsoftteams_consts import *
+from microsoftteams_webhook import create_question_card
 
 
 try:
@@ -956,6 +962,60 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
 
+    def _handle_ask_question_channel(self, param: dict) -> str:
+        """This function is used to Sends a message to a specified channel in a Microsoft Teams group.
+
+        :param param: Dictionary of input parameters
+        :return: status success/failure
+        """
+
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        group_id = param[MSTEAMS_JSON_GROUP_ID]
+        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
+        message = param[MSTEAMS_JSON_MSG]
+        choices = param[MSTEAMS_JSON_CHOICES]
+
+        choices_split = get_list_from_string(choices)
+
+        status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
+
+        if phantom.is_fail(status):
+            error_message = action_result.get_message()
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        card = create_question_card(message, choices_split)
+        parameters = ConversationParameters(
+            channel_data=TeamsChannelData(
+                channel=ChannelInfo(id=channel_id),
+                team=TeamInfo(id=group_id),
+                tenant=TenantInfo(id=self._tenant),
+            ),
+            tenant_id=self._tenant,
+            bot=TeamsChannelAccount(id=self._client_id, name="SOARBot"),
+            activity=Activity(type="message", attachments=[card]),
+        )
+        adapter = BotFrameworkAdapter(BotFrameworkAdapterSettings(app_id=self._client_id, app_password=self._client_secret))
+
+        async def handle_create_conversation(turn_context: TurnContext) -> Activity:
+            return turn_context.activity
+
+        activity: Activity = asyncio.run(
+            adapter.create_conversation(
+                reference=ConversationReference(channel_id=channel_id),
+                conversation_parameters=parameters,
+                service_url="https://smba.trafficmanager.net/teams",
+                logic=handle_create_conversation,
+            )
+        )
+
+        action_result.add_data(activity.as_dict())
+
+        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
+
     def _handle_list_channels(self, param):
         """This function is used to list all the channels of the particular group.
 
@@ -1428,6 +1488,7 @@ class MicrosoftTeamConnector(BaseConnector):
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
             "send_channel_message": self._handle_send_channel_message,
+            "ask_question_channel": self._handle_ask_question_channel,
             "send_direct_message": self._handle_send_direct_message,
             "send_chat_message": self._handle_send_chat_message,
             "list_groups": self._handle_list_groups,
