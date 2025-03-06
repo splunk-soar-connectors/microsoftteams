@@ -975,7 +975,7 @@ class MicrosoftTeamConnector(BaseConnector):
         group_id = param[MSTEAMS_JSON_GROUP_ID]
         channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
         message = param[MSTEAMS_JSON_MSG]
-        choices = param[MSTEAMS_JSON_CHOICES]
+        choices = param.get(MSTEAMS_JSON_CHOICES, "")
 
         choices_split = get_list_from_string(choices)
 
