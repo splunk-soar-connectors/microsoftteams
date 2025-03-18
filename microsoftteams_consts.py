@@ -1,6 +1,6 @@
 # File: microsoftteams_consts.py
 #
-# Copyright (c) 2019-2024 Splunk Inc.
+# Copyright (c) 2019-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ MSTEAMS_TC_FILE = "oauth_task.out"
 MSTEAMS_TC_STATUS_SLEEP = 3
 MSTEAMS_AUTHORIZE_WAIT_TIME = 15
 MSTEAMS_TOKEN_NOT_AVAILABLE_MSG = "Token not available. Please run test connectivity first."
-MSTEAMS_BASE_URL_NOT_FOUND_MSG = "Phantom Base URL not found in System Settings. " "Please specify this value in System Settings."
+MSTEAMS_BASE_URL_NOT_FOUND_MSG = "Phantom Base URL not found in System Settings. Please specify this value in System Settings."
 MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG = "Test connectivity failed"
 MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG = "Test connectivity passed"
 MSTEAMS_ADMIN_CONSENT_MSG = "Please hit the mentioned URL in another tab of browser to authorize the user and provide the admin consent: "

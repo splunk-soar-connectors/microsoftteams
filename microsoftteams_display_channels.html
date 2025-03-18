@@ -1,16 +1,17 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
-
-{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
 {% block title1 %}{{ title1 }}{% endblock %}
 {% block title2 %}{{ title2 }}{% endblock %}
-{% block custom_tools %}
-{% endblock %}
-
-{% block widget_content %} <!-- Main Start Block -->
-
-<!-- File: microsoftteams_display_channels.html
-  Copyright (c) 2019-2024 Splunk Inc.
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <!-- Main Start Block -->
+  <!-- File: microsoftteams_display_channels.html
+  Copyright (c) 2019-2025 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,8 +24,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License.
 -->
-<style>
-
+  <style>
     .msteams a:hover {
         text-decoration:underline;
     }
@@ -69,64 +69,64 @@ and limitations under the License.
         font-weight: bold;
     }
 
-</style>
-
-<div class="msteams" style="overflow: auto; width: 100% height: 100%; padding-left:10px; padding-right:10px">
+  </style>
+  <div class="msteams"
+       style="overflow: auto;
+              width: 100% height: 100%;
+              padding-left:10px;
+              padding-right:10px">
     <!-- Main Div -->
-
-    {% for result in results %} <!-- loop for each result -->
-    {% if not result.data %}
+    {% for result in results %}
+      <!-- loop for each result -->
+      {% if not result.data %}
         <h4 class="wf-h4-style">No data found</h4>
-    {% else %}
-
-    <h4 class="wf-h4-style">Info</h4>
-    <table class="wf-table-vertical">
-        <tr>
+      {% else %}
+        <h4 class="wf-h4-style">Info</h4>
+        <table class="wf-table-vertical">
+          <tr>
             <td>Group ID</td>
             <td>
-                <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['ms teams group id'], 'value': '{{ result.param.group_id }}' }], 0, {{ container.id }}, null, false);">
-                    {{ result.param.group_id }}
-                    &nbsp;
-                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                </a>
+              <a href="javascript:;"
+                 onclick="context_menu(this, [{'contains': ['ms teams group id'], 'value': '{{ result.param.group_id }}' }], 0, {{ container.id }}, null, false);">
+                {{ result.param.group_id }}
+                &nbsp;
+                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+              </a>
             </td>
-        </tr>
-    </table>
-
-    <h4 class="wf-h4-style">Channels</h4>
-    <div class="channels_table">
-        <table class="phantom-table dataTable">
+          </tr>
+        </table>
+        <h4 class="wf-h4-style">Channels</h4>
+        <div class="channels_table">
+          <table class="phantom-table dataTable">
             <thead>
-                <tr>
-                    <th class="widget-th">Channel ID</th>
-                    <th class="widget-th">Channel Name</th>
-                    <th class="widget-th">Description</th>
-                </tr>
+              <tr>
+                <th class="widget-th">Channel ID</th>
+                <th class="widget-th">Channel Name</th>
+                <th class="widget-th">Description</th>
+              </tr>
             </thead>
             <tbody>
-                {% for item in result.data %}
-                    <tr>
-                        <td class="widget-td">
-                            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ms teams channel id'], 'value': '{{ item.id }}' }], 0, {{ container.id }}, null, false);">
-                                {{ item.id }}
-                                &nbsp;
-                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                            </a>
-                        </td>
-                        <td class="widget-td">{{ item.displayName }}</td>
-                        <td class="widget-td">{{ item.description }}</td>
-                    </tr>
-                {% endfor %}
+              {% for item in result.data %}
+                <tr>
+                  <td class="widget-td">
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['ms teams channel id'], 'value': '{{ item.id }}' }], 0, {{ container.id }}, null, false);">
+                      {{ item.id }}
+                      &nbsp;
+                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
+                  <td class="widget-td">{{ item.displayName }}</td>
+                  <td class="widget-td">{{ item.description }}</td>
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    </div>
-    {% endif %}
+          </table>
+        </div>
+      {% endif %}
     {% endfor %}
-
-</div>
-
-<script>
+  </div>
+  <script>
 $.extend(true, $.fn.dataTable.defaults, {
     "searching": true,
     "bLengthChange": false,
@@ -145,6 +145,5 @@ $.extend(true, $.fn.dataTable.defaults, {
   });
   $('.dataTable').DataTable();
 
-</script>
-
+  </script>
 {% endblock %}
