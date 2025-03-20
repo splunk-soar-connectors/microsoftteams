@@ -9,7 +9,7 @@
     "product_name": "Teams",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2019-2024 Splunk Inc.",
+    "license": "Copyright (c) 2019-2025 Splunk Inc.",
     "app_version": "3.0.0",
     "utctime_updated": "2024-04-10T10:46:03.000000Z",
     "package_name": "phantom_microsoftteams",
@@ -776,7 +776,12 @@
                 "chat_type": {
                     "description": "Filter chats by type",
                     "data_type": "string",
-                    "value_list": ["oneOnOne", "group", "meeting", "unknownFutureValue"],
+                    "value_list": [
+                        "oneOnOne",
+                        "group",
+                        "meeting",
+                        "unknownFutureValue"
+                    ],
                     "order": 1
                 }
             },
@@ -794,8 +799,8 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path":"action_result.parameter.chat_type",
-                    "data_type":"string"
+                    "data_path": "action_result.parameter.chat_type",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.id",
@@ -850,7 +855,9 @@
                 {
                     "data_path": "action_result.data.*.onlineMeetingInfo.joinWebUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.onlineMeetingInfo.conferenceId",
@@ -859,7 +866,9 @@
                 {
                     "data_path": "action_result.data.*.onlineMeetingInfo.joinUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.onlineMeetingInfo.phones",
@@ -911,7 +920,9 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": ["ms teams user id"],
+                    "contains": [
+                        "ms teams user id"
+                    ],
                     "order": 0
                 },
                 "message": {
@@ -933,7 +944,9 @@
                 {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
-                    "contains": ["ms teams user id"]
+                    "contains": [
+                        "ms teams user id"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.message",
@@ -942,14 +955,18 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
-                    "contains": ["ms teams message id"],
+                    "contains": [
+                        "ms teams message id"
+                    ],
                     "column_name": "Message ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.chatId",
                     "data_type": "string",
-                    "contains": ["ms teams chat id"]
+                    "contains": [
+                        "ms teams chat id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.createdDateTime",
@@ -986,7 +1003,9 @@
                 {
                     "data_path": "action_result.data.*.replyToId",
                     "data_type": "string",
-                    "contains": ["ms teams message id"]
+                    "contains": [
+                        "ms teams message id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.subject",
@@ -999,12 +1018,16 @@
                 {
                     "data_path": "action_result.data.*.webUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
-                    "contains": ["ms teams user id"]
+                    "contains": [
+                        "ms teams user id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.from.user.displayName",
@@ -1031,12 +1054,16 @@
                 {
                     "data_path": "action_result.data.*.attachments.*.contentUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attachments.*.id",
                     "data_type": "string",
-                    "contains": ["ms teams attachment id"]
+                    "contains": [
+                        "ms teams attachment id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attachments.*.name",
@@ -1049,17 +1076,23 @@
                 {
                     "data_path": "action_result.data.*.attachments.*.thumbnailUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.channelId",
                     "data_type": "string",
-                    "contains": ["ms teams channel id"]
+                    "contains": [
+                        "ms teams channel id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
-                    "contains": ["ms teams team id"]
+                    "contains": [
+                        "ms teams team id"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -1095,7 +1128,9 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": ["ms teams chat id"],
+                    "contains": [
+                        "ms teams chat id"
+                    ],
                     "order": 0
                 },
                 "message": {
@@ -1117,7 +1152,9 @@
                 {
                     "data_path": "action_result.parameter.chat_id",
                     "data_type": "string",
-                    "contains": ["ms teams chat id"]
+                    "contains": [
+                        "ms teams chat id"
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.message",
@@ -1126,14 +1163,18 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
-                    "contains": ["ms teams message id"],
+                    "contains": [
+                        "ms teams message id"
+                    ],
                     "column_name": "Message ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.chatId",
                     "data_type": "string",
-                    "contains": ["ms teams chat id"]
+                    "contains": [
+                        "ms teams chat id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.createdDateTime",
@@ -1170,7 +1211,9 @@
                 {
                     "data_path": "action_result.data.*.replyToId",
                     "data_type": "string",
-                    "contains": ["ms teams message id"]
+                    "contains": [
+                        "ms teams message id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.subject",
@@ -1183,12 +1226,16 @@
                 {
                     "data_path": "action_result.data.*.webUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.from.user.id",
                     "data_type": "string",
-                    "contains": ["ms teams user id"]
+                    "contains": [
+                        "ms teams user id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.from.user.displayName",
@@ -1215,12 +1262,16 @@
                 {
                     "data_path": "action_result.data.*.attachments.*.contentUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attachments.*.id",
                     "data_type": "string",
-                    "contains": ["ms teams attachment id"]
+                    "contains": [
+                        "ms teams attachment id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attachments.*.name",
@@ -1233,17 +1284,23 @@
                 {
                     "data_path": "action_result.data.*.attachments.*.thumbnailUrl",
                     "data_type": "string",
-                    "contains": ["url"]
+                    "contains": [
+                        "url"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.channelId",
                     "data_type": "string",
-                    "contains": ["ms teams channel id"]
+                    "contains": [
+                        "ms teams channel id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.channelIdentity.teamId",
                     "data_type": "string",
-                    "contains": ["ms teams team id"]
+                    "contains": [
+                        "ms teams team id"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3335,7 +3392,7 @@
         {
             "action": "get response message",
             "description": "Get response on message in a chat",
-            "verbose":"Get response action retrieves replies from chat message. It can only find replies if they exist in the most recent 50 messages.",
+            "verbose": "Get response action retrieves replies from chat message. It can only find replies if they exist in the most recent 50 messages.",
             "type": "investigate",
             "identifier": "get_response",
             "read_only": true,
@@ -3497,7 +3554,6 @@
                     "data_type": "string",
                     "column_name": "Contain Attachment?",
                     "column_order": 3
-
                 },
                 {
                     "data_path": "action_result.data.*.lastEditedDateTime",
