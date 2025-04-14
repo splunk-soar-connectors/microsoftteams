@@ -1,4 +1,5 @@
 botbuilder-core==4.16.2
+botbuilder-dialogs==4.16.2
 botbuilder-integration-aiohttp==4.16.2
 botbuilder-schema==4.16.2
 botframework-connector==4.16.2
