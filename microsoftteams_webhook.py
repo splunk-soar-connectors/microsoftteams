@@ -1,5 +1,8 @@
 import asyncio
 import json
+from io import BytesIO
+from pathlib import Path
+from zipfile import ZipFile
 
 from botbuilder.core import ActivityHandler, Bot, BotFrameworkAdapterSettings, CardFactory, TurnContext
 from botbuilder.core.streaming import BotFrameworkHttpAdapterBase
@@ -93,6 +96,47 @@ class SOARBot(ActivityHandler):
                 )
 
 
+def create_app_package(asset: dict) -> bytes:
+    zip_bytes = BytesIO()
+    with ZipFile(zip_bytes, mode="w") as zip_file:
+        icons_path = Path(__file__).parent / "img" / "bot_icons"
+        for icon_name in ["color.png", "outline.png"]:
+            icon_path = icons_path / icon_name
+            zip_file.write(icon_path, arcname=icon_name)
+
+        manifest = {
+            "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.9/MicrosoftTeams.schema.json",
+            "manifestVersion": "1.19",
+            "version": "1.0.0",
+            "id": asset.get("client_id"),
+            "developer": {
+                "name": "Splunk",
+                "websiteUrl": "https://www.splunk.com",
+                "privacyUrl": "https://www.splunk.com/en_us/legal/privacy.html",
+                "termsOfUseUrl": "https://www.splunk.com/en_us/legal/terms.html",
+            },
+            "name": {"short": "SOARBot", "full": "Splunk SOAR Bot"},
+            "icons": {"color": "color.png", "outline": "outline.png"},
+            "description": {
+                "short": "Alerts and prompts from Splunk SOAR",
+                "full": "This application allows you to view notifications and answer prompts from Splunk SOAR in Microsoft Teams.",
+            },
+            "accentColor": "#4FA484",
+            "bots": [
+                {
+                    "botId": asset.get("client_id"),
+                    "scopes": ["personal", "team", "groupChat"],
+                    "supportsFiles": False,
+                    "isNotificationOnly": False,
+                }
+            ],
+        }
+        zip_file.writestr("manifest.json", json.dumps(manifest, indent=2))
+
+    zip_bytes.seek(0)
+    return zip_bytes.read()
+
+
 def handle_webhook(
     method: str,
     headers: dict[str, str],
@@ -101,6 +145,16 @@ def handle_webhook(
     body: str,
     asset: dict,
 ):
+    if path_parts == ["app_package"]:
+        return {
+            "status_code": 200,
+            "headers": {
+                "Content-Type": "application/zip",
+                "Content-Disposition": 'attachment; filename="appPackage.zip',
+            },
+            "content": create_app_package(asset),
+        }
+
     bot = SOARBot()
     adapter = SOARWebhookAdapter(BotFrameworkAdapterSettings(asset.get("client_id"), app_password=asset.get("client_secret")))
     response_awaitable = adapter.process(method, path_parts, headers, body, bot)
