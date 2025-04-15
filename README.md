@@ -401,15 +401,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **group_id** | required | ID of group | string | `ms teams group id` |
 **channel_id** | required | ID of channel | string | `ms teams channel id` |
 **message** | required | Message to send (Markdown is supported) | string | |
-**choices** | optional | Comma-separated list of possible answers (if provided, the question will be presented as a series of radio buttons; if not, the question will be presented as a text box) | string | |
+**choices** | required | Comma-separated list of possible answers | string | |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failed |
-action_result.parameter.channel_id | string | `ms teams channel id` | 10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 |
 action_result.parameter.group_id | string | `ms teams group id` | caf444a0-0e0e-426b-98ea-db67ff6b0b25 |
+action_result.parameter.channel_id | string | `ms teams channel id` | 10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 |
 action_result.parameter.message | string | | What is your favorite color? |
 action_result.parameter.choices | string | | Red,Green,Blue |
 action_result.data.\*.answer | string | | Green |

@@ -1,2 +1,48 @@
 Splunk SOAR App: Microsoft Teams
 Copyright (c) 2019-2025 Splunk Inc.
+Third Party Software Attributions:
+
+@@@@============================================================================
+
+Library: botbuilder-core - 4.16.2
+Homepage: https://www.github.com/Microsoft/botbuilder-python
+License: MIT License
+License Text:
+
+Please navigate to https://www.github.com/Microsoft/botbuilder-python to obtain a copy of the license.
+
+@@@@============================================================================
+
+Library: botbuilder-dialogs - 4.16.2
+Homepage: https://www.github.com/Microsoft/botbuilder-python
+License: MIT License
+License Text:
+
+Please navigate to https://www.github.com/Microsoft/botbuilder-python to obtain a copy of the license.
+
+@@@@============================================================================
+
+Library: botbuilder-integration-aiohttp - 4.16.2
+Homepage: https://www.github.com/Microsoft/botbuilder-python
+License: MIT License
+License Text:
+
+Please navigate to https://www.github.com/Microsoft/botbuilder-python to obtain a copy of the license.
+
+@@@@============================================================================
+
+Library: botbuilder-schema - 4.16.2
+Homepage: https://github.com/Microsoft/botbuilder-python
+License: MIT License
+License Text:
+
+Please navigate to https://github.com/Microsoft/botbuilder-python to obtain a copy of the license.
+
+@@@@============================================================================
+
+Library: botframework-connector - 4.16.2
+Homepage: https://www.github.com/Microsoft/botbuilder-python
+License: MIT License
+License Text:
+
+Please navigate to https://www.github.com/Microsoft/botbuilder-python to obtain a copy of the license.

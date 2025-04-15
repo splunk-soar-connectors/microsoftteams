@@ -969,7 +969,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status success/failure
         """
 
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
