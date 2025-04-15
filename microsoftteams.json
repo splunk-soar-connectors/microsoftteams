@@ -668,6 +668,14 @@
           "example_values": ["success", "failed"]
         },
         {
+          "data_path": "action_result.parameter.group_id",
+          "data_type": "string",
+          "contains": ["ms teams group id"],
+          "column_name": "Group ID",
+          "column_order": 0,
+          "example_values": ["caf444a0-0e0e-426b-98ea-db67ff6b0b25"]
+        },
+        {
           "data_path": "action_result.parameter.channel_id",
           "data_type": "string",
           "contains": ["ms teams channel id"],
@@ -676,14 +684,6 @@
           "example_values": [
             "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
           ]
-        },
-        {
-          "data_path": "action_result.parameter.group_id",
-          "data_type": "string",
-          "contains": ["ms teams group id"],
-          "column_name": "Group ID",
-          "column_order": 0,
-          "example_values": ["caf444a0-0e0e-426b-98ea-db67ff6b0b25"]
         },
         {
           "data_path": "action_result.parameter.message",
@@ -777,7 +777,7 @@
           "data_type": "string",
           "example_values": ["1517826451101"],
           "column_name": "Message ID",
-          "column_order": 3
+          "column_order": 6
         },
         {
           "data_path": "action_result.data.*.importance",
@@ -3262,12 +3262,16 @@
   "pip39_dependencies": {
     "wheel": [
       {
+        "module": "Babel",
+        "input_file": "wheels/shared/Babel-2.9.1-py2.py3-none-any.whl"
+      },
+      {
         "module": "PyJWT",
         "input_file": "wheels/py3/PyJWT-2.10.1-py3-none-any.whl"
       },
       {
         "module": "aiohappyeyeballs",
-        "input_file": "wheels/py3/aiohappyeyeballs-2.5.0-py3-none-any.whl"
+        "input_file": "wheels/py3/aiohappyeyeballs-2.6.1-py3-none-any.whl"
       },
       {
         "module": "aiohttp",
@@ -3278,20 +3282,28 @@
         "input_file": "wheels/shared/aiosignal-1.3.2-py2.py3-none-any.whl"
       },
       {
+        "module": "aiounittest",
+        "input_file": "wheels/py3/aiounittest-1.3.0-py3-none-any.whl"
+      },
+      {
         "module": "async_timeout",
         "input_file": "wheels/py3/async_timeout-4.0.3-py3-none-any.whl"
       },
       {
         "module": "attrs",
-        "input_file": "wheels/py3/attrs-25.1.0-py3-none-any.whl"
+        "input_file": "wheels/py3/attrs-25.3.0-py3-none-any.whl"
       },
       {
         "module": "azure_core",
-        "input_file": "wheels/py3/azure_core-1.32.0-py3-none-any.whl"
+        "input_file": "wheels/py3/azure_core-1.33.0-py3-none-any.whl"
       },
       {
         "module": "botbuilder_core",
         "input_file": "wheels/py3/botbuilder_core-4.16.2-py3-none-any.whl"
+      },
+      {
+        "module": "botbuilder_dialogs",
+        "input_file": "wheels/py3/botbuilder_dialogs-4.16.2-py3-none-any.whl"
       },
       {
         "module": "botbuilder_integration_aiohttp",
@@ -3318,8 +3330,20 @@
         "input_file": "wheels/py39/cryptography-44.0.2-cp39-abi3-manylinux_2_28_x86_64.whl"
       },
       {
+        "module": "datedelta",
+        "input_file": "wheels/py3/datedelta-1.4-py3-none-any.whl"
+      },
+      {
+        "module": "emoji",
+        "input_file": "wheels/py3/emoji-1.7.0-py3-none-any.whl"
+      },
+      {
         "module": "frozenlist",
         "input_file": "wheels/py39/frozenlist-1.5.0-cp39-cp39-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl"
+      },
+      {
+        "module": "grapheme",
+        "input_file": "wheels/py3/grapheme-0.6.0-py3-none-any.whl"
       },
       {
         "module": "isodate",
@@ -3331,7 +3355,7 @@
       },
       {
         "module": "msal",
-        "input_file": "wheels/py3/msal-1.31.1-py3-none-any.whl"
+        "input_file": "wheels/py3/msal-1.32.0-py3-none-any.whl"
       },
       {
         "module": "msrest",
@@ -3339,7 +3363,11 @@
       },
       {
         "module": "multidict",
-        "input_file": "wheels/py39/multidict-6.1.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+        "input_file": "wheels/py39/multidict-6.4.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "multipledispatch",
+        "input_file": "wheels/py3/multipledispatch-1.0.0-py3-none-any.whl"
       },
       {
         "module": "oauthlib",
@@ -3347,11 +3375,39 @@
       },
       {
         "module": "propcache",
-        "input_file": "wheels/py39/propcache-0.3.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+        "input_file": "wheels/py39/propcache-0.3.1-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
       },
       {
         "module": "pycparser",
         "input_file": "wheels/py3/pycparser-2.22-py3-none-any.whl"
+      },
+      {
+        "module": "pytz",
+        "input_file": "wheels/shared/pytz-2025.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text",
+        "input_file": "wheels/py3/recognizers_text-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_choice",
+        "input_file": "wheels/py3/recognizers_text_choice-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_date_time",
+        "input_file": "wheels/py3/recognizers_text_date_time-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_number",
+        "input_file": "wheels/py3/recognizers_text_number-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_number_with_unit",
+        "input_file": "wheels/py3/recognizers_text_number_with_unit-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "regex",
+        "input_file": "wheels/py39/regex-2024.11.6-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
       },
       {
         "module": "requests_oauthlib",
@@ -3359,11 +3415,171 @@
       },
       {
         "module": "typing_extensions",
-        "input_file": "wheels/py3/typing_extensions-4.12.2-py3-none-any.whl"
+        "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
       },
       {
         "module": "yarl",
-        "input_file": "wheels/py39/yarl-1.18.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+        "input_file": "wheels/py39/yarl-1.19.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      }
+    ]
+  },
+  "pip313_dependencies": {
+    "wheel": [
+      {
+        "module": "Babel",
+        "input_file": "wheels/shared/Babel-2.9.1-py2.py3-none-any.whl"
+      },
+      {
+        "module": "PyJWT",
+        "input_file": "wheels/py3/PyJWT-2.10.1-py3-none-any.whl"
+      },
+      {
+        "module": "aiohappyeyeballs",
+        "input_file": "wheels/py3/aiohappyeyeballs-2.6.1-py3-none-any.whl"
+      },
+      {
+        "module": "aiohttp",
+        "input_file": "wheels/py313/aiohttp-3.10.5-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "aiosignal",
+        "input_file": "wheels/shared/aiosignal-1.3.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "aiounittest",
+        "input_file": "wheels/py3/aiounittest-1.3.0-py3-none-any.whl"
+      },
+      {
+        "module": "attrs",
+        "input_file": "wheels/py3/attrs-25.3.0-py3-none-any.whl"
+      },
+      {
+        "module": "azure_core",
+        "input_file": "wheels/py3/azure_core-1.33.0-py3-none-any.whl"
+      },
+      {
+        "module": "botbuilder_core",
+        "input_file": "wheels/py3/botbuilder_core-4.16.2-py3-none-any.whl"
+      },
+      {
+        "module": "botbuilder_dialogs",
+        "input_file": "wheels/py3/botbuilder_dialogs-4.16.2-py3-none-any.whl"
+      },
+      {
+        "module": "botbuilder_integration_aiohttp",
+        "input_file": "wheels/py3/botbuilder_integration_aiohttp-4.16.2-py3-none-any.whl"
+      },
+      {
+        "module": "botbuilder_schema",
+        "input_file": "wheels/shared/botbuilder_schema-4.16.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "botframework_connector",
+        "input_file": "wheels/shared/botframework_connector-4.16.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "botframework_streaming",
+        "input_file": "wheels/py3/botframework_streaming-4.16.2-py3-none-any.whl"
+      },
+      {
+        "module": "cffi",
+        "input_file": "wheels/py313/cffi-1.17.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "cryptography",
+        "input_file": "wheels/py39/cryptography-44.0.2-cp39-abi3-manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "datedelta",
+        "input_file": "wheels/py3/datedelta-1.4-py3-none-any.whl"
+      },
+      {
+        "module": "emoji",
+        "input_file": "wheels/py3/emoji-1.7.0-py3-none-any.whl"
+      },
+      {
+        "module": "frozenlist",
+        "input_file": "wheels/py313/frozenlist-1.5.0-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "grapheme",
+        "input_file": "wheels/py3/grapheme-0.6.0-py3-none-any.whl"
+      },
+      {
+        "module": "isodate",
+        "input_file": "wheels/py3/isodate-0.7.2-py3-none-any.whl"
+      },
+      {
+        "module": "jsonpickle",
+        "input_file": "wheels/shared/jsonpickle-1.4.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "msal",
+        "input_file": "wheels/py3/msal-1.32.0-py3-none-any.whl"
+      },
+      {
+        "module": "msrest",
+        "input_file": "wheels/py3/msrest-0.7.1-py3-none-any.whl"
+      },
+      {
+        "module": "multidict",
+        "input_file": "wheels/py313/multidict-6.4.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "multipledispatch",
+        "input_file": "wheels/py3/multipledispatch-1.0.0-py3-none-any.whl"
+      },
+      {
+        "module": "oauthlib",
+        "input_file": "wheels/py3/oauthlib-3.2.2-py3-none-any.whl"
+      },
+      {
+        "module": "propcache",
+        "input_file": "wheels/py313/propcache-0.3.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "pycparser",
+        "input_file": "wheels/py3/pycparser-2.22-py3-none-any.whl"
+      },
+      {
+        "module": "pytz",
+        "input_file": "wheels/shared/pytz-2025.2-py2.py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text",
+        "input_file": "wheels/py3/recognizers_text-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_choice",
+        "input_file": "wheels/py3/recognizers_text_choice-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_date_time",
+        "input_file": "wheels/py3/recognizers_text_date_time-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_number",
+        "input_file": "wheels/py3/recognizers_text_number-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "recognizers_text_number_with_unit",
+        "input_file": "wheels/py3/recognizers_text_number_with_unit-1.0.2a2-py3-none-any.whl"
+      },
+      {
+        "module": "regex",
+        "input_file": "wheels/py313/regex-2024.11.6-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+      },
+      {
+        "module": "requests_oauthlib",
+        "input_file": "wheels/shared/requests_oauthlib-2.0.0-py2.py3-none-any.whl"
+      },
+      {
+        "module": "typing_extensions",
+        "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
+      },
+      {
+        "module": "yarl",
+        "input_file": "wheels/py313/yarl-1.19.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
       }
     ]
   }
