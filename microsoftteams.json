@@ -4083,7 +4083,7 @@
             },
             {
                 "module": "frozenlist",
-                "input_file": "wheels/py39/frozenlist-1.5.0-cp39-cp39-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl"
+                "input_file": "wheels/py39/frozenlist-1.6.0-cp39-cp39-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "grapheme",
@@ -4099,7 +4099,7 @@
             },
             {
                 "module": "msal",
-                "input_file": "wheels/py3/msal-1.32.0-py3-none-any.whl"
+                "input_file": "wheels/py3/msal-1.32.3-py3-none-any.whl"
             },
             {
                 "module": "msrest",
@@ -4163,7 +4163,7 @@
             },
             {
                 "module": "yarl",
-                "input_file": "wheels/py39/yarl-1.19.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py39/yarl-1.20.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
     },
@@ -4243,7 +4243,7 @@
             },
             {
                 "module": "frozenlist",
-                "input_file": "wheels/py313/frozenlist-1.5.0-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/frozenlist-1.6.0-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "grapheme",
@@ -4259,7 +4259,7 @@
             },
             {
                 "module": "msal",
-                "input_file": "wheels/py3/msal-1.32.0-py3-none-any.whl"
+                "input_file": "wheels/py3/msal-1.32.3-py3-none-any.whl"
             },
             {
                 "module": "msrest",
@@ -4323,7 +4323,7 @@
             },
             {
                 "module": "yarl",
-                "input_file": "wheels/py313/yarl-1.19.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/yarl-1.20.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
     }
