@@ -17,9 +17,15 @@ from io import BytesIO
 from pathlib import Path
 from zipfile import ZipFile
 
+import phantom.app as phantom
 from botbuilder.core import ActivityHandler, Bot, BotFrameworkAdapterSettings, CardFactory, TurnContext
 from botbuilder.core.streaming import BotFrameworkHttpAdapterBase
-from botbuilder.schema import Activity, Attachment, ChannelAccount
+from botbuilder.schema import Activity, Attachment
+from phantom.app import ActionResult
+from phantom.connector_result import ConnectorResult
+from phantom.utils import get_list_from_string
+
+from microsoftteams_consts import MSTEAMS_JSON_CHOICES, MSTEAMS_JSON_MSG
 
 
 class SOARWebhookAdapter(BotFrameworkHttpAdapterBase):
@@ -87,26 +93,89 @@ def create_question_card(question: str, choices: list[str]) -> Attachment:
     )
 
 
+def create_completed_question_card(question: str, choices: list[str], answer: str, answerer: str) -> Attachment:
+    if choices:
+        choice_bullets = []
+        for choice in choices:
+            if choice == answer:
+                choice_bullets.append(f"- **{choice}** ✅")
+            else:
+                choice_bullets.append(f"- {choice}")
+        answer_block = {
+            "type": "TextBlock",
+            "text": "\n".join(choice_bullets),
+            "wrap": True,
+        }
+    else:
+        answer_block = {
+            "type": "TextBlock",
+            "text": f"*{answer}*",
+            "wrap": True,
+        }
+    return CardFactory.adaptive_card(
+        {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.5",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "Question from Splunk SOAR",
+                    "wrap": True,
+                    "style": "heading",
+                },
+                {
+                    "type": "TextBlock",
+                    "text": question,
+                    "wrap": True,
+                },
+                answer_block,
+                {
+                    "type": "TextBlock",
+                    "text": f"Answer submitted by **{answerer}**.",
+                    "wrap": True,
+                },
+            ],
+        }
+    )
+
+
 class SOARBot(ActivityHandler):
+    def __init__(self, soar_rest_client):
+        super(ActivityHandler, self).__init__()
+        self.soar_rest_client = soar_rest_client
+
     async def on_message_activity(self, turn_context: TurnContext):
-        print(turn_context.activity.serialize())
         if message_value := turn_context.activity.value:
             if choice := message_value.get("choice"):
                 answerer = turn_context.activity.from_property.name
-                await turn_context.send_activity(f"Answer recorded: _{choice}_ by **{answerer}**")
-                return
-        await turn_context.send_activity(f"I heard {turn_context.activity.text}")
+                original_activity_id = turn_context.activity.reply_to_id
 
-    async def on_members_added_activity(self, members_added: list[ChannelAccount], turn_context: TurnContext):
-        for member in members_added:
-            if member.id != turn_context.activity.recipient.id:
-                await turn_context.send_activity(
-                    Activity(
-                        type="message",
-                        text="Hello!",
-                        attachments=[create_question_card("What is your favorite color?", ["Red", "Green", "Blue"])],
-                    )
-                )
+                app_run = self.soar_rest_client.get_related_connector_run(original_activity_id)
+                if not (isinstance(intermediate_results := app_run.get("result_data"), list) and intermediate_results):
+                    raise ValueError(f"Could not find connector run for message {original_activity_id}")
+
+                if not (isinstance(first_result := intermediate_results[0], dict)):
+                    raise ValueError(f"Could not get intermediate connector run results for message {original_activity_id}")
+
+                param = first_result.get("parameter", {})
+                connector_result = ConnectorResult.from_dict(first_result)
+
+                message = param[MSTEAMS_JSON_MSG]
+                choices = param.get(MSTEAMS_JSON_CHOICES, "")
+
+                choices_split = get_list_from_string(choices)
+
+                result = ActionResult(param)
+                result.set_status(phantom.APP_SUCCESS)
+                result.add_data({"answer": choice, "answered_by": answerer})
+                connector_result.add_item(result)
+                connector_result.postprocess_action_results()
+                self.soar_rest_client.finish_related_connector_run(original_activity_id, result=connector_result.get_dict())
+
+                answer_card = create_completed_question_card(message, choices_split, choice, answerer)
+                replacement_activity = Activity(type="message", id=original_activity_id, attachments=[answer_card])
+                await turn_context.update_activity(replacement_activity)
 
 
 def create_app_package(asset: dict) -> bytes:
@@ -150,25 +219,18 @@ def create_app_package(asset: dict) -> bytes:
     return zip_bytes.read()
 
 
-def handle_webhook(
-    method: str,
-    headers: dict[str, str],
-    path_parts: list[str],
-    query: dict[str, str],
-    body: str,
-    asset: dict,
-):
+def handle_webhook(method: str, headers: dict[str, str], path_parts: list[str], query: dict[str, str], body: str, asset: dict, soar_rest_client):
     if path_parts == ["app_package"]:
         return {
             "status_code": 200,
-            "headers": {
-                "Content-Type": "application/zip",
-                "Content-Disposition": 'attachment; filename="appPackage.zip',
-            },
+            "headers": [
+                ("Content-Type", "application/zip"),
+                ("Content-Disposition", 'attachment; filename="appPackage.zip"'),
+            ],
             "content": create_app_package(asset),
         }
 
-    bot = SOARBot()
+    bot = SOARBot(soar_rest_client)
     adapter = SOARWebhookAdapter(BotFrameworkAdapterSettings(asset.get("client_id"), app_password=asset.get("client_secret")))
     response_awaitable = adapter.process(method, path_parts, headers, body, bot)
 

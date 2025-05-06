@@ -772,10 +772,10 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "ask question channel",
-            "description": "Ask a question to a channel of a group",
+            "action": "ask question",
+            "description": "Ask a question in a channel",
             "type": "generic",
-            "identifier": "ask_question_channel",
+            "identifier": "ask_question",
             "read_only": false,
             "parameters": {
                 "group_id": {
@@ -799,15 +799,15 @@
                     "order": 1
                 },
                 "message": {
-                    "description": "Message to send (Markdown is supported)",
+                    "description": "Question text (Markdown is supported)",
                     "data_type": "string",
                     "required": true,
                     "order": 2
                 },
                 "choices": {
-                    "description": "Comma-separated list of possible answers",
+                    "description": "Comma-separated list of possible answers (leave blank for a short-answer question)",
                     "data_type": "string",
-                    "required": true,
+                    "required": false,
                     "order": 3
                 }
             },
@@ -872,182 +872,13 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.answer_submitter",
+                    "data_path": "action_result.data.*.answered_by",
                     "data_type": "string",
                     "column_name": "Answered by",
                     "column_order": 5,
                     "example_values": [
                         "John Smith"
                     ]
-                },
-                {
-                    "data_path": "action_result.data.*.@odata.context",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://test.link.com/beta/$metadata#chatThreads/$entity"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.body.content",
-                    "data_type": "string",
-                    "example_values": [
-                        "test message"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.body.contentType",
-                    "data_type": "string",
-                    "example_values": [
-                        "text"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.createdDateTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2021-03-12T06:02:01.352Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.deletedDateTime",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.etag",
-                    "data_type": "string",
-                    "example_values": [
-                        "1615528921352"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.application",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.conversation",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.device",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.displayName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test User"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.userIdentityType",
-                    "data_type": "string",
-                    "example_values": [
-                        "aadUser"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "1517826451101"
-                    ],
-                    "column_name": "Message ID",
-                    "column_order": 6
-                },
-                {
-                    "data_path": "action_result.data.*.importance",
-                    "data_type": "string",
-                    "example_values": [
-                        "normal"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.lastEditedDateTime",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.lastModifiedDateTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2021-03-12T06:02:01.352Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.locale",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.messageType",
-                    "data_type": "string",
-                    "example_values": [
-                        "message"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.policyViolation",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.replyToId",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.tenantId",
-                    "data_type": "string",
-                    "example_values": [
-                        "149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.from.user.@odata.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "#microsoft.graph.teamworkUserIdentity"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.chatId",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.eventDetail",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.channelIdentity.teamId",
-                    "data_type": "string",
-                    "example_values": [
-                        "hfyr6hdhyr6s-d42a-452b-9155-379764077e25"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.channelIdentity.channelId",
-                    "data_type": "string",
-                    "example_values": [
-                        "19:391631e7f5984005811c658217ea8f23@thread.tacv2"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.subject",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.summary",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.webUrl",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary",

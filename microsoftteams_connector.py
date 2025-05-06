@@ -962,7 +962,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
 
-    def _handle_ask_question_channel(self, param: dict) -> str:
+    def _handle_ask_question(self, param: dict) -> str:
         """This function is used to Sends a message to a specified channel in a Microsoft Teams group.
 
         :param param: Dictionary of input parameters
@@ -972,12 +972,17 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        group_id = param[MSTEAMS_JSON_GROUP_ID]
-        channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
+        group_id = param.get(MSTEAMS_JSON_GROUP_ID)
+        channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
+        user_id = param.get(MSTEAMS_JSON_USER_ID)
         message = param[MSTEAMS_JSON_MSG]
         choices = param.get(MSTEAMS_JSON_CHOICES, "")
 
         choices_split = get_list_from_string(choices)
+
+        card = create_question_card(message, choices_split)
+        bot = TeamsChannelAccount(id=self._client_id, name="SOARBot")
+        activity = Activity(type="message", attachments=[card])
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -987,17 +992,19 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        card = create_question_card(message, choices_split)
-        parameters = ConversationParameters(
-            channel_data=TeamsChannelData(
-                channel=ChannelInfo(id=channel_id),
-                team=TeamInfo(id=group_id),
-                tenant=TenantInfo(id=self._tenant),
-            ),
-            tenant_id=self._tenant,
-            bot=TeamsChannelAccount(id=self._client_id, name="SOARBot"),
-            activity=Activity(type="message", attachments=[card]),
+        channel_data = TeamsChannelData(
+            channel=ChannelInfo(id=channel_id),
+            team=TeamInfo(id=group_id),
+            tenant=TenantInfo(id=self._tenant),
         )
+        parameters = ConversationParameters(
+            channel_data=channel_data,
+            tenant_id=self._tenant,
+            bot=bot,
+            activity=activity,
+        )
+        reference = ConversationReference(channel_id=channel_id)
+
         adapter = BotFrameworkAdapter(BotFrameworkAdapterSettings(app_id=self._client_id, app_password=self._client_secret))
 
         async def handle_create_conversation(turn_context: TurnContext) -> Activity:
@@ -1005,16 +1012,17 @@ class MicrosoftTeamConnector(BaseConnector):
 
         activity: Activity = asyncio.run(
             adapter.create_conversation(
-                reference=ConversationReference(channel_id=channel_id),
+                reference=reference,
                 conversation_parameters=parameters,
                 service_url="https://smba.trafficmanager.net/teams",
                 logic=handle_create_conversation,
             )
         )
 
-        action_result.add_data(activity.as_dict())
-
-        return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent")
+        self.save_progress(f"Sent message to channel with activity ID: {activity.id}")
+        suspend_token = self.suspend_run(activity.id)
+        self.save_progress(f"Delegated action to webhook with token: {suspend_token}")
+        return True
 
     def _handle_list_channels(self, param):
         """This function is used to list all the channels of the particular group.
@@ -1488,7 +1496,7 @@ class MicrosoftTeamConnector(BaseConnector):
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
             "send_channel_message": self._handle_send_channel_message,
-            "ask_question_channel": self._handle_ask_question_channel,
+            "ask_question": self._handle_ask_question,
             "send_direct_message": self._handle_send_direct_message,
             "send_chat_message": self._handle_send_chat_message,
             "list_groups": self._handle_list_groups,
