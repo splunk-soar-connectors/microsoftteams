@@ -7,8 +7,9 @@
 - For an admin user, you can run the test connectivity directly.
 - For a non-admin user, you need to get the admin consent first. This can be done by running the
   action **get_admin_consent** by an admin user.
+- New in 3.1.0: there are now two ways to set up an asset: via Azure Active Directory, or via an Azure Bot. If you intend to use the "ask question" action, you must use the new Azure Bot method.
 
-## Authentication
+## Authentication (Azure Active Directory)
 
 This app requires creating an app in the Azure Active Directory.
 
@@ -51,6 +52,66 @@ This app requires creating an app in the Azure Active Directory.
 
     After making these changes, click **Add permissions** at the bottom of the screen, then
     click **Grant admin consent for \<tenant_name>** .
+
+## Authentication (Azure Bot)
+
+The "ask question" action requires creating an Azure Bot. This method requires the following:
+
+- Version 6.4.1 or later of the Splunk SOAR platform
+- Version 3.1.0 or later of the Microsoft Teams app for Splunk SOAR
+- The webhooks feature must be enabled in the SOAR administrative settings
+- The webhooks port (default 3500) must be accessible from any IPv4 address (`0.0.0.0/0`)
+- The webhooks port must have a valid TLS certificate that is trusted by a Root CA
+
+To set up an Azure Bot:
+
+- Navigate to <https://portal.azure.com> in a browser and log in with your Microsoft account.
+- Type "Azure Bot" into the search bar, and select the "Azure Bot" item from the "Marketplace" section.
+- On the "Create an Azure Bot" page, complete the form:
+  - **Bot Handle**: Choose an appropriate name, such as `SOARBot`.
+  - Select an Azure **Subscription** from your account, and select or create a **Resource group** to contain the bot.
+  - **Data residency**: Most users can select `Global`. If you have stricter compliance needs, you can select `Regional` and choose either the `West Europe` or `Central India` region.
+  - **Pricing tier**: Change to the `Free` plan. The Microsoft Teams app for Splunk SOAR does not use any paid features.
+  - **Type of App**: `Multi Tenant`.
+  - **Creation type**: `Create new Microsoft App ID`.
+  - Leave the **Service management reference** blank.
+  - Click **Review + create**, then **Create**. After your bot is created, click **Go to resource**. This brings you to your newly-created bot. Bookmark this page or open a second copy of it in a new tab, as you will need it again later.
+- On the left side, under **Settings**, click **Configuration**. Next to the **Microsoft App ID** field, click **Manage Password**. This brings you to the Azure Active Directory role for your bot. We will now set up the permissions for your bot and retrieve its credentials:
+  - On the **Certificates and Secrets** page, delete the existing client secret. This secret was created automatically, but we can't use it because we have no way of retrieving its secret value.
+  - Click **New client secret**, and give the new secret whatever description and expiration date you like. Click **Add**. _**Before you leave this page, copy the value of the new client secret and make a note of it.**_ You won't be able to retrieve it again later, and you'll need it when configuring the SOAR asset in a future step.
+  - On the left sidebar, click **API permissions**. Click **Add a permission**, then **Microsoft Graph**, then **Delegated permissions**. Add the following permissions:
+    - `offline_access`
+    - `User.ReadBasic.All`
+    - `OnlineMeetings.ReadWrite`
+    - `Calendars.ReadWrite`
+    - `Channel.ReadBasic.All`
+    - `ChannelMessage.Send`
+    - `ChatMessage.Send`
+    - `Chat.ReadWrite.All`
+    - `GroupMember.ReadWrite.All`
+  - Click **Add permissions**. Click **Grant admin consent**, then **Yes**.
+  - On the left sidebar, click **Overview**. Copy the **Application (client) ID** and the **Directory (tenant) ID** and make a note of them for the next step. Leave this page open, as you will need it again soon.
+- In a new tab, open Splunk SOAR. Navigate to **Apps**, find **Microsoft Teams**, and click **Configure New Asset**. We will now configure the SOAR asset:
+  - On the **Asset Info** tab, assign whatever name, description, and tags you like. Assign an Automation Broker, if needed.
+  - On the **Asset Settings** tab, paste in the **Client ID**, **Client Secret**, and **Tenant ID** you copied earlier. Set **Microsoft Teams' timezone** to your local timezone. Copy the value of the **POST incoming for Microsoft Teams to this location** field, and make a note of it for later.
+  - On the **Webhook Settings** tab, ensure that **Enable webhooks for this asset** is checked. Leave all the other settings at their defaults, and click **Save**. Copy the value of the new **URL for this webhook** field, and note it for later. Leave this page open, you'll need it again soon.
+- Return to the Azure Active Directory page:
+  - Click **Add a Redirect URI**, then **Add a platform**, then **Web**.
+  - For the **Redirect URI**, paste in the **POST incoming** URL you copied earlier, and add `/result` to the end. Click **Configure**.
+  - You can now close this tab.
+- Return to the Azure Bot page:
+  - On the left sidebar, under **Settings**, click **Configuration**. For the **Messaging endpoint**, paste in the **Webhook URL** you copied earlier. Click **Apply**.
+  - On the left sidebar, under **Settings**, click **Channels**. Click **Microsoft Teams** and agree to the Terms of Service. Under **Messaging**, select **Microsoft Teams Commercial**, then click **Apply**.
+  - You can now close this tab.
+- Return to the Splunk SOAR Asset Configuration page.
+  - Under **Asset Settings**, click **Test Connectivity**. Follow the instructions that appear for authorizing the app. After the connectivity check succeeds, click **Close**.
+  - Copy the **URL for this webhook** again, and paste it into your browser's address bar. Add `/app_package` to the end, and hit enter. Your browser will download an `appPackage.zip` file, which you will use in the next step.
+  - You can now close the SOAR asset page, if you like.
+- Open the Microsoft Teams app on your desktop or web browser, and log in as a user with administrative privileges. We will now install the SOARBot app in your Teams workspace:
+  - On the left sidebar, click **Apps**. In the middle pane, click **Manage your apps**.
+  - On the top bar, click **Upload an app**, then **Upload a custom app**. Select the `appPackage.zip` you downloaded previously. Click **Add**.
+
+The app is now configured successfully. Please note that due to a Microsoft limitation, it may take up to 24 hours for your Azure Bot to be fully provisioned. During this time, users may receive an error when trying to submit responses to the `ask question` action.
 
 ## Method to revoke permission
 
