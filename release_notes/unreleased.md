@@ -1,3 +1,4 @@
 **Unreleased**
 
 * Add the `ask question` action to create interactive messages in a Microsoft Teams channel. [PAPP-33370]
+* Add the ability to configure the asset authentication as an "Azure Bot" (required in order to use `ask question`)
