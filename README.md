@@ -1,7 +1,7 @@
 # Microsoft Teams
 
 Publisher: Splunk \
-Connector Version: 3.0.0 \
+Connector Version: 3.1.0 \
 Product Vendor: Microsoft \
 Product Name: Teams \
 Minimum Product Version: 6.3.0
