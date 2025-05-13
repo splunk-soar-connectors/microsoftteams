@@ -22,6 +22,16 @@
     "latest_tested_versions": [
         "Cloud, Aug 17 2023"
     ],
+    "webhook": {
+        "handler": "microsoftteams_webhook.handle_webhook",
+        "requires_auth": false,
+        "ip_allowlist": [
+            "0.0.0.0/0"
+        ],
+        "allowed_headers": [
+            "Authorization"
+        ]
+    },
     "configuration": {
         "client_id": {
             "description": "Client ID",
@@ -729,6 +739,146 @@
                 {
                     "data_path": "action_result.data.*.webUrl",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Message sent"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ask question",
+            "description": "Ask a question in a channel",
+            "type": "generic",
+            "identifier": "ask_question",
+            "read_only": false,
+            "parameters": {
+                "group_id": {
+                    "description": "ID of group",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams group id"
+                    ],
+                    "order": 0
+                },
+                "channel_id": {
+                    "description": "ID of channel",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ms teams channel id"
+                    ],
+                    "order": 1
+                },
+                "message": {
+                    "description": "Question text (Markdown is supported)",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 2
+                },
+                "choices": {
+                    "description": "Comma-separated list of possible answers (leave blank for a short-answer question)",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams group id"
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 0,
+                    "example_values": [
+                        "caf444a0-0e0e-426b-98ea-db67ff6b0b25"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.channel_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams channel id"
+                    ],
+                    "column_name": "Channel ID",
+                    "column_order": 1,
+                    "example_values": [
+                        "10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string",
+                    "column_name": "Message",
+                    "column_order": 2,
+                    "example_values": [
+                        "What is your favorite color?"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.choices",
+                    "data_type": "string",
+                    "column_name": "Choices",
+                    "column_order": 3,
+                    "example_values": [
+                        "Red,Green,Blue"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answer",
+                    "data_type": "string",
+                    "column_name": "Answer",
+                    "column_order": 4,
+                    "example_values": [
+                        "Green"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answered_by",
+                    "data_type": "string",
+                    "column_name": "Answered by",
+                    "column_order": 5,
+                    "example_values": [
+                        "John Smith"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary",
@@ -3680,5 +3830,332 @@
             },
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip_dependencies": {
+        "wheel": []
+    },
+    "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "Babel",
+                "input_file": "wheels/shared/Babel-2.9.1-py2.py3-none-any.whl"
+            },
+            {
+                "module": "PyJWT",
+                "input_file": "wheels/py3/PyJWT-2.10.1-py3-none-any.whl"
+            },
+            {
+                "module": "aiohappyeyeballs",
+                "input_file": "wheels/py3/aiohappyeyeballs-2.6.1-py3-none-any.whl"
+            },
+            {
+                "module": "aiohttp",
+                "input_file": "wheels/py39/aiohttp-3.10.5-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "aiosignal",
+                "input_file": "wheels/shared/aiosignal-1.3.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "aiounittest",
+                "input_file": "wheels/py3/aiounittest-1.3.0-py3-none-any.whl"
+            },
+            {
+                "module": "async_timeout",
+                "input_file": "wheels/py3/async_timeout-4.0.3-py3-none-any.whl"
+            },
+            {
+                "module": "attrs",
+                "input_file": "wheels/py3/attrs-25.3.0-py3-none-any.whl"
+            },
+            {
+                "module": "azure_core",
+                "input_file": "wheels/py3/azure_core-1.34.0-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_core",
+                "input_file": "wheels/py3/botbuilder_core-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_dialogs",
+                "input_file": "wheels/py3/botbuilder_dialogs-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_integration_aiohttp",
+                "input_file": "wheels/py3/botbuilder_integration_aiohttp-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_schema",
+                "input_file": "wheels/shared/botbuilder_schema-4.16.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "botframework_connector",
+                "input_file": "wheels/shared/botframework_connector-4.16.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "botframework_streaming",
+                "input_file": "wheels/py3/botframework_streaming-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "cffi",
+                "input_file": "wheels/py39/cffi-1.17.1-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "cryptography",
+                "input_file": "wheels/py39/cryptography-44.0.3-cp39-abi3-manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "datedelta",
+                "input_file": "wheels/py3/datedelta-1.4-py3-none-any.whl"
+            },
+            {
+                "module": "emoji",
+                "input_file": "wheels/py3/emoji-1.7.0-py3-none-any.whl"
+            },
+            {
+                "module": "frozenlist",
+                "input_file": "wheels/py39/frozenlist-1.6.0-cp39-cp39-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "grapheme",
+                "input_file": "wheels/py3/grapheme-0.6.0-py3-none-any.whl"
+            },
+            {
+                "module": "isodate",
+                "input_file": "wheels/py3/isodate-0.7.2-py3-none-any.whl"
+            },
+            {
+                "module": "jsonpickle",
+                "input_file": "wheels/shared/jsonpickle-1.4.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "msal",
+                "input_file": "wheels/py3/msal-1.32.3-py3-none-any.whl"
+            },
+            {
+                "module": "msrest",
+                "input_file": "wheels/py3/msrest-0.7.1-py3-none-any.whl"
+            },
+            {
+                "module": "multidict",
+                "input_file": "wheels/py39/multidict-6.4.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "multipledispatch",
+                "input_file": "wheels/py3/multipledispatch-1.0.0-py3-none-any.whl"
+            },
+            {
+                "module": "oauthlib",
+                "input_file": "wheels/py3/oauthlib-3.2.2-py3-none-any.whl"
+            },
+            {
+                "module": "propcache",
+                "input_file": "wheels/py39/propcache-0.3.1-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "pycparser",
+                "input_file": "wheels/py3/pycparser-2.22-py3-none-any.whl"
+            },
+            {
+                "module": "pytz",
+                "input_file": "wheels/shared/pytz-2025.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text",
+                "input_file": "wheels/py3/recognizers_text-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_choice",
+                "input_file": "wheels/py3/recognizers_text_choice-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_date_time",
+                "input_file": "wheels/py3/recognizers_text_date_time-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_number",
+                "input_file": "wheels/py3/recognizers_text_number-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_number_with_unit",
+                "input_file": "wheels/py3/recognizers_text_number_with_unit-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "regex",
+                "input_file": "wheels/py39/regex-2024.11.6-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "requests_oauthlib",
+                "input_file": "wheels/shared/requests_oauthlib-2.0.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "typing_extensions",
+                "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
+            },
+            {
+                "module": "yarl",
+                "input_file": "wheels/py39/yarl-1.20.0-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            }
+        ]
+    },
+    "pip313_dependencies": {
+        "wheel": [
+            {
+                "module": "Babel",
+                "input_file": "wheels/shared/Babel-2.9.1-py2.py3-none-any.whl"
+            },
+            {
+                "module": "PyJWT",
+                "input_file": "wheels/py3/PyJWT-2.10.1-py3-none-any.whl"
+            },
+            {
+                "module": "aiohappyeyeballs",
+                "input_file": "wheels/py3/aiohappyeyeballs-2.6.1-py3-none-any.whl"
+            },
+            {
+                "module": "aiohttp",
+                "input_file": "wheels/py313/aiohttp-3.10.5-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "aiosignal",
+                "input_file": "wheels/shared/aiosignal-1.3.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "aiounittest",
+                "input_file": "wheels/py3/aiounittest-1.3.0-py3-none-any.whl"
+            },
+            {
+                "module": "attrs",
+                "input_file": "wheels/py3/attrs-25.3.0-py3-none-any.whl"
+            },
+            {
+                "module": "azure_core",
+                "input_file": "wheels/py3/azure_core-1.34.0-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_core",
+                "input_file": "wheels/py3/botbuilder_core-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_dialogs",
+                "input_file": "wheels/py3/botbuilder_dialogs-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_integration_aiohttp",
+                "input_file": "wheels/py3/botbuilder_integration_aiohttp-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "botbuilder_schema",
+                "input_file": "wheels/shared/botbuilder_schema-4.16.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "botframework_connector",
+                "input_file": "wheels/shared/botframework_connector-4.16.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "botframework_streaming",
+                "input_file": "wheels/py3/botframework_streaming-4.16.2-py3-none-any.whl"
+            },
+            {
+                "module": "cffi",
+                "input_file": "wheels/py313/cffi-1.17.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "cryptography",
+                "input_file": "wheels/py39/cryptography-44.0.3-cp39-abi3-manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "datedelta",
+                "input_file": "wheels/py3/datedelta-1.4-py3-none-any.whl"
+            },
+            {
+                "module": "emoji",
+                "input_file": "wheels/py3/emoji-1.7.0-py3-none-any.whl"
+            },
+            {
+                "module": "frozenlist",
+                "input_file": "wheels/py313/frozenlist-1.6.0-cp313-cp313-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "grapheme",
+                "input_file": "wheels/py3/grapheme-0.6.0-py3-none-any.whl"
+            },
+            {
+                "module": "isodate",
+                "input_file": "wheels/py3/isodate-0.7.2-py3-none-any.whl"
+            },
+            {
+                "module": "jsonpickle",
+                "input_file": "wheels/shared/jsonpickle-1.4.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "msal",
+                "input_file": "wheels/py3/msal-1.32.3-py3-none-any.whl"
+            },
+            {
+                "module": "msrest",
+                "input_file": "wheels/py3/msrest-0.7.1-py3-none-any.whl"
+            },
+            {
+                "module": "multidict",
+                "input_file": "wheels/py313/multidict-6.4.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "multipledispatch",
+                "input_file": "wheels/py3/multipledispatch-1.0.0-py3-none-any.whl"
+            },
+            {
+                "module": "oauthlib",
+                "input_file": "wheels/py3/oauthlib-3.2.2-py3-none-any.whl"
+            },
+            {
+                "module": "propcache",
+                "input_file": "wheels/py313/propcache-0.3.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "pycparser",
+                "input_file": "wheels/py3/pycparser-2.22-py3-none-any.whl"
+            },
+            {
+                "module": "pytz",
+                "input_file": "wheels/shared/pytz-2025.2-py2.py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text",
+                "input_file": "wheels/py3/recognizers_text-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_choice",
+                "input_file": "wheels/py3/recognizers_text_choice-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_date_time",
+                "input_file": "wheels/py3/recognizers_text_date_time-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_number",
+                "input_file": "wheels/py3/recognizers_text_number-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "recognizers_text_number_with_unit",
+                "input_file": "wheels/py3/recognizers_text_number_with_unit-1.0.2a2-py3-none-any.whl"
+            },
+            {
+                "module": "regex",
+                "input_file": "wheels/py313/regex-2024.11.6-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            },
+            {
+                "module": "requests_oauthlib",
+                "input_file": "wheels/shared/requests_oauthlib-2.0.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "typing_extensions",
+                "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
+            },
+            {
+                "module": "yarl",
+                "input_file": "wheels/py313/yarl-1.20.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+            }
+        ]
+    }
 }
