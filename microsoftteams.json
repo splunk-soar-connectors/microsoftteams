@@ -3902,7 +3902,7 @@
             },
             {
                 "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-44.0.3-cp39-abi3-manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py3/cryptography-45.0.3-cp37-abi3-manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "datedelta",
@@ -3938,7 +3938,7 @@
             },
             {
                 "module": "multidict",
-                "input_file": "wheels/py39/multidict-6.4.3-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py39/multidict-6.4.4-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "multipledispatch",
@@ -3990,7 +3990,7 @@
             },
             {
                 "module": "typing_extensions",
-                "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
+                "input_file": "wheels/py3/typing_extensions-4.14.0-py3-none-any.whl"
             },
             {
                 "module": "yarl",
@@ -4062,7 +4062,7 @@
             },
             {
                 "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-44.0.3-cp39-abi3-manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py3/cryptography-45.0.3-cp311-abi3-manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "datedelta",
@@ -4098,7 +4098,7 @@
             },
             {
                 "module": "multidict",
-                "input_file": "wheels/py313/multidict-6.4.3-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/multidict-6.4.4-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "multipledispatch",
@@ -4150,7 +4150,7 @@
             },
             {
                 "module": "typing_extensions",
-                "input_file": "wheels/py3/typing_extensions-4.13.2-py3-none-any.whl"
+                "input_file": "wheels/py3/typing_extensions-4.14.0-py3-none-any.whl"
             },
             {
                 "module": "yarl",
