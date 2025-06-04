@@ -15,6 +15,7 @@ import asyncio
 import json
 from io import BytesIO
 from pathlib import Path
+from typing import Union
 from zipfile import ZipFile
 
 import phantom.app as phantom
@@ -219,7 +220,13 @@ def create_app_package(asset: dict) -> bytes:
     return zip_bytes.read()
 
 
-def handle_webhook(method: str, headers: dict[str, str], path_parts: list[str], query: dict[str, str], body: str, asset: dict, soar_rest_client):
+# Type alias that accepts both the string values provided by SOAR 6.x and the list values provided by SOAR 7.x
+QueryParameters = dict[str, Union[str, list[str]]]
+
+
+def handle_webhook(
+    method: str, headers: dict[str, str], path_parts: list[str], query: QueryParameters, body: str, asset: dict, soar_rest_client
+):
     if path_parts == ["app_package"]:
         return {
             "status_code": 200,
