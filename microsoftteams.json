@@ -30,7 +30,26 @@
         ],
         "allowed_headers": [
             "Authorization"
-        ]
+        ],
+        "routes": [
+            {
+                "allowed_methods": [
+                    "GET"
+                ],
+                "declaration_lineno": 230,
+                "declaration_path": "microsoftteams_webhook.py",
+                "url_pattern": "app_package"
+            },
+            {
+                "allowed_methods": [
+                    "GET",
+                    "POST"
+                ],
+                "declaration_lineno": 39,
+                "declaration_path": "microsoftteams_webhook.py",
+                "url_pattern": ""
+            }
+    ]
     },
     "configuration": {
         "client_id": {
