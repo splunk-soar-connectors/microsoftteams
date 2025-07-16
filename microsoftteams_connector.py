@@ -748,6 +748,8 @@ class MicrosoftTeamConnector(BaseConnector):
             except Exception as e:
                 self.debug_print(f"{MSTEAMS_DECRYPTION_ERROR}: {_get_error_message_from_exception(e, self)}")
                 return action_result.set_status(phantom.APP_ERROR, MSTEAMS_DECRYPTION_ERROR)
+        else:
+            current_code = self._state["code"]
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
         self.save_progress(MSTEAMS_GENERATING_ACCESS_TOKEN_MSG)
@@ -1585,7 +1587,7 @@ class MicrosoftTeamConnector(BaseConnector):
             if self._state.get(MSTEAMS_TOKEN_STRING, {}).get(MSTEAMS_REFRESH_TOKEN_STRING):
                 self._state[MSTEAMS_TOKEN_STRING][MSTEAMS_REFRESH_TOKEN_STRING] = self.encrypt_state(self._refresh_token, "refresh")
         except Exception as e:
-            self.debug_print(f"{MSTEAMS_ENCRYPTION_ERROR}: {self._get_error_message_from_exception(e, self)}")
+            self.debug_print(f"{MSTEAMS_ENCRYPTION_ERROR}: {_get_error_message_from_exception(e, self)}")
             return self.set_status(phantom.APP_ERROR, MSTEAMS_ENCRYPTION_ERROR)
         self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         # Save the state, this data is saved across actions and app upgrades
