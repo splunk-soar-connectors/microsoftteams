@@ -17,7 +17,7 @@
     "min_phantom_version": "6.3.0",
     "app_wizard_version": "1.0.0",
     "rest_handler": "microsoftteams_connector._handle_rest_request",
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, Aug 17 2023"
