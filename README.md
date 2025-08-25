@@ -1,9 +1,9 @@
 # Microsoft Teams
 
-Publisher: Splunk \
-Connector Version: 3.1.2 \
-Product Vendor: Microsoft \
-Product Name: Teams \
+Publisher: Splunk <br>
+Connector Version: 3.1.2 <br>
+Product Vendor: Microsoft <br>
+Product Name: Teams <br>
 Minimum Product Version: 6.3.0
 
 This app integrates with Microsoft Teams to support various generic and investigative actions
@@ -262,27 +262,27 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user \
-[list users](#action-list-users) - List all users \
-[send channel message](#action-send-channel-message) - Send a message to a channel of a group \
-[ask question](#action-ask-question) - Ask a question in a channel \
-[list chats](#action-list-chats) - List chats for authenticated user \
-[send direct message](#action-send-direct-message) - Send a direct message to a user \
-[send chat message](#action-send-chat-message) - Send a message to specific chat \
-[list channels](#action-list-channels) - Lists all channels of a group \
-[list groups](#action-list-groups) - List all Azure Groups \
-[list teams](#action-list-teams) - List all Microsoft Teams \
-[create meeting](#action-create-meeting) - Create a microsoft teams meeting \
-[get channel message](#action-get-channel-message) - Get message in a channel \
-[get chat message](#action-get-chat-message) - Get message in a chat \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[get admin consent](#action-get-admin-consent) - Get the admin consent for a non-admin user <br>
+[list users](#action-list-users) - List all users <br>
+[send channel message](#action-send-channel-message) - Send a message to a channel of a group <br>
+[ask question](#action-ask-question) - Ask a question in a channel <br>
+[list chats](#action-list-chats) - List chats for authenticated user <br>
+[send direct message](#action-send-direct-message) - Send a direct message to a user <br>
+[send chat message](#action-send-chat-message) - Send a message to specific chat <br>
+[list channels](#action-list-channels) - Lists all channels of a group <br>
+[list groups](#action-list-groups) - List all Azure Groups <br>
+[list teams](#action-list-teams) - List all Microsoft Teams <br>
+[create meeting](#action-create-meeting) - Create a microsoft teams meeting <br>
+[get channel message](#action-get-channel-message) - Get message in a channel <br>
+[get chat message](#action-get-chat-message) - Get message in a chat <br>
 [get response message](#action-get-response-message) - Get response on message in a chat
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 You first need admin consent if you're a non-admin user.
@@ -299,7 +299,7 @@ No Output
 
 Get the admin consent for a non-admin user
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 Action <b>'get admin consent'</b> has to be run by an admin user to provide consent to a non-admin user.
@@ -323,7 +323,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all users
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -395,7 +395,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Send a message to a channel of a group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -452,7 +452,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Ask a question in a channel
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -484,7 +484,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List chats for authenticated user
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -526,7 +526,7 @@ summary.total_objects_successful | numeric | | |
 
 Send a direct message to a user
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -579,7 +579,7 @@ summary.total_objects_successful | numeric | | |
 
 Send a message to specific chat
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -632,7 +632,7 @@ summary.total_objects_successful | numeric | | |
 
 Lists all channels of a group
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -666,7 +666,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all Azure Groups
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -719,7 +719,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all Microsoft Teams
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -774,7 +774,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Create a microsoft teams meeting
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 The <b>add_calendar_event</b> parameter can be used for creating a calender event for the given time and send the meeting invitation to all the attendees. If the value of that parameter is false, then apart from <b>subject</b>, rest of the parameters will be ignored and no event will be created in the calendar.
@@ -909,7 +909,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get message in a channel
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -985,7 +985,7 @@ action_result.message | string | | Message sent |
 
 Get message in a chat
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -1045,7 +1045,7 @@ action_result.message | string | | Message sent |
 
 Get response on message in a chat
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Get response action retrieves replies from chat message. It can only find replies if they exist in the most recent 50 messages.
