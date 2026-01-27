@@ -1,1 +1,2 @@
 **Unreleased**
+* docs: deprecate Azure Bot setup and ask question action, and document workaround [PAPP-37538]
