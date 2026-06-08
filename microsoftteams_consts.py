@@ -93,6 +93,7 @@ MSTEAMS_TOKEN_STRING = "token"
 MSTEAMS_STATE_IS_ENCRYPTED = "is_encrypted"
 MSTEAMS_ACCESS_TOKEN_STRING = "access_token"
 MSTEAMS_REFRESH_TOKEN_STRING = "refresh_token"
+MSTEAMS_OAUTH_CONFIG_HASH = "oauth_config_hash"
 MSTEAMS_CONFIG_CLIENT_SECRET = "client_secret"  # pragma: allowlist secret
 MSTEAMS_CONFIG_TIMEZONE = "timezone"
 MSTEAMS_CONFIG_SCOPE = "scope"
