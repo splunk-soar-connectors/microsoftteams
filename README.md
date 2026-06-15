@@ -173,6 +173,9 @@ Microsoft login page. Log in to a Microsoft account. After logging in, review th
 permissions listed, then click **Accept** . Finally, close that tab. The test connectivity window
 should show a success message.
 
+If test connectivity has already succeeded for the current asset configuration, running it again
+should complete successfully without requiring the authorization steps again.
+
 The app should now be ready to be used.
 
 ## Important points to be considered for 'Create Meeting' action

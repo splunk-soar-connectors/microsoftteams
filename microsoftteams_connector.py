@@ -667,7 +667,6 @@ class MicrosoftTeamConnector(BaseConnector):
         resp_json[MSTEAMS_REFRESH_TOKEN_STRING] = encrypted_refresh_token
 
         self._state[MSTEAMS_TOKEN_STRING] = resp_json
-        self._state[MSTEAMS_OAUTH_CONFIG_HASH] = self._get_oauth_config_hash()
         self._state[MSTEAMS_STATE_IS_ENCRYPTED] = True
         self.save_state(self._state)
         _save_app_state(self._state, self.get_asset_id(), self)
@@ -813,6 +812,7 @@ class MicrosoftTeamConnector(BaseConnector):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
             return action_result.get_status()
 
+        self._save_oauth_config_hash()
         self.save_progress(MSTEAMS_GOT_CURRENT_USER_INFO_MSG)
         self.save_progress(MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG)
         return action_result.set_status(phantom.APP_SUCCESS)
