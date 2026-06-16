@@ -17,6 +17,7 @@
 # Phantom App imports
 import asyncio
 import grp
+import hashlib
 import json
 import os
 import pwd
@@ -520,6 +521,25 @@ class MicrosoftTeamConnector(BaseConnector):
     def _is_token_expired(self, action_result_message: str) -> bool:
         return MSTEAMS_TOKEN_EXPIRED_MARKER in action_result_message
 
+    def _get_oauth_config_hash(self):
+        config = self.get_config()
+        oauth_config = {
+            MSTEAMS_CONFIG_TENANT_ID: config.get(MSTEAMS_CONFIG_TENANT_ID),
+            MSTEAMS_CONFIG_CLIENT_ID: config.get(MSTEAMS_CONFIG_CLIENT_ID),
+            MSTEAMS_CONFIG_CLIENT_SECRET: config.get(MSTEAMS_CONFIG_CLIENT_SECRET),
+            MSTEAMS_CONFIG_SCOPE: config.get(MSTEAMS_CONFIG_SCOPE),
+        }
+        return hashlib.sha256(json.dumps(oauth_config, sort_keys=True).encode("utf-8")).hexdigest()
+
+    def _is_oauth_config_changed(self):
+        stored_oauth_config_hash = self._state.get(MSTEAMS_OAUTH_CONFIG_HASH)
+        return bool(stored_oauth_config_hash and stored_oauth_config_hash != self._get_oauth_config_hash())
+
+    def _save_oauth_config_hash(self):
+        self._state[MSTEAMS_OAUTH_CONFIG_HASH] = self._get_oauth_config_hash()
+        self.save_state(self._state)
+        _save_app_state(self._state, self.get_asset_id(), self)
+
     def _make_rest_call(
         self, endpoint, action_result, headers=None, params=None, data=None, method="get", verify=True
     ) -> RetVal[bool, Optional[Any]]:
@@ -687,6 +707,20 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         self.save_progress(MSTEAMS_MAKING_CONNECTION_MSG)
 
+        if self._access_token or self._refresh_token:
+            if self._is_oauth_config_changed():
+                self.save_progress("Asset OAuth configuration changed from last test connectivity run. Starting user authorization flow.")
+            else:
+                self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
+                status, _ = self._update_request(action_result=action_result, endpoint=MSTEAMS_MSGRAPH_SELF_ENDPOINT)
+                if not phantom.is_fail(status):
+                    self._save_oauth_config_hash()
+                    self.save_progress(MSTEAMS_GOT_CURRENT_USER_INFO_MSG)
+                    self.save_progress(MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG)
+                    return action_result.set_status(phantom.APP_SUCCESS)
+
+                self.save_progress("Stored credentials could not be validated. Starting user authorization flow.")
+
         # Get initial REST URL
         ret_val, app_rest_url = self._get_app_rest_url(action_result)
         if phantom.is_fail(ret_val):
@@ -778,6 +812,7 @@ class MicrosoftTeamConnector(BaseConnector):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
             return action_result.get_status()
 
+        self._save_oauth_config_hash()
         self.save_progress(MSTEAMS_GOT_CURRENT_USER_INFO_MSG)
         self.save_progress(MSTEAMS_TEST_CONNECTIVITY_PASSED_MSG)
         return action_result.set_status(phantom.APP_SUCCESS)
