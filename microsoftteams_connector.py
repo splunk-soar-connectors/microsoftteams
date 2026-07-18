@@ -48,6 +48,10 @@ except ImportError:
     import urllib
 
 
+def _encode_graph_path_segment(value):
+    return urllib.quote(str(value), safe="")
+
+
 def _handle_login_redirect(request, key):
     """This function is used to redirect login request to microsoft login page.
 
@@ -935,7 +939,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status (success/failed)
         """
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=_encode_graph_path_segment(group_id))
         channel_list = []
 
         while True:
@@ -982,7 +986,10 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_CHANNEL_MSG_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_CHANNEL_MSG_ENDPOINT.format(
+            group_id=_encode_graph_path_segment(group_id),
+            channel_id=_encode_graph_path_segment(channel_id),
+        )
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -1073,7 +1080,7 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=_encode_graph_path_segment(group_id))
 
         while True:
             # make rest call
@@ -1231,7 +1238,11 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MSG_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
+        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MSG_ENDPOINT.format(
+            group_id=_encode_graph_path_segment(group_id),
+            channel_id=_encode_graph_path_segment(channel_id),
+            message_id=_encode_graph_path_segment(message_id),
+        )
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1259,7 +1270,10 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
         message_id = param[MSTEAMS_JSON_MSG_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MSG_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
+        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MSG_ENDPOINT.format(
+            chat_id=_encode_graph_path_segment(chat_id),
+            message_id=_encode_graph_path_segment(message_id),
+        )
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1284,7 +1298,7 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
         message_id = param[MSTEAMS_JSON_MSG_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
 
         endpoint += "?$orderby=createdDateTime+desc&$top=50"
 
@@ -1411,7 +1425,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param message: Message to be sent
         :return: status success/failure
         """
-        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -1492,12 +1506,12 @@ class MicrosoftTeamConnector(BaseConnector):
                     {
                         "@odata.type": "#microsoft.graph.aadUserConversationMember",
                         "roles": ["owner"],
-                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{current_user_id}')",
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users/{_encode_graph_path_segment(current_user_id)}",
                     },
                     {
                         "@odata.type": "#microsoft.graph.aadUserConversationMember",
                         "roles": ["owner"],
-                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{user_id}')",
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users/{_encode_graph_path_segment(user_id)}",
                     },
                 ],
             }
