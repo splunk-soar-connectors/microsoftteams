@@ -13,6 +13,7 @@
 # limitations under the License.
 import asyncio
 import json
+import re
 from io import BytesIO
 from pathlib import Path
 from typing import Union
@@ -27,6 +28,9 @@ from phantom.connector_result import ConnectorResult
 from phantom.utils import get_list_from_string
 
 from microsoftteams_consts import MSTEAMS_JSON_CHOICES, MSTEAMS_JSON_MSG
+
+
+SUSPEND_ID_PATTERN = re.compile(r"^[A-Za-z0-9:_-]+$")
 
 
 class SOARWebhookAdapter(BotFrameworkHttpAdapterBase):
@@ -151,6 +155,8 @@ class SOARBot(ActivityHandler):
             if choice := message_value.get("choice"):
                 answerer = turn_context.activity.from_property.name
                 original_activity_id = turn_context.activity.reply_to_id
+                if not isinstance(original_activity_id, str) or not SUSPEND_ID_PATTERN.fullmatch(original_activity_id):
+                    raise ValueError("Invalid suspended-run identifier")
 
                 app_run = self.soar_rest_client.get_related_connector_run(original_activity_id)
                 if not (isinstance(intermediate_results := app_run.get("result_data"), list) and intermediate_results):
