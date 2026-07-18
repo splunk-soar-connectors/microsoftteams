@@ -153,7 +153,6 @@ class SOARBot(ActivityHandler):
     async def on_message_activity(self, turn_context: TurnContext):
         if message_value := turn_context.activity.value:
             if choice := message_value.get("choice"):
-                answerer = turn_context.activity.from_property.name
                 original_activity_id = turn_context.activity.reply_to_id
                 if not isinstance(original_activity_id, str) or not SUSPEND_ID_PATTERN.fullmatch(original_activity_id):
                     raise ValueError("Invalid suspended-run identifier")
@@ -172,6 +171,18 @@ class SOARBot(ActivityHandler):
                 choices = param.get(MSTEAMS_JSON_CHOICES, "")
 
                 choices_split = get_list_from_string(choices)
+                if choices_split and choice not in choices_split:
+                    raise ValueError("Submitted answer is not one of the offered choices")
+
+                expected_conversation_id = (first_result.get("summary") or {}).get("expected_conversation_id")
+                actual_conversation_id = getattr(getattr(turn_context.activity, "conversation", None), "id", None)
+                if not expected_conversation_id or actual_conversation_id != expected_conversation_id:
+                    raise ValueError("Answer was submitted from a different Microsoft Teams conversation")
+
+                responder = turn_context.activity.from_property
+                answerer = getattr(responder, "aad_object_id", None) or getattr(responder, "id", None)
+                if not answerer:
+                    raise ValueError("Microsoft Teams responder identity is unavailable")
 
                 result = ActionResult(param)
                 result.set_status(phantom.APP_SUCCESS)
@@ -241,6 +252,13 @@ def handle_webhook(
                 ("Content-Disposition", 'attachment; filename="appPackage.zip"'),
             ],
             "content": create_app_package(asset),
+        }
+
+    if not asset.get("client_id"):
+        return {
+            "status_code": 401,
+            "headers": {},
+            "content": "Microsoft Teams Bot Framework authentication is not configured",
         }
 
     bot = SOARBot(soar_rest_client)

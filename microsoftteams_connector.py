@@ -1087,6 +1087,10 @@ class MicrosoftTeamConnector(BaseConnector):
         )
 
         self.save_progress(f"Sent message to channel with activity ID: {activity.id}")
+        conversation_id = getattr(getattr(activity, "conversation", None), "id", None)
+        if not conversation_id:
+            return action_result.set_status(phantom.APP_ERROR, "Microsoft Teams did not return a conversation identifier")
+        action_result.update_summary({"expected_conversation_id": conversation_id})
         suspend_token = self.suspend_run(activity.id)
         self.save_progress(f"Delegated action to webhook with token: {suspend_token}")
         return True
