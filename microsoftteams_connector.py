@@ -429,11 +429,9 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
 
-        # store the r_text in debug data, it will get dumped in the logs if the action fails
+        # Response bodies and headers can contain credentials and must not enter debug logs.
         if hasattr(action_result, "add_debug_data"):
             action_result.add_debug_data({"r_status_code": response.status_code})
-            action_result.add_debug_data({"r_text": response.text})
-            action_result.add_debug_data({"r_headers": response.headers})
 
         # Process each 'Content-Type' of response separately
 
