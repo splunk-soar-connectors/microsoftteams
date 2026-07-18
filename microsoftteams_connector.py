@@ -18,10 +18,12 @@
 import asyncio
 import grp
 import hashlib
+import hmac
 import json
 import os
 import pwd
 import re
+import secrets
 import sys
 import time
 from typing import Any, Optional
@@ -189,9 +191,20 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state")
+    if not oauth_state or ":" not in oauth_state:
         return HttpResponse(f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
+
+    asset_id, presented_nonce = oauth_state.split(":", 1)
+    if not asset_id.isalnum():
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
+
+    state = _load_app_state(asset_id)
+    nonce_key = "admin_consent_state_nonce" if request.GET.get("admin_consent") is not None else "oauth_state_nonce"
+    stored_nonce = state.get(nonce_key, "")
+    if not stored_nonce or not hmac.compare_digest(stored_nonce, presented_nonce):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
+    state.pop(nonce_key, None)
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -199,6 +212,7 @@ def _handle_login_response(request):
 
     # If there is an error in response
     if error:
+        _save_app_state(state, asset_id, None)
         message = f"Error: {error}"
         if error_description:
             message = f"{message} Details: {error_description}"
@@ -209,9 +223,8 @@ def _handle_login_response(request):
 
     # If none of the code or admin_consent is available
     if not (code or admin_consent):
+        _save_app_state(state, asset_id, None)
         return HttpResponse(f"Error while authenticating\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
-
-    state = _load_app_state(asset_id)
 
     # If value of admin_consent is available
     if admin_consent:
@@ -264,8 +277,9 @@ def _handle_rest_request(request, path_parts):
     # To handle response from microsoft login page
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")
-        if asset_id and asset_id.isalnum():
+        oauth_state = request.GET.get("state", "")
+        asset_id = oauth_state.split(":", 1)[0]
+        if return_val.status_code < 400 and asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
             auth_status_file_path = f"{app_dir}/{asset_id}_{MSTEAMS_TC_FILE}"
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -741,11 +755,14 @@ class MicrosoftTeamConnector(BaseConnector):
         # Authorization URL used to make request for getting code which is used to generate access token
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
+        flow_nonce = secrets.token_hex(16)
+        app_state["oauth_state_nonce"] = flow_nonce
+        oauth_state = f"{self.get_asset_id()}:{flow_nonce}"
         authorization_url = MSTEAMS_AUTHORIZE_URL.format(
             tenant_id=self._tenant,
             client_id=self._client_id,
             redirect_uri=redirect_uri,
-            state=self.get_asset_id(),
+            state=urllib.quote(oauth_state),
             response_type="code",
             scope=self._scope,
         )
@@ -867,8 +884,14 @@ class MicrosoftTeamConnector(BaseConnector):
         # Store admin_consent_url to state file so that we can access it from _handle_rest_request
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
+        flow_nonce = secrets.token_hex(16)
+        self._state["admin_consent_state_nonce"] = flow_nonce
+        oauth_state = f"{self.get_asset_id()}:{flow_nonce}"
         admin_consent_url = MSTEAMS_ADMIN_CONSENT_URL.format(
-            tenant_id=self._tenant, client_id=self._client_id, redirect_uri=redirect_uri, state=self.get_asset_id()
+            tenant_id=self._tenant,
+            client_id=self._client_id,
+            redirect_uri=redirect_uri,
+            state=urllib.quote(oauth_state),
         )
         admin_consent_url = f"{MSTEAMS_LOGIN_BASE_URL}{admin_consent_url}"
         self._state["admin_consent_url"] = admin_consent_url
