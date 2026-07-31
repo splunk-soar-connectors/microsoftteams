@@ -18,10 +18,12 @@
 import asyncio
 import grp
 import hashlib
+import hmac
 import json
 import os
 import pwd
 import re
+import secrets
 import sys
 import time
 from typing import Any, Optional
@@ -46,6 +48,10 @@ try:
     import urllib.parse as urllib
 except ImportError:
     import urllib
+
+
+def _encode_graph_path_segment(value):
+    return urllib.quote(str(value), safe="")
 
 
 def _handle_login_redirect(request, key):
@@ -185,9 +191,20 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state")
+    if not oauth_state or ":" not in oauth_state:
         return HttpResponse(f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
+
+    asset_id, presented_nonce = oauth_state.split(":", 1)
+    if not asset_id.isalnum():
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
+
+    state = _load_app_state(asset_id)
+    nonce_key = "admin_consent_state_nonce" if request.GET.get("admin_consent") is not None else "oauth_state_nonce"
+    stored_nonce = state.get(nonce_key, "")
+    if not stored_nonce or not hmac.compare_digest(stored_nonce, presented_nonce):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
+    state.pop(nonce_key, None)
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -195,6 +212,7 @@ def _handle_login_response(request):
 
     # If there is an error in response
     if error:
+        _save_app_state(state, asset_id, None)
         message = f"Error: {error}"
         if error_description:
             message = f"{message} Details: {error_description}"
@@ -205,9 +223,8 @@ def _handle_login_response(request):
 
     # If none of the code or admin_consent is available
     if not (code or admin_consent):
+        _save_app_state(state, asset_id, None)
         return HttpResponse(f"Error while authenticating\n{json.dumps(request.GET)}", content_type="text/plain", status=400)
-
-    state = _load_app_state(asset_id)
 
     # If value of admin_consent is available
     if admin_consent:
@@ -260,8 +277,9 @@ def _handle_rest_request(request, path_parts):
     # To handle response from microsoft login page
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")
-        if asset_id and asset_id.isalnum():
+        oauth_state = request.GET.get("state", "")
+        asset_id = oauth_state.split(":", 1)[0]
+        if return_val.status_code < 400 and asset_id and asset_id.isalnum():
             app_dir = os.path.dirname(os.path.abspath(__file__))
             auth_status_file_path = f"{app_dir}/{asset_id}_{MSTEAMS_TC_FILE}"
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -411,11 +429,9 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
         """
 
-        # store the r_text in debug data, it will get dumped in the logs if the action fails
+        # Response bodies and headers can contain credentials and must not enter debug logs.
         if hasattr(action_result, "add_debug_data"):
             action_result.add_debug_data({"r_status_code": response.status_code})
-            action_result.add_debug_data({"r_text": response.text})
-            action_result.add_debug_data({"r_headers": response.headers})
 
         # Process each 'Content-Type' of response separately
 
@@ -737,11 +753,14 @@ class MicrosoftTeamConnector(BaseConnector):
         # Authorization URL used to make request for getting code which is used to generate access token
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
+        flow_nonce = secrets.token_hex(16)
+        app_state["oauth_state_nonce"] = flow_nonce
+        oauth_state = f"{self.get_asset_id()}:{flow_nonce}"
         authorization_url = MSTEAMS_AUTHORIZE_URL.format(
             tenant_id=self._tenant,
             client_id=self._client_id,
             redirect_uri=redirect_uri,
-            state=self.get_asset_id(),
+            state=urllib.quote(oauth_state),
             response_type="code",
             scope=self._scope,
         )
@@ -863,8 +882,14 @@ class MicrosoftTeamConnector(BaseConnector):
         # Store admin_consent_url to state file so that we can access it from _handle_rest_request
         self._client_id = urllib.quote(self._client_id)
         self._tenant = urllib.quote(self._tenant)
+        flow_nonce = secrets.token_hex(16)
+        self._state["admin_consent_state_nonce"] = flow_nonce
+        oauth_state = f"{self.get_asset_id()}:{flow_nonce}"
         admin_consent_url = MSTEAMS_ADMIN_CONSENT_URL.format(
-            tenant_id=self._tenant, client_id=self._client_id, redirect_uri=redirect_uri, state=self.get_asset_id()
+            tenant_id=self._tenant,
+            client_id=self._client_id,
+            redirect_uri=redirect_uri,
+            state=urllib.quote(oauth_state),
         )
         admin_consent_url = f"{MSTEAMS_LOGIN_BASE_URL}{admin_consent_url}"
         self._state["admin_consent_url"] = admin_consent_url
@@ -905,25 +930,37 @@ class MicrosoftTeamConnector(BaseConnector):
 
         endpoint = MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT
 
-        while True:
-            # make rest call
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+        status, users = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
-            if phantom.is_fail(status):
-                return action_result.get_status()
-
-            for user in response.get("value", []):
-                action_result.add_data(user)
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+        for user in users:
+            action_result.add_data(user)
 
         summary = action_result.update_summary({})
         summary["total_users"] = action_result.get_data_size()
 
         return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _get_paginated_values(self, endpoint, action_result):
+        values = []
+        seen_endpoints = set()
+
+        for _ in range(MSTEAMS_MAX_PAGINATION_PAGES):
+            if endpoint in seen_endpoints:
+                return action_result.set_status(phantom.APP_ERROR, "Microsoft Graph returned a non-progressing nextLink"), None
+            seen_endpoints.add(endpoint)
+
+            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+            if phantom.is_fail(status):
+                return status, None
+
+            values.extend(response.get("value", []))
+            endpoint = response.get(MSTEAMS_NEXT_LINK_STRING)
+            if not endpoint:
+                return phantom.APP_SUCCESS, values
+
+        return action_result.set_status(phantom.APP_ERROR, "Microsoft Graph pagination exceeded the 1000-page limit"), None
 
     def _verify_parameters(self, group_id, channel_id, action_result) -> bool:
         """This function is used to verify that the provided group_id is valid and channel_id belongs
@@ -935,23 +972,11 @@ class MicrosoftTeamConnector(BaseConnector):
         :return: status (success/failed)
         """
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
-        channel_list = []
-
-        while True:
-            # make rest call
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
-
-            if phantom.is_fail(status):
-                return action_result.get_status()
-
-            for channel in response.get("value", []):
-                channel_list.append(channel["id"])
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=_encode_graph_path_segment(group_id))
+        status, channels = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
+        channel_list = [channel["id"] for channel in channels]
 
         if channel_id not in channel_list:
             return action_result.set_status(
@@ -982,7 +1007,10 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_CHANNEL_MSG_ENDPOINT.format(group_id=group_id, channel_id=channel_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_CHANNEL_MSG_ENDPOINT.format(
+            group_id=_encode_graph_path_segment(group_id),
+            channel_id=_encode_graph_path_segment(channel_id),
+        )
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -1057,6 +1085,10 @@ class MicrosoftTeamConnector(BaseConnector):
         )
 
         self.save_progress(f"Sent message to channel with activity ID: {activity.id}")
+        conversation_id = getattr(getattr(activity, "conversation", None), "id", None)
+        if not conversation_id:
+            return action_result.set_status(phantom.APP_ERROR, "Microsoft Teams did not return a conversation identifier")
+        action_result.update_summary({"expected_conversation_id": conversation_id})
         suspend_token = self.suspend_run(activity.id)
         self.save_progress(f"Delegated action to webhook with token: {suspend_token}")
         return True
@@ -1073,25 +1105,17 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=group_id)
+        endpoint = MSTEAMS_MSGRAPH_LIST_CHANNELS_ENDPOINT.format(group_id=_encode_graph_path_segment(group_id))
 
-        while True:
-            # make rest call
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+        status, channels = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            error_message = action_result.get_message()
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
 
-            if phantom.is_fail(status):
-                error_message = action_result.get_message()
-                if "teamId" in error_message:
-                    error_message = error_message.replace("teamId", "'group_id'")
-                return action_result.set_status(phantom.APP_ERROR, error_message)
-
-            for channel in response.get("value", []):
-                action_result.add_data(channel)
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+        for channel in channels:
+            action_result.add_data(channel)
 
         summary = action_result.update_summary({})
         summary["total_channels"] = action_result.get_data_size()
@@ -1109,20 +1133,12 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         endpoint = MSTEAMS_MSGRAPH_GROUPS_ENDPOINT
 
-        while True:
-            # make rest call using refresh token
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+        status, groups = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
-            if phantom.is_fail(status):
-                return action_result.get_status()
-
-            for group in response.get("value", []):
-                action_result.add_data(group)
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+        for group in groups:
+            action_result.add_data(group)
 
         summary = action_result.update_summary({})
         summary["total_groups"] = action_result.get_data_size()
@@ -1140,20 +1156,12 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         endpoint = MSTEAMS_MSGRAPH_TEAMS_ENDPOINT
 
-        while True:
-            # make rest call using refresh token
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+        status, teams = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
-            if phantom.is_fail(status):
-                return action_result.get_status()
-
-            for team in response.get("value", []):
-                action_result.add_data(team)
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+        for team in teams:
+            action_result.add_data(team)
 
         summary = action_result.update_summary({})
         summary["total_teams"] = action_result.get_data_size()
@@ -1231,7 +1239,11 @@ class MicrosoftTeamConnector(BaseConnector):
                 error_message = error_message.replace("teamId", "'group_id'")
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MSG_ENDPOINT.format(group_id=group_id, channel_id=channel_id, message_id=message_id)
+        endpoint = MSTEAMS_MSGRAPH_GET_CHANNEL_MSG_ENDPOINT.format(
+            group_id=_encode_graph_path_segment(group_id),
+            channel_id=_encode_graph_path_segment(channel_id),
+            message_id=_encode_graph_path_segment(message_id),
+        )
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1259,7 +1271,10 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
         message_id = param[MSTEAMS_JSON_MSG_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MSG_ENDPOINT.format(chat_id=chat_id, message_id=message_id)
+        endpoint = MSTEAMS_MSGRAPH_GET_CHAT_MSG_ENDPOINT.format(
+            chat_id=_encode_graph_path_segment(chat_id),
+            message_id=_encode_graph_path_segment(message_id),
+        )
 
         # make rest call
         ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
@@ -1284,13 +1299,16 @@ class MicrosoftTeamConnector(BaseConnector):
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
         message_id = param[MSTEAMS_JSON_MSG_ID]
 
-        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
 
         endpoint += "?$orderby=createdDateTime+desc&$top=50"
 
         all_replies = []
+        seen_endpoints = {endpoint}
+        page_count = 0
 
         while True:
+            page_count += 1
             # make rest call
             ret_val, response = self._update_request(endpoint=endpoint, action_result=action_result, method="get")
 
@@ -1324,7 +1342,13 @@ class MicrosoftTeamConnector(BaseConnector):
                 break
 
             if response.get(MSTEAMS_NEXT_LINK_STRING):
-                endpoint = response.get(MSTEAMS_NEXT_LINK_STRING)
+                next_endpoint = response.get(MSTEAMS_NEXT_LINK_STRING)
+                if page_count >= MSTEAMS_MAX_PAGINATION_PAGES:
+                    return action_result.set_status(phantom.APP_ERROR, "Microsoft Graph pagination exceeded the 1000-page limit")
+                if next_endpoint in seen_endpoints:
+                    return action_result.set_status(phantom.APP_ERROR, "Microsoft Graph returned a non-progressing nextLink")
+                seen_endpoints.add(next_endpoint)
+                endpoint = next_endpoint
             else:
                 break
 
@@ -1368,35 +1392,27 @@ class MicrosoftTeamConnector(BaseConnector):
 
         endpoint = MSTEAMS_MSGRAPH_LIST_CHATS_ENDPOINT
 
-        while True:
-            # make rest call
-            status, response = self._update_request(endpoint=endpoint, action_result=action_result)
+        status, chats = self._get_paginated_values(endpoint, action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
-            if phantom.is_fail(status):
-                return action_result.get_status()
+        for chat in chats:
+            # Filters
+            if chat_type_filter and chat_type_filter != chat.get("chatType", ""):
+                continue
 
-            for chat in response.get("value", []):
-                # Filters
-                if chat_type_filter and chat_type_filter != chat.get("chatType", ""):
+            if user_filter:
+                user_match = False
+                for member in chat.get("members", []):
+                    user_id = member.get("userId", "")
+                    email = member.get("email", "")
+                    if user_filter in user_id or user_filter in email:
+                        user_match = True
+                        break
+                if not user_match:
                     continue
 
-                if user_filter:
-                    user_match = False
-                    for member in chat.get("members", []):
-                        user_id = member.get("userId", "")
-                        email = member.get("email", "")
-                        if user_filter in user_id or user_filter in email:
-                            user_match = True
-                            break
-                    if not user_match:
-                        continue
-
-                action_result.add_data(chat)
-
-            if not response.get(MSTEAMS_NEXT_LINK_STRING):
-                break
-
-            endpoint = response[MSTEAMS_NEXT_LINK_STRING]
+            action_result.add_data(chat)
 
         summary = action_result.update_summary({})
         summary["total_chats"] = action_result.get_data_size()
@@ -1411,7 +1427,7 @@ class MicrosoftTeamConnector(BaseConnector):
         :param message: Message to be sent
         :return: status success/failure
         """
-        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=chat_id)
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
 
         data = {"body": {"contentType": "html", "content": message}}
 
@@ -1492,12 +1508,12 @@ class MicrosoftTeamConnector(BaseConnector):
                     {
                         "@odata.type": "#microsoft.graph.aadUserConversationMember",
                         "roles": ["owner"],
-                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{current_user_id}')",
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users/{_encode_graph_path_segment(current_user_id)}",
                     },
                     {
                         "@odata.type": "#microsoft.graph.aadUserConversationMember",
                         "roles": ["owner"],
-                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users('{user_id}')",
+                        "user@odata.bind": f"https://graph.microsoft.com/v1.0/users/{_encode_graph_path_segment(user_id)}",
                     },
                 ],
             }
