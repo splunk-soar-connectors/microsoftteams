@@ -77,17 +77,11 @@ def _handle_login_redirect(request, key):
     state = _load_app_state(asset_id)
     if not state:
         return HttpResponse("ERROR: Invalid asset_id", content_type="text/plain", status=400)
-    nonce_key = (
-        "admin_consent_state_nonce"
-        if key == "admin_consent_url"
-        else "oauth_state_nonce"
-    )
+    nonce_key = "admin_consent_state_nonce" if key == "admin_consent_url" else "oauth_state_nonce"
     presented_nonce = request.GET.get("state_nonce", "")
     stored_nonce = state.get(nonce_key, "")
     if not stored_nonce or not hmac.compare_digest(stored_nonce, presented_nonce):
-        return HttpResponse(
-            "ERROR: Invalid OAuth state", content_type="text/plain", status=400
-        )
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
     url = state.get(key)
     if not url:
         return HttpResponse(f"App state is invalid, {key} not found.", content_type="text/plain", status=400)
@@ -789,9 +783,7 @@ class MicrosoftTeamConnector(BaseConnector):
         app_state["authorization_url"] = authorization_url
 
         # URL which would be shown to the user
-        start_query = urllib.urlencode(
-            {"asset_id": self.get_asset_id(), "state_nonce": flow_nonce}
-        )
+        start_query = urllib.urlencode({"asset_id": self.get_asset_id(), "state_nonce": flow_nonce})
         url_for_authorize_request = f"{app_rest_url}/start_oauth?{start_query}"
         _save_app_state(app_state, self.get_asset_id(), self)
 
@@ -917,9 +909,7 @@ class MicrosoftTeamConnector(BaseConnector):
         admin_consent_url = f"{MSTEAMS_LOGIN_BASE_URL}{admin_consent_url}"
         self._state["admin_consent_url"] = admin_consent_url
 
-        consent_query = urllib.urlencode(
-            {"asset_id": self.get_asset_id(), "state_nonce": flow_nonce}
-        )
+        consent_query = urllib.urlencode({"asset_id": self.get_asset_id(), "state_nonce": flow_nonce})
         url_to_show = f"{app_rest_url}/admin_consent?{consent_query}"
         _save_app_state(self._state, self.get_asset_id(), self)
 
