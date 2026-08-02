@@ -66,6 +66,18 @@ class ValidationFollowupTests(unittest.TestCase):
             _load_path_helper()("message/channel"), "message%2Fchannel"
         )
 
+    def test_oauth_start_requires_the_pending_flow_nonce(self):
+        source = _function_source("_handle_login_redirect")
+        self.assertIn('request.GET.get("state_nonce", "")', source)
+        self.assertIn("hmac.compare_digest(stored_nonce, presented_nonce)", source)
+        self.assertIn('key == "admin_consent_url"', source)
+
+    def test_user_and_admin_start_links_carry_their_flow_nonce(self):
+        source = CONNECTOR.read_text()
+        self.assertIn('"state_nonce": flow_nonce', source)
+        self.assertIn('start_oauth?{start_query}', source)
+        self.assertIn('admin_consent?{consent_query}', source)
+
 
 if __name__ == "__main__":
     unittest.main()

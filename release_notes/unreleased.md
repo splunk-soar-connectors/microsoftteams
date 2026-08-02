@@ -1,6 +1,7 @@
 **Unreleased**
 
 * Reject exact and nested-encoded dot segments in Microsoft Graph path identifiers.
+* Require the pending-flow nonce before returning user or administrator OAuth redirects.
 
 * Encoded Microsoft Graph path identifiers before constructing request URLs.
 * Escaped values embedded in Microsoft Teams widget JavaScript.
