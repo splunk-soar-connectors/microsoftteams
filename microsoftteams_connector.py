@@ -51,7 +51,16 @@ except ImportError:
 
 
 def _encode_graph_path_segment(value):
-    return urllib.quote(str(value), safe="")
+    raw_value = str(value)
+    canonical_value = raw_value
+    for _ in range(5):
+        decoded_value = urllib.unquote(canonical_value)
+        if decoded_value == canonical_value:
+            break
+        canonical_value = decoded_value
+    if canonical_value in {".", ".."}:
+        raise ValueError("Microsoft Graph path identifiers must not be dot segments")
+    return urllib.quote(raw_value, safe="")
 
 
 def _handle_login_redirect(request, key):
