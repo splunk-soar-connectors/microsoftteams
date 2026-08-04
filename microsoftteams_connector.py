@@ -51,7 +51,16 @@ except ImportError:
 
 
 def _encode_graph_path_segment(value):
-    return urllib.quote(str(value), safe="")
+    raw_value = str(value)
+    canonical_value = raw_value
+    for _ in range(5):
+        decoded_value = urllib.unquote(canonical_value)
+        if decoded_value == canonical_value:
+            break
+        canonical_value = decoded_value
+    if canonical_value in {".", ".."}:
+        raise ValueError("Microsoft Graph path identifiers must not be dot segments")
+    return urllib.quote(raw_value, safe="")
 
 
 def _handle_login_redirect(request, key):
@@ -68,6 +77,11 @@ def _handle_login_redirect(request, key):
     state = _load_app_state(asset_id)
     if not state:
         return HttpResponse("ERROR: Invalid asset_id", content_type="text/plain", status=400)
+    nonce_key = "admin_consent_state_nonce" if key == "admin_consent_url" else "oauth_state_nonce"
+    presented_nonce = request.GET.get("state_nonce", "")
+    stored_nonce = state.get(nonce_key, "")
+    if not stored_nonce or not hmac.compare_digest(stored_nonce, presented_nonce):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type="text/plain", status=400)
     url = state.get(key)
     if not url:
         return HttpResponse(f"App state is invalid, {key} not found.", content_type="text/plain", status=400)
@@ -769,7 +783,8 @@ class MicrosoftTeamConnector(BaseConnector):
         app_state["authorization_url"] = authorization_url
 
         # URL which would be shown to the user
-        url_for_authorize_request = f"{app_rest_url}/start_oauth?asset_id={self.get_asset_id()}&"
+        start_query = urllib.urlencode({"asset_id": self.get_asset_id(), "state_nonce": flow_nonce})
+        url_for_authorize_request = f"{app_rest_url}/start_oauth?{start_query}"
         _save_app_state(app_state, self.get_asset_id(), self)
 
         self.save_progress(MSTEAMS_AUTHORIZE_USER_MSG)
@@ -894,7 +909,8 @@ class MicrosoftTeamConnector(BaseConnector):
         admin_consent_url = f"{MSTEAMS_LOGIN_BASE_URL}{admin_consent_url}"
         self._state["admin_consent_url"] = admin_consent_url
 
-        url_to_show = f"{app_rest_url}/admin_consent?asset_id={self.get_asset_id()}&"
+        consent_query = urllib.urlencode({"asset_id": self.get_asset_id(), "state_nonce": flow_nonce})
+        url_to_show = f"{app_rest_url}/admin_consent?{consent_query}"
         _save_app_state(self._state, self.get_asset_id(), self)
 
         self.save_progress("Waiting to receive the admin consent")
