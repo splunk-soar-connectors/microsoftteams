@@ -15,6 +15,141 @@
   - `send direct message`
   - The `send email` action, from your preferred email connector. For the email recipient, use the email address that is automatically assigned to your Microsoft Teams channel (see [Microsoft docs](https://support.microsoft.com/en-us/office/send-an-email-to-a-channel-in-microsoft-teams-d91db004-d9d7-4a47-82e6-fb1b16dfd51e))
 
+## Approval via reactions
+
+Use **ask for approval via reactions** to post an approval card and wait for a
+reaction using the asset's delegated Microsoft Graph identity. This action does
+not use an Azure Bot, a webhook callback, or a suspended SOAR action.
+
+Choose `channel` with `group_id` and `channel_id`, `chat` with `chat_id`, or
+`direct_message` with the recipient's Entra object ID in `user_id`. Direct messages
+create or retrieve a one-on-one chat. Supply `message` and optionally `title` and
+`details` (a JSON object or `Label: value` lines). An optional `adaptive_card` JSON
+object replaces the built-in card.
+
+### Enter reactions without pasting emoji
+
+The `reactions` field accepts plain text. Its default is:
+
+```text
+thumbs_up|Approve|true,thumbs_down|Deny|false
+```
+
+Each comma-separated option is `reaction|label|approves`. Labels and flags are
+optional: `thumbs_up,thumbs_down` also works. Without any flags, the first option
+approves and the others reject. With explicit flags, only options marked `true`
+approve. Configure at least one approving and one rejecting option.
+
+| Reaction | Names you can type |
+| --- | --- |
+| Thumbs up | `thumbs_up`, `thumbs up`, `thumbsup`, `like`, `+1`, `yes`, `approve` |
+| Thumbs down | `thumbs_down`, `thumbs down`, `thumbsdown`, `dislike`, `-1`, `no`, `deny`, `reject` |
+| Check mark | `checkmark`, `check`, `white_check_mark` |
+| Cross | `cross`, `x` |
+| Heart | `heart`, `love` |
+| Laugh | `laugh`, `haha` |
+| Surprise | `surprised`, `wow` |
+| Sad | `sad`, `cry` |
+| Angry | `angry`, `mad` |
+| Eyes | `eyes` |
+| Rocket | `rocket` |
+| Celebration | `tada`, `party` |
+
+Names are case-insensitive and may have surrounding colons, such as `:thumbsup:`.
+For a different emoji, enter its Unicode code point, such as `U+1F680` for a
+rocket. Separate code points within a sequence with spaces (`U+2764 U+FE0F` for a
+heart). Teams must support the chosen emoji. Literal emoji and JSON arrays also
+work:
+
+```json
+[
+  {"emoji": "checkmark", "label": "Allow", "approves": true},
+  {"emoji": "cross", "label": "Block", "approves": false}
+]
+```
+
+Unknown names, invalid flags, and duplicate options fail before posting. Skin
+tones and presentation variants count as the same reaction. Labels describe the
+decision; they do not determine whether it approves.
+
+### Who can answer and what gets seeded
+
+`approvers` is an optional comma-separated list of Entra object IDs, UPNs, email
+addresses, or exact display names. Entries must resolve unambiguously before the
+request is sent. Without a list, any identifiable user who can see the message
+can answer, except the account used by the asset. That account's reactions are
+always excluded, including seeded reactions. Use a dedicated sending account.
+
+`seed_reactions=approving` (the default) pre-adds one approving reaction so mobile
+responders can tap it. `none` disables seeding. This action does not promise both
+choices as pre-seeded buttons: responders choose another accepted reaction from
+Teams' reaction picker. Setting names in SOAR changes accepted reactions, not the
+Teams quick-reaction toolbar. A failed seed is reported in `seed_errors` and does
+not prevent a response.
+
+The earliest eligible reaction present when polled decides. Unauthorized attempts
+are recorded in `ignored_reactions`; unknown emoji and missing user identities do
+not decide. Simultaneous conflicting reactions resolve to rejection. This is a
+first-response action, not a vote or quorum. Polling reads current reactions, so a
+reaction removed before the next read may never be observed. Later reactions do
+not revise a completed decision.
+
+### Polling, expiry, and playbook branches
+
+`max_checks` (1-1000, default 60) bounds the number of reads.
+`check_interval_seconds` (5-900, default 30) sets the delay between them. The first
+read is immediate; total sleep is `(max_checks - 1) * check_interval_seconds`,
+plus Graph request time. Defaults therefore sleep 29.5 minutes. `max_checks=1`
+reads once without sleeping.
+
+The action occupies a SOAR action worker while polling. Configure the polling
+window below your deployment's action execution timeout, allowing time for Graph
+requests and the final card update. A platform termination can prevent final
+results and the expiry update; this action does not override platform limits.
+
+| Outcome | Action status | `approved` | `timed_out` |
+| --- | --- | --- | --- |
+| Approval | success | true | false |
+| Rejection | success | false | false |
+| No eligible response before polling ends | failed | false | true |
+
+Branch on successful status **and** `action_result.data.*.approved=true` before
+taking the approved path. Handle `timed_out=true` separately from rejection and
+API errors. A successful action means a response was received; it is not by
+itself approval. The first failed reaction read stops the action with an error;
+subsequent failed reads consume checks and polling continues within the bound.
+
+Results include the decision, responder's Entra ID, available directory name and
+UPN/email, reaction time, message ID/link, checks performed, and ignored reactions.
+The action attempts to update the card with the decision or expiry. If editing
+fails, it attempts a channel reply or a chat follow-up. `card_updated` and
+`card_update_error` report this separately; an update failure never changes the
+decision. When editing fails, the original card can still appear open, although
+the completed action no longer accepts answers.
+
+### Required delegated permissions
+
+Keep the app's existing authentication and user lookup permissions. Add the
+following permissions to the Entra registration and the asset's `scope`, grant
+any required consent, and rerun **test connectivity**:
+
+| Destination | Additional permissions |
+| --- | --- |
+| Channel | `ChannelMessage.Read.All` to read reactions; `ChannelMessage.Send` to post and seed; `ChannelMessage.ReadWrite` to edit the posted card |
+| Chat or direct message | `Chat.ReadWrite` to create/retrieve a chat, post, read reactions, seed, and edit |
+
+The delegated user must have access to the destination. The action uses the
+connector's existing Microsoft Graph endpoint configuration.
+
+### Validation before deployment
+
+Unit tests use a fake Graph transport. On a SOAR test asset, verify approval,
+rejection, an unauthorized responder, an unanswered request with a short polling
+window, and the final card update for each destination you use. Confirm the
+playbook continues after expiry and that your mobile client can select the
+configured rejection reaction. No live Teams or SOAR validation is implied by
+the unit tests.
+
 ## Authentication
 
 This connector requires creating an app in the Microsoft Entra ID.
