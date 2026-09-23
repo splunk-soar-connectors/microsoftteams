@@ -111,3 +111,122 @@ MSTEAMS_DECRYPTION_ERROR = "Error occurred while decrypting the state file"
 
 # Constants relating to '_get_error_message_from_exception'
 ERROR_MSG_UNAVAILABLE = "Error message unavailable. Please check the asset configuration and|or action parameters"
+
+# Reaction approvals over Microsoft Graph
+MSTEAMS_JSON_DESTINATION = "destination"
+
+MSTEAMS_JSON_ADAPTIVE_CARD = "adaptive_card"
+
+MSTEAMS_ADAPTIVE_CARD_CONTENT_TYPE = "application/vnd.microsoft.card.adaptive"
+
+MSTEAMS_JSON_APPROVERS = "approvers"
+
+MSTEAMS_JSON_TITLE = "title"
+
+MSTEAMS_JSON_DETAILS = "details"
+
+MSTEAMS_GUID_PATTERN = r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+
+MSTEAMS_APPROVER_UNRESOLVED_MSG = (
+    "Could not find a user in this tenant for approver '{approver}'. Give a user principal name, an email "
+    "address, an exact display name, or an Azure AD object ID."
+)
+
+MSTEAMS_APPROVER_LOOKUP_FAILED_MSG = "Could not look up approver '{approver}' in Microsoft Graph: {error}"
+
+MSTEAMS_MSGRAPH_SET_CHANNEL_MSG_REACTION_ENDPOINT = "/teams/{group_id}/channels/{channel_id}/messages/{message_id}/setReaction"
+
+MSTEAMS_MSGRAPH_SET_CHAT_MSG_REACTION_ENDPOINT = "/chats/{chat_id}/messages/{message_id}/setReaction"
+
+MSTEAMS_JSON_REACTIONS = "reactions"
+
+MSTEAMS_JSON_SEED_REACTIONS = "seed_reactions"
+
+MSTEAMS_JSON_MAX_CHECKS = "max_checks"
+
+MSTEAMS_JSON_CHECK_INTERVAL = "check_interval_seconds"
+
+MSTEAMS_VALID_REACTION_DESTINATIONS = frozenset({"channel", "direct_message", "chat"})
+
+MSTEAMS_REACTION_DEFAULT_REACTIONS = "thumbs_up|Approve|true,thumbs_down|Deny|false"
+
+MSTEAMS_REACTION_DEFAULT_MAX_CHECKS = 60
+
+MSTEAMS_REACTION_DEFAULT_CHECK_INTERVAL = 30
+
+MSTEAMS_REACTION_MIN_CHECK_INTERVAL = 5
+
+MSTEAMS_REACTION_MAX_CHECK_INTERVAL = 900
+
+MSTEAMS_REACTION_MAX_CHECKS_LIMIT = 1000
+
+MSTEAMS_REACTION_ALIASES = {
+    "like": "\U0001f44d",
+    "thumbsup": "\U0001f44d",
+    "thumbs up": "\U0001f44d",
+    "thumbs_up": "\U0001f44d",
+    "+1": "\U0001f44d",
+    "yes": "\U0001f44d",
+    "approve": "\U0001f44d",
+    "dislike": "\U0001f44e",
+    "thumbsdown": "\U0001f44e",
+    "thumbs down": "\U0001f44e",
+    "thumbs_down": "\U0001f44e",
+    "-1": "\U0001f44e",
+    "no": "\U0001f44e",
+    "reject": "\U0001f44e",
+    "deny": "\U0001f44e",
+    "heart": "❤️",
+    "love": "❤️",
+    "laugh": "\U0001f606",
+    "haha": "\U0001f606",
+    "surprised": "\U0001f62e",
+    "wow": "\U0001f62e",
+    "sad": "\U0001f622",
+    "cry": "\U0001f622",
+    "angry": "\U0001f621",
+    "mad": "\U0001f621",
+    "check": "✅",
+    "checkmark": "✅",
+    "white_check_mark": "✅",
+    "cross": "❌",
+    "x": "❌",
+    "eyes": "\U0001f440",
+    "rocket": "\U0001f680",
+    "tada": "\U0001f389",
+    "party": "\U0001f389",
+}
+
+MSTEAMS_REACTION_IGNORED_CODEPOINTS = frozenset({0xFE0E, 0xFE0F} | set(range(0x1F3FB, 0x1F400)))
+
+MSTEAMS_REACTION_NO_RESPONSE_MSG = (
+    "No approver reacted within {checks} check(s) at {interval}s apart{window}. "
+    "The message is still posted in Teams; its ID is in the action results."
+)
+
+MSTEAMS_REACTION_SEED_FAILED_MSG = "Could not seed reaction '{reaction}' on the message: {error}. Approvers can still add it by hand."
+
+MSTEAMS_REACTION_SINGLE_SEED_NOTE = (
+    "Seeded {landed} of {requested} accepted reactions ({emoji}). Only the approving reaction is seeded. "
+    "Approvers can choose another accepted reaction from the Teams reaction picker."
+)
+MSTEAMS_REACTION_SCOPE_HINT = (
+    "Reading and setting reactions needs delegated scopes beyond the app defaults: 'ChannelMessage.Read.All' plus "
+    "'ChannelMessage.Send' for a channel, or 'Chat.ReadWrite' for a chat or direct message. Add them to the asset's "
+    "'scope' and to the Entra app registration, then re-run test connectivity."
+)
+
+MSTEAMS_REACTION_PROMPT_BLOCK_ID = "soar_reaction_prompt"
+
+MSTEAMS_REACTION_LEGEND_BLOCK_ID = "soar_reaction_legend"
+
+MSTEAMS_REACTION_TRANSIENT_BLOCK_IDS = frozenset({MSTEAMS_REACTION_PROMPT_BLOCK_ID, MSTEAMS_REACTION_LEGEND_BLOCK_ID})
+
+MSTEAMS_REACTION_UPDATE_FAILED_MSG = "Could not edit the approval message to record the decision: {error}. The decision itself is unaffected."
+
+MSTEAMS_REACTION_UPDATE_SCOPE_HINT = (
+    "Editing a posted message needs 'ChannelMessage.ReadWrite' for a channel, or 'Chat.ReadWrite' for a chat or "
+    "direct message. Without it the decision is posted as a reply instead."
+)
+
+MSTEAMS_USER_SELECT_BASIC = "id,displayName,givenName,surname,userPrincipalName,mail"

@@ -26,6 +26,8 @@ import re
 import secrets
 import sys
 import time
+import uuid
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 import encryption_helper
@@ -41,6 +43,15 @@ from phantom.base_connector import BaseConnector
 from phantom.utils import get_list_from_string
 
 from microsoftteams_consts import *
+from microsoftteams_reactions import (
+    create_reaction_approval_card,
+    describe_reaction_decision,
+    finalize_reaction_card,
+    normalize_reaction,
+    parse_reactions,
+    reaction_decision_blocks,
+    reaction_expired_blocks,
+)
 from microsoftteams_webhook import create_question_card
 
 
@@ -1552,6 +1563,667 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, status_message="Message sent to user successfully")
 
+    def _get_bounded_int(self, action_result, param, name, default, minimum, maximum):
+        """Read a whole-number parameter within the configured bounds.
+
+        Out-of-range is an error rather than a silent clamp: a playbook that asks
+        for 100000 checks is expressing an intent the action cannot honour, and
+        quietly doing something else would make the timeout it reports a lie.
+        """
+
+        value = param.get(name)
+        if value in (None, ""):
+            return phantom.APP_SUCCESS, default
+        try:
+            if isinstance(value, bool) or (isinstance(value, float) and not value.is_integer()):
+                raise ValueError("not a whole number")
+            value = int(value)
+        except (TypeError, ValueError, OverflowError):
+            return action_result.set_status(phantom.APP_ERROR, f"Parameter '{name}' must be a whole number."), None
+        if not minimum <= value <= maximum:
+            return (
+                action_result.set_status(phantom.APP_ERROR, f"Parameter '{name}' must be between {minimum} and {maximum}."),
+                None,
+            )
+        return phantom.APP_SUCCESS, value
+
+    def _build_adaptive_card_message_payload(self, card_obj: dict) -> dict:
+        """Build a Microsoft Graph chat/channel message body with an adaptive card attachment."""
+
+        attachment_id = str(uuid.uuid4())
+        card_json = json.dumps(card_obj, separators=(",", ":"))
+        return {
+            "body": {"contentType": "html", "content": f'<attachment id="{attachment_id}"></attachment>'},
+            "attachments": [
+                {
+                    "id": attachment_id,
+                    "contentType": MSTEAMS_ADAPTIVE_CARD_CONTENT_TYPE,
+                    "contentUrl": None,
+                    "content": card_json,
+                }
+            ],
+        }
+
+    def _find_users(self, action_result, value, select):
+        """Every user in the tenant matching one identifier. Returns (status, matches).
+
+        Try a UPN or object ID directly, then an exact directory search. Mail
+        addresses can differ from UPNs, so they also need the search fallback.
+        """
+
+        value = str(value).strip()
+        if not value:
+            return phantom.APP_SUCCESS, []
+
+        if "@" in value or re.match(MSTEAMS_GUID_PATTERN, value):
+            status, response = self._update_request(
+                action_result,
+                f"{MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT}/{_encode_graph_path_segment(value)}",
+                params={"$select": select},
+            )
+            if phantom.is_success(status) and isinstance(response, dict) and response.get("id"):
+                return phantom.APP_SUCCESS, [response]
+
+        # Doubling the quote is how OData escapes one inside a string literal.
+        escaped = value.replace("'", "''")
+        status, response = self._update_request(
+            action_result,
+            MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT,
+            params={
+                "$filter": f"mail eq '{escaped}' or userPrincipalName eq '{escaped}' or displayName eq '{escaped}'",
+                "$select": select,
+                # Three is enough to tell "one" from "more than one" and to name
+                # a couple of the clashes back to whoever has to disambiguate.
+                "$top": "3",
+            },
+        )
+        if phantom.is_fail(status) or not isinstance(response, dict):
+            return action_result.get_status(), None
+
+        return phantom.APP_SUCCESS, response.get("value") or []
+
+    def _lookup_approver(self, action_result, value):
+        """Find one user in the tenant. Returns {'id', 'name'} or None."""
+
+        status, matches = self._find_users(action_result, value, MSTEAMS_USER_SELECT_BASIC)
+        if phantom.is_fail(status) or not matches or len(matches) != 1:
+            # Zero is no such user; more than one means the name is ambiguous and
+            # guessing which person was meant is not acceptable for an approval.
+            return None
+        return {"id": matches[0]["id"], "name": matches[0].get("displayName") or value}
+
+    def _resolve_approvers(self, action_result, approvers):
+        """Resolve approver entries to Azure AD object IDs and display names.
+
+        Reaction identities are matched by object ID. Resolve names, UPNs and
+        email addresses before posting so ambiguous entries fail closed.
+        """
+        resolved = []
+        for entry in approvers:
+            value = str(entry).strip()
+            if not value:
+                continue
+            try:
+                found = self._lookup_approver(action_result, value)
+            except Exception as e:
+                return None, MSTEAMS_APPROVER_LOOKUP_FAILED_MSG.format(approver=value, error=_get_error_message_from_exception(e, self))
+            if not found:
+                return None, MSTEAMS_APPROVER_UNRESOLVED_MSG.format(approver=value)
+            resolved.append({"id": str(found["id"]).lower(), "name": found["name"]})
+        return resolved, ""
+
+    def _get_signed_in_identity(self, action_result):
+        """The delegated account this asset posts as: object ID and display name.
+
+        The ID separates our own seeded reactions from an approver's.
+        """
+
+        status, response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_ME_ENDPOINT, action_result=action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status(), None
+        user_id = (response or {}).get("id")
+        if not user_id:
+            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve current user ID"), None
+        return phantom.APP_SUCCESS, {
+            "id": str(user_id).strip().lower(),
+            "name": (response or {}).get("displayName") or "",
+        }
+
+    def _resolve_one_on_one_chat_id(self, action_result, user_id):
+        """Create or retrieve the delegated user's one-on-one chat."""
+        status, identity = self._get_signed_in_identity(action_result)
+        if phantom.is_fail(status):
+            return status, None
+        members = [
+            {
+                "@odata.type": "#microsoft.graph.aadUserConversationMember",
+                "roles": ["owner"],
+                "user@odata.bind": f"{MSTEAMS_MSGRAPH_API_BASE_URL}/users/{_encode_graph_path_segment(member_id)}",
+            }
+            for member_id in (identity["id"], user_id)
+        ]
+        status, response = self._update_request(
+            action_result, "/chats", method="post", data=json.dumps({"chatType": "oneOnOne", "members": members})
+        )
+        if phantom.is_fail(status):
+            return status, None
+        chat_id = (response or {}).get("id")
+        if not chat_id:
+            return action_result.set_status(phantom.APP_ERROR, "Microsoft Graph did not return a chat ID."), None
+        return phantom.APP_SUCCESS, chat_id
+
+    def _resolve_reaction_target(self, action_result, destination, param):
+        """Work out which Graph message collection the card should be posted to.
+
+        Returns (status, {'messages_endpoint', 'reaction_endpoint'}) where
+        'reaction_endpoint' still needs its message_id substituted -- the ID only
+        exists once the card has actually been posted.
+        """
+
+        if destination == "channel":
+            group_id = param.get(MSTEAMS_JSON_GROUP_ID)
+            channel_id = param.get(MSTEAMS_JSON_CHANNEL_ID)
+            if not group_id or not channel_id:
+                return (
+                    action_result.set_status(phantom.APP_ERROR, "For destination 'channel', provide both 'group_id' and 'channel_id'."),
+                    None,
+                )
+
+            status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
+            if phantom.is_fail(status):
+                error_message = action_result.get_message()
+                if "teamId" in error_message:
+                    error_message = error_message.replace("teamId", "'group_id'")
+                return action_result.set_status(phantom.APP_ERROR, error_message), None
+
+            encoded_group = _encode_graph_path_segment(group_id)
+            encoded_channel = _encode_graph_path_segment(channel_id)
+            return phantom.APP_SUCCESS, {
+                "messages_endpoint": MSTEAMS_MSGRAPH_SEND_CHANNEL_MSG_ENDPOINT.format(group_id=encoded_group, channel_id=encoded_channel),
+                "reaction_endpoint": MSTEAMS_MSGRAPH_SET_CHANNEL_MSG_REACTION_ENDPOINT.format(
+                    group_id=encoded_group, channel_id=encoded_channel, message_id="{message_id}"
+                ),
+                # A channel post has a reply thread to fall back to; a chat does
+                # not, so there the fallback is a new message in the chat.
+                "threaded": True,
+            }
+
+        if destination == "direct_message":
+            user_id = param.get(MSTEAMS_JSON_USER_ID)
+            if not user_id:
+                return action_result.set_status(phantom.APP_ERROR, "For destination 'direct_message', provide 'user_id'."), None
+            status, chat_id = self._resolve_one_on_one_chat_id(action_result, user_id)
+            if phantom.is_fail(status):
+                return action_result.get_status(), None
+        else:
+            chat_id = param.get(MSTEAMS_JSON_CHAT_ID)
+            if not chat_id:
+                return action_result.set_status(phantom.APP_ERROR, "For destination 'chat', provide 'chat_id'."), None
+
+        encoded_chat = _encode_graph_path_segment(chat_id)
+        return phantom.APP_SUCCESS, {
+            "messages_endpoint": MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=encoded_chat),
+            "reaction_endpoint": MSTEAMS_MSGRAPH_SET_CHAT_MSG_REACTION_ENDPOINT.format(chat_id=encoded_chat, message_id="{message_id}"),
+            "threaded": False,
+        }
+
+    @staticmethod
+    def _approving_reaction(reactions):
+        """The reaction that approves -- the fallback when only one can be seeded."""
+
+        return next((reaction for reaction in reactions if reaction["approves"]), reactions[0] if reactions else None)
+
+    def _seed_reactions(self, action_result, target, message_id, reactions):
+        """Seed only the approving choice; this account's reactions never decide."""
+        approving = self._approving_reaction(reactions)
+        endpoint = target["reaction_endpoint"].format(message_id=_encode_graph_path_segment(message_id))
+        status, _ = self._update_request(
+            action_result=action_result,
+            endpoint=endpoint,
+            method="post",
+            data=json.dumps({"reactionType": approving["emoji"]}),
+        )
+        if phantom.is_fail(status):
+            message = MSTEAMS_REACTION_SEED_FAILED_MSG.format(reaction=approving["emoji"], error=action_result.get_message())
+            self.save_progress(message)
+            return [message]
+        return []
+
+    @staticmethod
+    def _seeded_reactions_present(raw_reactions, reactions, self_id):
+        """Which accepted reactions this account actually holds on the message.
+
+        Read from the message rather than inferred from the seed calls: a 204
+        from setReaction says the call was accepted, not that the reaction stuck.
+        """
+
+        wanted = {reaction["key"]: reaction for reaction in reactions}
+        present = []
+        for entry in raw_reactions or []:
+            if not isinstance(entry, dict):
+                continue
+            reactor_id = str((((entry.get("user") or {}).get("user")) or {}).get("id") or "").strip().lower()
+            if not self_id or reactor_id != self_id:
+                continue
+            choice = wanted.get(normalize_reaction(entry.get("reactionType")))
+            if choice and choice["emoji"] not in present:
+                present.append(choice["emoji"])
+        return present
+
+    def _resolve_user_identity(self, action_result, user_id, fallback_name=""):
+        """Turn a reacting user's object ID into something a person can read.
+
+        A reaction carries only a display name and an object ID. An object ID is
+        a database key: it identifies the approver to an auditor but tells a
+        human reading the card nothing, so the directory is asked for the user
+        principal name and mail as well. Best-effort -- a failed lookup degrades
+        to what the reaction itself carried rather than failing the approval.
+        """
+
+        identity = {"name": fallback_name or "", "upn": "", "email": "", "aad_id": user_id or ""}
+        if not user_id:
+            return identity
+
+        try:
+            status, response = self._update_request(
+                action_result,
+                f"{MSTEAMS_MSGRAPH_LIST_USERS_ENDPOINT}/{_encode_graph_path_segment(user_id)}",
+                params={"$select": "id,displayName,userPrincipalName,mail"},
+            )
+        except Exception as e:
+            self.save_progress(f"Could not look up the approver's directory entry: {_get_error_message_from_exception(e, self)}")
+            return identity
+
+        if phantom.is_fail(status) or not isinstance(response, dict):
+            self.save_progress(f"Could not look up the approver's directory entry: {action_result.get_message()}")
+            return identity
+
+        identity["name"] = response.get("displayName") or identity["name"]
+        identity["upn"] = response.get("userPrincipalName") or ""
+        identity["email"] = response.get("mail") or ""
+        return identity
+
+    @staticmethod
+    def _find_answering_reaction(raw_reactions, reactions, self_id, approver_ids):
+        """Split a message's reactions into the answer and the ones turned away.
+
+        Returns (answer, ignored). 'answer' is the oldest eligible reaction, or
+        None if nobody has answered yet: several can land between two checks, and
+        the first person to respond is the one who decided.
+
+        'ignored' holds reactions that were a real attempt to answer -- a
+        configured emoji -- from somebody not on the approver list. They never
+        decide anything, but silently dropping them would leave no record that
+        someone tried. Reactions with an emoji that is not configured are not
+        attempts to answer and are not reported.
+        """
+
+        wanted = {reaction["key"]: reaction for reaction in reactions}
+        eligible = []
+        ignored = []
+
+        for entry in raw_reactions or []:
+            if not isinstance(entry, dict):
+                continue
+            choice = wanted.get(normalize_reaction(entry.get("reactionType")))
+            if not choice:
+                continue
+
+            identity = (entry.get("user") or {}).get("user") or {}
+            reactor_id = str(identity.get("id") or "").strip().lower()
+            # The seeded reactions are ours. Counting them would decide every
+            # approval the instant it was posted.
+            if not reactor_id or reactor_id == self_id:
+                continue
+
+            created = str(entry.get("createdDateTime") or "")
+            if approver_ids and reactor_id not in approver_ids:
+                ignored.append(
+                    {
+                        "reaction": entry.get("reactionType"),
+                        "reaction_emoji": choice["emoji"],
+                        "answer": choice["label"],
+                        "reacted_by": identity.get("displayName") or "",
+                        "reacted_by_aad_id": identity.get("id") or "",
+                        "reacted_at": created,
+                        "reason": "not a listed approver",
+                    }
+                )
+                continue
+
+            # Fractional seconds and offsets do not sort chronologically as strings.
+            try:
+                timestamp = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                if timestamp.tzinfo is None:
+                    timestamp = timestamp.replace(tzinfo=timezone.utc)
+            except ValueError:
+                timestamp = datetime.max.replace(tzinfo=timezone.utc)
+            # A simultaneous approve/deny tie resolves to deny.
+            eligible.append(((timestamp, choice["approves"]), entry, choice, identity))
+
+        if not eligible:
+            return None, ignored
+
+        eligible.sort(key=lambda item: item[0])
+        _, entry, choice, identity = eligible[0]
+        return (entry, choice, identity), ignored
+
+    def _close_reaction_message(self, action_result, target, message_id, card_obj, blocks):
+        """Edit the posted approval message so it records how it ended.
+
+        Returns (updated, error). Editing is presentation, never the decision
+        itself, so every failure here is reported rather than raised: the
+        playbook has its answer regardless of what Teams does with the card.
+
+        A delegated PATCH can rewrite a message this account sent, which is what
+        makes this possible without the Azure Bot. Where it is refused -- most
+        often a missing 'ChannelMessage.ReadWrite' -- the same record is posted
+        as a reply instead, so the outcome is still visible next to the request.
+        """
+
+        encoded_id = _encode_graph_path_segment(message_id)
+        closed_card = finalize_reaction_card(card_obj, blocks)
+
+        status, _ = self._update_request(
+            action_result=action_result,
+            endpoint=f"{target['messages_endpoint']}/{encoded_id}",
+            method="patch",
+            data=json.dumps(self._build_adaptive_card_message_payload(closed_card)),
+        )
+        if phantom.is_success(status):
+            return True, ""
+
+        error = MSTEAMS_REACTION_UPDATE_FAILED_MSG.format(error=action_result.get_message())
+        self.save_progress(f"{error} {MSTEAMS_REACTION_UPDATE_SCOPE_HINT}")
+
+        # A chat has no reply thread, so there the record goes into the chat as
+        # its own message, immediately after the one it closes.
+        reply_endpoint = f"{target['messages_endpoint']}/{encoded_id}/replies" if target.get("threaded") else target["messages_endpoint"]
+        status, _ = self._update_request(
+            action_result=action_result,
+            endpoint=reply_endpoint,
+            method="post",
+            data=json.dumps(self._build_adaptive_card_message_payload(closed_card)),
+        )
+        if phantom.is_fail(status):
+            return False, f"{error} Posting it as a reply also failed: {action_result.get_message()}"
+
+        return False, f"{error} It was posted as a reply instead."
+
+    def _handle_ask_for_approval_reactions(self, param: dict) -> str:
+        """Post an approval card over Graph and watch for an emoji reaction on it.
+
+        Post as the delegated user and poll a bounded number of times. No
+        suspended action, webhook callback or Azure Bot is required.
+        """
+
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        destination = (param.get(MSTEAMS_JSON_DESTINATION) or "").strip().lower()
+        if destination not in MSTEAMS_VALID_REACTION_DESTINATIONS:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Invalid destination. Use one of: {', '.join(sorted(MSTEAMS_VALID_REACTION_DESTINATIONS))}.",
+            )
+
+        try:
+            reactions = parse_reactions(param.get(MSTEAMS_JSON_REACTIONS) or MSTEAMS_REACTION_DEFAULT_REACTIONS)
+        except ValueError as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Parameter 'reactions' is not valid: {e}")
+
+        if len(reactions) < 2:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                "Parameter 'reactions' needs at least two distinct emoji. The first approves unless one sets \"approves\": true.",
+            )
+
+        if not any(r["approves"] for r in reactions) or all(r["approves"] for r in reactions):
+            return action_result.set_status(phantom.APP_ERROR, "Configure at least one approving and one rejecting reaction.")
+
+        status, max_checks = self._get_bounded_int(
+            action_result, param, MSTEAMS_JSON_MAX_CHECKS, MSTEAMS_REACTION_DEFAULT_MAX_CHECKS, 1, MSTEAMS_REACTION_MAX_CHECKS_LIMIT
+        )
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        status, check_interval = self._get_bounded_int(
+            action_result,
+            param,
+            MSTEAMS_JSON_CHECK_INTERVAL,
+            MSTEAMS_REACTION_DEFAULT_CHECK_INTERVAL,
+            MSTEAMS_REACTION_MIN_CHECK_INTERVAL,
+            MSTEAMS_REACTION_MAX_CHECK_INTERVAL,
+        )
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        resolved_approvers, approver_error = self._resolve_approvers(action_result, get_list_from_string(param.get(MSTEAMS_JSON_APPROVERS, "")))
+        if resolved_approvers is None:
+            return action_result.set_status(phantom.APP_ERROR, approver_error)
+        approver_ids = {approver["id"] for approver in resolved_approvers}
+
+        seed_mode = str(param.get(MSTEAMS_JSON_SEED_REACTIONS, "approving")).strip().lower()
+        if seed_mode not in ("approving", "none"):
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'seed_reactions' must be 'approving' or 'none'.")
+
+        adaptive_raw = param.get(MSTEAMS_JSON_ADAPTIVE_CARD)
+        if adaptive_raw is not None and str(adaptive_raw).strip():
+            try:
+                card_obj = json.loads(str(adaptive_raw))
+            except json.JSONDecodeError as e:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid adaptive card JSON: {e}")
+            if not isinstance(card_obj, dict):
+                return action_result.set_status(phantom.APP_ERROR, "Adaptive card must be a JSON object at the root.")
+        else:
+            message = param.get(MSTEAMS_JSON_MSG)
+            if not message or not str(message).strip():
+                return action_result.set_status(
+                    phantom.APP_ERROR, "Parameter 'message' is required unless 'adaptive_card' supplies a custom card."
+                )
+            try:
+                # The card names people; matching is by Azure AD object ID.
+                card_obj = create_reaction_approval_card(
+                    str(param.get(MSTEAMS_JSON_TITLE) or "Approval required"),
+                    str(message),
+                    param.get(MSTEAMS_JSON_DETAILS) or "",
+                    reactions,
+                    [approver["name"] for approver in resolved_approvers],
+                )
+            except Exception as e:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Could not build the approval card: {_get_error_message_from_exception(e, self)}"
+                )
+
+        # Identify ourselves before posting: without this the seeded reactions
+        # cannot be told apart from an approver's, and the action would answer
+        # itself on the first check.
+        status, self_identity = self._get_signed_in_identity(action_result)
+        if phantom.is_fail(status):
+            return action_result.get_status()
+        self_id = self_identity["id"]
+        if approver_ids and not (approver_ids - {self_id}):
+            return action_result.set_status(phantom.APP_ERROR, "The sending account cannot approve its own request. Specify another approver.")
+
+        status, target = self._resolve_reaction_target(action_result, destination, param)
+        if phantom.is_fail(status):
+            return action_result.get_status()
+
+        status, response = self._update_request(
+            action_result=action_result,
+            endpoint=target["messages_endpoint"],
+            method="post",
+            data=json.dumps(self._build_adaptive_card_message_payload(card_obj)),
+        )
+        if phantom.is_fail(status):
+            error_message = action_result.get_message()
+            if "teamId" in error_message:
+                error_message = error_message.replace("teamId", "'group_id'")
+            return action_result.set_status(phantom.APP_ERROR, error_message)
+
+        message_id = (response or {}).get("id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Posted the card but Microsoft Teams did not return a message ID to watch.")
+
+        self.save_progress(f"Posted approval card as message {message_id}")
+        action_result.update_summary(
+            {
+                "message_id": message_id,
+                "destination": destination,
+                "expected_approver_ids": sorted(approver_ids),
+            }
+        )
+
+        message_endpoint = f"{target['messages_endpoint']}/{_encode_graph_path_segment(message_id)}"
+
+        seed_errors = []
+        if seed_mode != "none":
+            seed_errors = self._seed_reactions(action_result, target, message_id, reactions)
+
+        record = {
+            "message_id": message_id,
+            "web_url": (response or {}).get("webUrl"),
+            "destination": destination,
+            "seeded": False,
+            "seeded_reactions": [],
+            "seed_mode": seed_mode,
+            "seed_note": "",
+            "seed_errors": seed_errors,
+        }
+
+        record.update({"approved": False, "timed_out": False})
+        action_result.add_data(record)
+        answered = False
+        # Keyed so the same standing reaction is not recorded once per check --
+        # an ignored reaction stays on the message for every remaining poll.
+        ignored_seen = {}
+        seeds_checked = False
+        for check in range(1, max_checks + 1):
+            status, message_body = self._update_request(action_result=action_result, endpoint=message_endpoint, method="get")
+            if phantom.is_fail(status):
+                # Fail promptly when the first read cannot establish access.
+                # Later errors consume checks but allow another bounded retry.
+                if check == 1:
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"Could not read reactions on message '{message_id}': {action_result.get_message()}. {MSTEAMS_REACTION_SCOPE_HINT}",
+                    )
+                self.save_progress(f"Check {check}/{max_checks} could not read the message: {action_result.get_message()}")
+            else:
+                raw_reactions = (message_body or {}).get("reactions")
+                if not seeds_checked:
+                    # setReaction returning 204 means the call was accepted, not
+                    # that the reaction stuck, so what is really on the message
+                    # is read back once -- from a poll we were making anyway.
+                    seeds_checked = True
+                    record["seeded_reactions"] = self._seeded_reactions_present(raw_reactions, reactions, self_id)
+                    record["seeded"] = bool(record["seeded_reactions"])
+                    if seed_mode != "none" and len(record["seeded_reactions"]) < len(reactions):
+                        # Expected on most tenants, so it is reported as a note.
+                        # Carrying it in seed_errors made a normal outcome read
+                        # like a failure.
+                        note = MSTEAMS_REACTION_SINGLE_SEED_NOTE.format(
+                            requested=len(reactions),
+                            landed=len(record["seeded_reactions"]),
+                            emoji=" ".join(record["seeded_reactions"]) or "none",
+                        )
+                        self.save_progress(note)
+                        record["seed_note"] = note
+
+                found, ignored = self._find_answering_reaction(raw_reactions, reactions, self_id, approver_ids)
+                for entry in ignored:
+                    ignored_seen.setdefault((entry["reacted_by_aad_id"], entry["reaction_emoji"], entry["reacted_at"]), entry)
+                if found:
+                    entry, choice, identity = found
+                    approver = self._resolve_user_identity(action_result, identity.get("id") or "", identity.get("displayName") or "")
+                    record.update(
+                        {
+                            "approved": choice["approves"],
+                            "answer": choice["label"],
+                            "reaction": entry.get("reactionType"),
+                            "reaction_emoji": choice["emoji"],
+                            "answered_by": approver["name"],
+                            "answered_by_upn": approver["upn"],
+                            "answered_by_email": approver["email"],
+                            "answered_by_aad_id": approver["aad_id"],
+                            "answered_at": entry.get("createdDateTime") or "",
+                            "checks_performed": check,
+                            "timed_out": False,
+                        }
+                    )
+                    answered = True
+                    break
+
+            if check < max_checks:
+                self.save_progress(f"No response yet (check {check}/{max_checks}); waiting {check_interval}s")
+                time.sleep(check_interval)
+
+        if not answered:
+            record.update(
+                {
+                    "approved": False,
+                    "answer": "",
+                    "reaction": "",
+                    "reaction_emoji": "",
+                    "answered_by": "",
+                    "answered_by_upn": "",
+                    "answered_by_email": "",
+                    "answered_by_aad_id": "",
+                    "answered_at": "",
+                    "checks_performed": max_checks,
+                    "timed_out": True,
+                }
+            )
+            # Only max_checks - 1 gaps are actually waited through, and a single
+            # check waits no time at all -- reporting a duration there would be
+            # a plain untruth.
+            waited = (max_checks - 1) * check_interval
+            if waited <= 0:
+                window = ""
+            elif waited < 120:
+                window = f" (about {waited} seconds)"
+            else:
+                window = f" (about {round(waited / 60)} minutes)"
+
+            # Leave nothing in Teams that still looks like a live approval.
+            updated, update_error = self._close_reaction_message(
+                action_result, target, message_id, card_obj, reaction_expired_blocks(max_checks, window)
+            )
+            record["card_updated"] = updated
+            record["card_update_error"] = update_error
+            record["ignored_reactions"] = list(ignored_seen.values())
+
+            action_result.update_summary({"approved": False, "timed_out": True, "ignored_reactions": len(record["ignored_reactions"])})
+            # An approval that nobody answered is not an approval. Failing here
+            # keeps a playbook that only branches on action status from reading
+            # silence as consent.
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                MSTEAMS_REACTION_NO_RESPONSE_MSG.format(checks=max_checks, interval=check_interval, window=window),
+            )
+
+        updated, update_error = self._close_reaction_message(
+            action_result,
+            target,
+            message_id,
+            card_obj,
+            reaction_decision_blocks(choice, approver, record["answered_at"]),
+        )
+        record["card_updated"] = updated
+        record["card_update_error"] = update_error
+        record["ignored_reactions"] = list(ignored_seen.values())
+
+        action_result.update_summary(
+            {
+                "approved": record["approved"],
+                "timed_out": False,
+                "answer": record["answer"],
+                "ignored_reactions": len(record["ignored_reactions"]),
+            }
+        )
+
+        return action_result.set_status(phantom.APP_SUCCESS, describe_reaction_decision(choice, approver, record["answered_at"]))
+
     def handle_action(self, param):
         """This function gets current action identifier and calls member function of its own to handle the action.
 
@@ -1566,6 +2238,7 @@ class MicrosoftTeamConnector(BaseConnector):
             "test_connectivity": self._handle_test_connectivity,
             "send_channel_message": self._handle_send_channel_message,
             "ask_question": self._handle_ask_question,
+            "ask_for_approval_reactions": self._handle_ask_for_approval_reactions,
             "send_direct_message": self._handle_send_direct_message,
             "send_chat_message": self._handle_send_chat_message,
             "list_groups": self._handle_list_groups,

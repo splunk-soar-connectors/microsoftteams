@@ -3848,6 +3848,433 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "ask for approval via reactions",
+            "identifier": "ask_for_approval_reactions",
+            "description": "Post an approval card to Teams over Microsoft Graph and wait for an emoji reaction to answer it",
+            "verbose": "Posts an Adaptive Card using the asset's delegated Microsoft Graph identity and polls for an accepted reaction. No Azure Bot or suspended action is required. Configure reactions using typed names such as thumbs_up and thumbs_down, Unicode code points such as U+1F44D, or literal emoji. The first option approves unless approval flags are supplied. The earliest eligible reaction observed decides; the sending account never counts. Optional approvers are resolved to directory object IDs before posting. Only the approving reaction is seeded; other choices remain available in Teams' reaction picker. Polling stops after max_checks reads, check_interval_seconds apart. Expiry returns failed status with timed_out=true and approved=false. A rejection is a successful response with approved=false; always branch on approved as well as status. The message is updated with the outcome; if editing fails, a follow-up is attempted and card_update_error records the failure. Requires ChannelMessage.Read.All and ChannelMessage.Send for channels, ChannelMessage.ReadWrite to edit channel posts, or Chat.ReadWrite for chats/direct messages, plus the app's existing user lookup scopes. Polling occupies an action worker; keep the configured window within the SOAR action execution timeout.",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "destination": {
+                    "description": "Where to post: channel (needs group_id and channel_id), direct_message (needs user_id), or chat (needs chat_id)",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "value_list": [
+                        "channel",
+                        "direct_message",
+                        "chat"
+                    ],
+                    "default": "channel",
+                    "order": 0
+                },
+                "message": {
+                    "description": "What is being approved. Required unless 'adaptive_card' supplies a custom card. Markdown is supported",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 1
+                },
+                "title": {
+                    "description": "Card heading",
+                    "data_type": "string",
+                    "required": false,
+                    "default": "Approval required",
+                    "order": 2
+                },
+                "details": {
+                    "description": "Optional context shown as a fact table. Either a JSON object, or one 'Label: value' per line",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3
+                },
+                "approvers": {
+                    "description": "Comma-separated list of who may respond: display names, user principal names, email addresses, or Azure AD object IDs. Each is resolved against the tenant when the card is sent. Leave empty to let anyone who can see the message respond.",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 4
+                },
+                "reactions": {
+                    "description": "Accepted reactions: type thumbs_up,thumbs_down or checkmark,cross. Optional labels and true/false approval flags use vertical-bar separators (see README examples). Other emoji can use Unicode notation, e.g. U+1F680. Literal emoji and JSON arrays are also accepted. First option approves unless flags are provided.",
+                    "data_type": "string",
+                    "required": false,
+                    "default": "thumbs_up|Approve|true,thumbs_down|Deny|false",
+                    "order": 5
+                },
+                "adaptive_card": {
+                    "description": "Optional Adaptive Card JSON (root object) posted instead of the built-in approval card. The reaction flow is unchanged - only the card body differs. Example: {\"type\":\"AdaptiveCard\",\"version\":\"1.5\",\"body\":[{\"type\":\"TextBlock\",\"text\":\"Approve?\"}]}",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 6
+                },
+                "seed_reactions": {
+                    "description": "Pre-add the approving reaction for a quick tap, or seed none. Only one reaction is seeded; other choices can be selected from Teams' reaction picker. The sending account never counts as an approver.",
+                    "data_type": "string",
+                    "required": false,
+                    "value_list": [
+                        "approving",
+                        "none"
+                    ],
+                    "default": "approving",
+                    "order": 7
+                },
+                "max_checks": {
+                    "description": "Number of reaction reads (1-1000). The first is immediate; 1 performs no waiting",
+                    "data_type": "numeric",
+                    "required": false,
+                    "default": 60,
+                    "order": 8
+                },
+                "check_interval_seconds": {
+                    "description": "Seconds between reads (5-900). Total sleep is (max_checks - 1) times this value, plus request time. Defaults sleep 29.5 minutes. Keep within the SOAR action execution timeout",
+                    "data_type": "numeric",
+                    "required": false,
+                    "default": 30,
+                    "order": 9
+                },
+                "group_id": {
+                    "description": "Team (group) ID - required when destination is channel",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [
+                        "ms teams group id"
+                    ],
+                    "order": 10
+                },
+                "channel_id": {
+                    "description": "Channel ID - required when destination is channel",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [
+                        "ms teams channel id"
+                    ],
+                    "order": 11
+                },
+                "user_id": {
+                    "description": "Azure AD object ID of the user - required when destination is direct_message",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [
+                        "ms teams user id"
+                    ],
+                    "order": 12
+                },
+                "chat_id": {
+                    "description": "Chat ID - required when destination is chat",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": true,
+                    "contains": [
+                        "ms teams chat id"
+                    ],
+                    "order": 13
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "column_name": "Status",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.parameter.destination",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.details",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.approvers",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.reactions",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.adaptive_card",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.seed_reactions",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.max_checks",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.check_interval_seconds",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.channel_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams channel id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.chat_id",
+                    "data_type": "string",
+                    "contains": [
+                        "ms teams chat id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.approved",
+                    "data_type": "boolean",
+                    "column_name": "Approved",
+                    "column_order": 0,
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answer",
+                    "data_type": "string",
+                    "column_name": "Decision",
+                    "column_order": 1,
+                    "example_values": [
+                        "Approve",
+                        "Deny"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.reaction_emoji",
+                    "data_type": "string",
+                    "column_name": "Reaction",
+                    "column_order": 2,
+                    "example_values": [
+                        "👍",
+                        "👎"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.reaction",
+                    "data_type": "string",
+                    "example_values": [
+                        "like",
+                        "👎"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answered_by",
+                    "data_type": "string",
+                    "column_name": "Answered by",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.answered_by_upn",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answered_by_email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.answered_by_aad_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.answered_at",
+                    "data_type": "string",
+                    "column_name": "Answered at",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.timed_out",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.checks_performed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.message_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.web_url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.destination",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.seeded",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.seeded_reactions.*",
+                    "data_type": "string",
+                    "example_values": [
+                        "👍"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.seed_mode",
+                    "data_type": "string",
+                    "example_values": [
+                        "approving",
+                        "none"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.seed_note",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.seed_errors.*",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.card_updated",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.card_update_error",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reaction",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reaction_emoji",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.answer",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reacted_by",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reacted_by_aad_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reacted_at",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.ignored_reactions.*.reason",
+                    "data_type": "string",
+                    "example_values": [
+                        "not a listed approver"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.message_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.destination",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.approved",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.summary.timed_out",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.summary.answer",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.expected_approver_ids.*",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.ignored_reactions",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {
@@ -4176,5 +4603,10 @@
                 "input_file": "wheels/py313/yarl-1.24.5-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
-    }
+    },
+    "contributors": [
+        {
+            "name": "Scott Horton"
+        }
+    ]
 }
