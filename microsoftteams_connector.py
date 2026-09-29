@@ -840,7 +840,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
         url = f"{MSTEAMS_MSGRAPH_API_BASE_URL}{MSTEAMS_MSGRAPH_SELF_ENDPOINT}"
-        status, response = self._update_request(action_result=action_result, endpoint=url)
+        status, _response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(status):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
