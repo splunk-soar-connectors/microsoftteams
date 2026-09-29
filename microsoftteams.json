@@ -3917,7 +3917,7 @@
             },
             {
                 "module": "cryptography",
-                "input_file": "wheels/py39/cryptography-50.0.0-cp39-abi3-manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py39/cryptography-50.0.1-cp39-abi3-manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "datedelta",
@@ -3945,7 +3945,7 @@
             },
             {
                 "module": "msal",
-                "input_file": "wheels/py3/msal-1.37.0-py3-none-any.whl"
+                "input_file": "wheels/py3/msal-1.39.0-py3-none-any.whl"
             },
             {
                 "module": "msrest",
@@ -3961,7 +3961,7 @@
             },
             {
                 "module": "oauthlib",
-                "input_file": "wheels/py3/oauthlib-3.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/oauthlib-4.0.0-py3-none-any.whl"
             },
             {
                 "module": "propcache",
@@ -3973,11 +3973,11 @@
             },
             {
                 "module": "pyjwt",
-                "input_file": "wheels/py3/pyjwt-2.13.0-py3-none-any.whl"
+                "input_file": "wheels/py3/pyjwt-2.15.1-py3-none-any.whl"
             },
             {
                 "module": "pytz",
-                "input_file": "wheels/shared/pytz-2026.3.post1-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/pytz-2026.4-py2.py3-none-any.whl"
             },
             {
                 "module": "recognizers_text",
@@ -4073,11 +4073,11 @@
             },
             {
                 "module": "cffi",
-                "input_file": "wheels/py313/cffi-2.1.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/cffi-2.1.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "cryptography",
-                "input_file": "wheels/py3/cryptography-50.0.0-cp311-abi3-manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py3/cryptography-50.0.1-cp311-abi3-manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "datedelta",
@@ -4105,7 +4105,7 @@
             },
             {
                 "module": "msal",
-                "input_file": "wheels/py3/msal-1.37.0-py3-none-any.whl"
+                "input_file": "wheels/py3/msal-1.39.0-py3-none-any.whl"
             },
             {
                 "module": "msrest",
@@ -4113,7 +4113,7 @@
             },
             {
                 "module": "multidict",
-                "input_file": "wheels/py313/multidict-6.7.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/multidict-6.9.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "multipledispatch",
@@ -4121,11 +4121,11 @@
             },
             {
                 "module": "oauthlib",
-                "input_file": "wheels/py3/oauthlib-3.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/oauthlib-4.0.0-py3-none-any.whl"
             },
             {
                 "module": "propcache",
-                "input_file": "wheels/py313/propcache-0.5.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/propcache-0.5.4-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "pycparser",
@@ -4133,11 +4133,11 @@
             },
             {
                 "module": "pyjwt",
-                "input_file": "wheels/py3/pyjwt-2.13.0-py3-none-any.whl"
+                "input_file": "wheels/py3/pyjwt-2.15.1-py3-none-any.whl"
             },
             {
                 "module": "pytz",
-                "input_file": "wheels/shared/pytz-2026.3.post1-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/pytz-2026.4-py2.py3-none-any.whl"
             },
             {
                 "module": "recognizers_text",
@@ -4161,7 +4161,7 @@
             },
             {
                 "module": "regex",
-                "input_file": "wheels/py313/regex-2026.7.19-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/regex-2026.9.29-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             },
             {
                 "module": "requests_oauthlib",
@@ -4173,7 +4173,7 @@
             },
             {
                 "module": "yarl",
-                "input_file": "wheels/py313/yarl-1.24.5-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
+                "input_file": "wheels/py313/yarl-1.25.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl"
             }
         ]
     }

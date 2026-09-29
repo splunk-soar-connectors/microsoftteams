@@ -425,6 +425,13 @@ class MicrosoftTeamConnector(BaseConnector):
         if 200 <= response.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
+        error = resp_json.get("error", {}) if isinstance(resp_json, dict) else {}
+        self._graph_token_rejected = (
+            response.status_code == 401
+            and isinstance(error, dict)
+            and error.get("code") in {"InvalidAuthenticationToken", "ExpiredAuthenticationToken", "TokenExpired"}
+        )
+
         error_message = response.text.replace("{", "{{").replace("}", "}}")
         message = f"Error from server. Status Code: {response.status_code} Data from server: {error_message}"
 
@@ -507,7 +514,15 @@ class MicrosoftTeamConnector(BaseConnector):
             "refresh_token": self._refresh_token,
         }
 
-        if not self._access_token:
+        expires_at = self._state.get(MSTEAMS_TOKEN_STRING, {}).get("expires_at")
+        try:
+            if isinstance(expires_at, bool):
+                raise ValueError
+            expired = self._access_token and expires_at is not None and time.time() >= float(expires_at)
+        except (TypeError, ValueError, OverflowError):
+            expired = False
+
+        if not self._access_token or expired:
             if not self._refresh_token:
                 # If none of the access_token and refresh_token is available
                 return action_result.set_status(phantom.APP_ERROR, status_message=MSTEAMS_TOKEN_NOT_AVAILABLE_MSG), None
@@ -524,12 +539,10 @@ class MicrosoftTeamConnector(BaseConnector):
             action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
         )
 
-        action_result_message = action_result.get_message().lower()
-
         if phantom.is_fail(status):
-            # If token is expired, generate new token
-            if self._is_token_expired(action_result_message):
+            if self._graph_token_rejected:
                 self.debug_print(MSTEAMS_TOKEN_EXPIRED_MSG)
+                token_data["refresh_token"] = self._refresh_token
                 status = self._generate_new_access_token(action_result=action_result, data=token_data)
 
                 if phantom.is_fail(status):
@@ -547,9 +560,6 @@ class MicrosoftTeamConnector(BaseConnector):
                 return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
-
-    def _is_token_expired(self, action_result_message: str) -> bool:
-        return MSTEAMS_TOKEN_EXPIRED_MARKER in action_result_message
 
     def _get_oauth_config_hash(self):
         config = self.get_config()
@@ -587,6 +597,7 @@ class MicrosoftTeamConnector(BaseConnector):
         """
 
         resp_json = None
+        self._graph_token_rejected = False
 
         try:
             request_func = getattr(requests, method)
@@ -674,9 +685,26 @@ class MicrosoftTeamConnector(BaseConnector):
 
         req_url = f"{MSTEAMS_LOGIN_BASE_URL}{MSTEAMS_SERVER_TOKEN_URL.format(tenant_id=self._tenant)}"
 
+        started_at = time.time()
         status, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=urllib.urlencode(data), method="post")
         if phantom.is_fail(status):
             return action_result.get_status()
+
+        try:
+            expires_in = resp_json.get("expires_in")
+            if isinstance(expires_in, bool):
+                raise ValueError
+            lifetime = float(expires_in)
+            if 0 < lifetime < float("inf"):
+                resp_json["expires_at"] = started_at + lifetime
+        except (TypeError, ValueError, OverflowError):
+            pass
+
+        if not resp_json.get(MSTEAMS_ACCESS_TOKEN_STRING):
+            return action_result.set_status(phantom.APP_ERROR, "Token response did not include an access token")
+
+        if not resp_json.get(MSTEAMS_REFRESH_TOKEN_STRING) and self._refresh_token:
+            resp_json[MSTEAMS_REFRESH_TOKEN_STRING] = self._refresh_token
 
         self._access_token = resp_json[MSTEAMS_ACCESS_TOKEN_STRING]
         self._refresh_token = resp_json[MSTEAMS_REFRESH_TOKEN_STRING]
@@ -840,7 +868,7 @@ class MicrosoftTeamConnector(BaseConnector):
         self.save_progress(MSTEAMS_CURRENT_USER_INFO_MSG)
 
         url = f"{MSTEAMS_MSGRAPH_API_BASE_URL}{MSTEAMS_MSGRAPH_SELF_ENDPOINT}"
-        status, response = self._update_request(action_result=action_result, endpoint=url)
+        status, _response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(status):
             self.save_progress(MSTEAMS_TEST_CONNECTIVITY_FAILED_MSG)
