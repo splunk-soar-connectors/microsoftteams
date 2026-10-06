@@ -25,6 +25,141 @@ This app integrates with Microsoft Teams to support various generic and investig
   - `send direct message`
   - The `send email` action, from your preferred email connector. For the email recipient, use the email address that is automatically assigned to your Microsoft Teams channel (see [Microsoft docs](https://support.microsoft.com/en-us/office/send-an-email-to-a-channel-in-microsoft-teams-d91db004-d9d7-4a47-82e6-fb1b16dfd51e))
 
+## Approval via reactions
+
+Use **ask for approval via reactions** to post an approval card and wait for a
+reaction using the asset's delegated Microsoft Graph identity. This action does
+not use an Azure Bot, a webhook callback, or a suspended SOAR action.
+
+Choose `channel` with `group_id` and `channel_id`, `chat` with `chat_id`, or
+`direct_message` with the recipient's Entra object ID in `user_id`. Direct messages
+create or retrieve a one-on-one chat. Supply `message` and optionally `title` and
+`details` (a JSON object or `Label: value` lines). An optional `adaptive_card` JSON
+object replaces the built-in card.
+
+### Enter reactions without pasting emoji
+
+The `reactions` field accepts plain text. Its default is:
+
+```text
+thumbs_up|Approve|true,thumbs_down|Deny|false
+```
+
+Each comma-separated option is `reaction|label|approves`. Labels and flags are
+optional: `thumbs_up,thumbs_down` also works. Without any flags, the first option
+approves and the others reject. With explicit flags, only options marked `true`
+approve. Configure at least one approving and one rejecting option.
+
+| Reaction | Names you can type |
+| --- | --- |
+| Thumbs up | `thumbs_up`, `thumbs up`, `thumbsup`, `like`, `+1`, `yes`, `approve` |
+| Thumbs down | `thumbs_down`, `thumbs down`, `thumbsdown`, `dislike`, `-1`, `no`, `deny`, `reject` |
+| Check mark | `checkmark`, `check`, `white_check_mark` |
+| Cross | `cross`, `x` |
+| Heart | `heart`, `love` |
+| Laugh | `laugh`, `haha` |
+| Surprise | `surprised`, `wow` |
+| Sad | `sad`, `cry` |
+| Angry | `angry`, `mad` |
+| Eyes | `eyes` |
+| Rocket | `rocket` |
+| Celebration | `tada`, `party` |
+
+Names are case-insensitive and may have surrounding colons, such as `:thumbsup:`.
+For a different emoji, enter its Unicode code point, such as `U+1F680` for a
+rocket. Separate code points within a sequence with spaces (`U+2764 U+FE0F` for a
+heart). Teams must support the chosen emoji. Literal emoji and JSON arrays also
+work:
+
+```json
+[
+  {"emoji": "checkmark", "label": "Allow", "approves": true},
+  {"emoji": "cross", "label": "Block", "approves": false}
+]
+```
+
+Unknown names, invalid flags, and duplicate options fail before posting. Skin
+tones and presentation variants count as the same reaction. Labels describe the
+decision; they do not determine whether it approves.
+
+### Who can answer and what gets seeded
+
+`approvers` is an optional comma-separated list of Entra object IDs, UPNs, email
+addresses, or exact display names. Entries must resolve unambiguously before the
+request is sent. Without a list, any identifiable user who can see the message
+can answer, except the account used by the asset. That account's reactions are
+always excluded, including seeded reactions. Use a dedicated sending account.
+
+`seed_reactions=approving` (the default) pre-adds one approving reaction so mobile
+responders can tap it. `none` disables seeding. This action does not promise both
+choices as pre-seeded buttons: responders choose another accepted reaction from
+Teams' reaction picker. Setting names in SOAR changes accepted reactions, not the
+Teams quick-reaction toolbar. A failed seed is reported in `seed_errors` and does
+not prevent a response.
+
+The earliest eligible reaction present when polled decides. Unauthorized attempts
+are recorded in `ignored_reactions`; unknown emoji and missing user identities do
+not decide. Simultaneous conflicting reactions resolve to rejection. This is a
+first-response action, not a vote or quorum. Polling reads current reactions, so a
+reaction removed before the next read may never be observed. Later reactions do
+not revise a completed decision.
+
+### Polling, expiry, and playbook branches
+
+`max_checks` (1-1000, default 60) bounds the number of reads.
+`check_interval_seconds` (5-900, default 30) sets the delay between them. The first
+read is immediate; total sleep is `(max_checks - 1) * check_interval_seconds`,
+plus Graph request time. Defaults therefore sleep 29.5 minutes. `max_checks=1`
+reads once without sleeping.
+
+The action occupies a SOAR action worker while polling. Configure the polling
+window below your deployment's action execution timeout, allowing time for Graph
+requests and the final card update. A platform termination can prevent final
+results and the expiry update; this action does not override platform limits.
+
+| Outcome | Action status | `approved` | `timed_out` |
+| --- | --- | --- | --- |
+| Approval | success | true | false |
+| Rejection | success | false | false |
+| No eligible response before polling ends | failed | false | true |
+
+Branch on successful status **and** `action_result.data.*.approved=true` before
+taking the approved path. Handle `timed_out=true` separately from rejection and
+API errors. A successful action means a response was received; it is not by
+itself approval. The first failed reaction read stops the action with an error;
+subsequent failed reads consume checks and polling continues within the bound.
+
+Results include the decision, responder's Entra ID, available directory name and
+UPN/email, reaction time, message ID/link, checks performed, and ignored reactions.
+The action attempts to update the card with the decision or expiry. If editing
+fails, it attempts a channel reply or a chat follow-up. `card_updated` and
+`card_update_error` report this separately; an update failure never changes the
+decision. When editing fails, the original card can still appear open, although
+the completed action no longer accepts answers.
+
+### Required delegated permissions
+
+Keep the app's existing authentication and user lookup permissions. Add the
+following permissions to the Entra registration and the asset's `scope`, grant
+any required consent, and rerun **test connectivity**:
+
+| Destination | Additional permissions |
+| --- | --- |
+| Channel | `ChannelMessage.Read.All` to read reactions; `ChannelMessage.Send` to post and seed; `ChannelMessage.ReadWrite` to edit the posted card |
+| Chat or direct message | `Chat.ReadWrite` to create/retrieve a chat, post, read reactions, seed, and edit |
+
+The delegated user must have access to the destination. The action uses the
+connector's existing Microsoft Graph endpoint configuration.
+
+### Validation before deployment
+
+Unit tests use a fake Graph transport. On a SOAR test asset, verify approval,
+rejection, an unauthorized responder, an unanswered request with a short polling
+window, and the final card update for each destination you use. Confirm the
+playbook continues after expiry and that your mobile client can select the
+configured rejection reaction. No live Teams or SOAR validation is implied by
+the unit tests.
+
 ## Authentication
 
 This connector requires creating an app in the Microsoft Entra ID.
@@ -225,7 +360,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [create meeting](#action-create-meeting) - Create a microsoft teams meeting <br>
 [get channel message](#action-get-channel-message) - Get message in a channel <br>
 [get chat message](#action-get-chat-message) - Get message in a chat <br>
-[get response message](#action-get-response-message) - Get response on message in a chat
+[get response message](#action-get-response-message) - Get response on message in a chat <br>
+[ask for approval via reactions](#action-ask-for-approval-via-reactions) - Post an approval card to Teams over Microsoft Graph and wait for an emoji reaction to answer it
 
 ## action: 'test connectivity'
 
@@ -1053,6 +1189,92 @@ summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 action_result.summary | string | | |
 action_result.message | string | | Message sent |
+
+## action: 'ask for approval via reactions'
+
+Post an approval card to Teams over Microsoft Graph and wait for an emoji reaction to answer it
+
+Type: **generic** <br>
+Read only: **False**
+
+Posts an Adaptive Card using the asset's delegated Microsoft Graph identity and polls for an accepted reaction. No Azure Bot or suspended action is required. Configure reactions using typed names such as thumbs_up and thumbs_down, Unicode code points such as U+1F44D, or literal emoji. The first option approves unless approval flags are supplied. The earliest eligible reaction observed decides; the sending account never counts. Optional approvers are resolved to directory object IDs before posting. Only the approving reaction is seeded; other choices remain available in Teams' reaction picker. Polling stops after max_checks reads, check_interval_seconds apart. Expiry returns failed status with timed_out=true and approved=false. A rejection is a successful response with approved=false; always branch on approved as well as status. The message is updated with the outcome; if editing fails, a follow-up is attempted and card_update_error records the failure. Requires ChannelMessage.Read.All and ChannelMessage.Send for channels, ChannelMessage.ReadWrite to edit channel posts, or Chat.ReadWrite for chats/direct messages, plus the app's existing user lookup scopes. Polling occupies an action worker; keep the configured window within the SOAR action execution timeout.
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**destination** | required | Where to post: channel (needs group_id and channel_id), direct_message (needs user_id), or chat (needs chat_id) | string | |
+**message** | optional | What is being approved. Required unless 'adaptive_card' supplies a custom card. Markdown is supported | string | |
+**title** | optional | Card heading | string | |
+**details** | optional | Optional context shown as a fact table. Either a JSON object, or one 'Label: value' per line | string | |
+**approvers** | optional | Comma-separated list of who may respond: display names, user principal names, email addresses, or Azure AD object IDs. Each is resolved against the tenant when the card is sent. Leave empty to let anyone who can see the message respond. | string | |
+**reactions** | optional | Accepted reactions: type thumbs_up,thumbs_down or checkmark,cross. Optional labels and true/false approval flags use vertical-bar separators (see README examples). Other emoji can use Unicode notation, e.g. U+1F680. Literal emoji and JSON arrays are also accepted. First option approves unless flags are provided. | string | |
+**adaptive_card** | optional | Optional Adaptive Card JSON (root object) posted instead of the built-in approval card. The reaction flow is unchanged - only the card body differs. Example: {"type":"AdaptiveCard","version":"1.5","body":[{"type":"TextBlock","text":"Approve?"}]} | string | |
+**seed_reactions** | optional | Pre-add the approving reaction for a quick tap, or seed none. Only one reaction is seeded; other choices can be selected from Teams' reaction picker. The sending account never counts as an approver. | string | |
+**max_checks** | optional | Number of reaction reads (1-1000). The first is immediate; 1 performs no waiting | numeric | |
+**check_interval_seconds** | optional | Seconds between reads (5-900). Total sleep is (max_checks - 1) times this value, plus request time. Defaults sleep 29.5 minutes. Keep within the SOAR action execution timeout | numeric | |
+**group_id** | optional | Team (group) ID - required when destination is channel | string | `ms teams group id` |
+**channel_id** | optional | Channel ID - required when destination is channel | string | `ms teams channel id` |
+**user_id** | optional | Azure AD object ID of the user - required when destination is direct_message | string | `ms teams user id` |
+**chat_id** | optional | Chat ID - required when destination is chat | string | `ms teams chat id` |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failed |
+action_result.parameter.destination | string | | |
+action_result.parameter.message | string | | |
+action_result.parameter.title | string | | |
+action_result.parameter.details | string | | |
+action_result.parameter.approvers | string | | |
+action_result.parameter.reactions | string | | |
+action_result.parameter.adaptive_card | string | | |
+action_result.parameter.seed_reactions | string | | |
+action_result.parameter.max_checks | numeric | | |
+action_result.parameter.check_interval_seconds | numeric | | |
+action_result.parameter.group_id | string | `ms teams group id` | |
+action_result.parameter.channel_id | string | `ms teams channel id` | |
+action_result.parameter.user_id | string | `ms teams user id` | |
+action_result.parameter.chat_id | string | `ms teams chat id` | |
+action_result.data.\*.approved | boolean | | True False |
+action_result.data.\*.answer | string | | Approve Deny |
+action_result.data.\*.reaction_emoji | string | | 👍 👎 |
+action_result.data.\*.reaction | string | | like 👎 |
+action_result.data.\*.answered_by | string | | |
+action_result.data.\*.answered_by_upn | string | `email` | |
+action_result.data.\*.answered_by_email | string | `email` | |
+action_result.data.\*.answered_by_aad_id | string | | |
+action_result.data.\*.answered_at | string | | |
+action_result.data.\*.timed_out | boolean | | True False |
+action_result.data.\*.checks_performed | numeric | | 3 |
+action_result.data.\*.message_id | string | | |
+action_result.data.\*.web_url | string | `url` | |
+action_result.data.\*.destination | string | | |
+action_result.data.\*.seeded | boolean | | |
+action_result.data.\*.seeded_reactions.\* | string | | 👍 |
+action_result.data.\*.seed_mode | string | | approving none |
+action_result.data.\*.seed_note | string | | |
+action_result.data.\*.seed_errors.\* | string | | |
+action_result.data.\*.card_updated | boolean | | True False |
+action_result.data.\*.card_update_error | string | | |
+action_result.data.\*.ignored_reactions.\*.reaction | string | | |
+action_result.data.\*.ignored_reactions.\*.reaction_emoji | string | | |
+action_result.data.\*.ignored_reactions.\*.answer | string | | |
+action_result.data.\*.ignored_reactions.\*.reacted_by | string | | |
+action_result.data.\*.ignored_reactions.\*.reacted_by_aad_id | string | | |
+action_result.data.\*.ignored_reactions.\*.reacted_at | string | | |
+action_result.data.\*.ignored_reactions.\*.reason | string | | not a listed approver |
+action_result.summary.message_id | string | | |
+action_result.summary.destination | string | | |
+action_result.summary.approved | boolean | | |
+action_result.summary.timed_out | boolean | | |
+action_result.summary.answer | string | | |
+action_result.summary.expected_approver_ids.\* | string | | |
+action_result.summary.ignored_reactions | numeric | | 0 |
+action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ______________________________________________________________________
 
