@@ -354,12 +354,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **group_id** | required | ID of group | string | `ms teams group id` |
 **channel_id** | required | ID of channel | string | `ms teams channel id` |
 **message** | required | Message to send (HTML is supported) | string | |
+**adaptive_card** | optional | JSON string of an Adaptive Card to send as a rich card attachment | string | |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failed |
+action_result.parameter.adaptive_card | string | | |
 action_result.parameter.channel_id | string | `ms teams channel id` | 10:2daiuhf4c29f6d7041eca70b67979r245437@thread.v2 |
 action_result.parameter.group_id | string | `ms teams group id` | caf444a0-0e0e-426b-98ea-db67ff6b0b25 |
 action_result.parameter.message | string | | This is a test message |
@@ -484,6 +486,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **user_id** | required | ID of the user to send direct message to | string | `ms teams user id` |
 **message** | required | Message content to send | string | |
+**adaptive_card** | optional | JSON string of an Adaptive Card to send as a rich card attachment | string | |
 
 #### Action Output
 
@@ -492,6 +495,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.user_id | string | `ms teams user id` | |
 action_result.parameter.message | string | | |
+action_result.parameter.adaptive_card | string | | |
 action_result.data.\*.id | string | `ms teams message id` | |
 action_result.data.\*.chatId | string | `ms teams chat id` | |
 action_result.data.\*.createdDateTime | string | | |
@@ -537,6 +541,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **chat_id** | required | ID of the chat to send message to | string | `ms teams chat id` |
 **message** | required | Message content to send | string | |
+**adaptive_card** | optional | JSON string of an Adaptive Card to send as a rich card attachment | string | |
 
 #### Action Output
 
@@ -545,6 +550,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.chat_id | string | `ms teams chat id` | |
 action_result.parameter.message | string | | |
+action_result.parameter.adaptive_card | string | | |
 action_result.data.\*.id | string | `ms teams message id` | |
 action_result.data.\*.chatId | string | `ms teams chat id` | |
 action_result.data.\*.createdDateTime | string | | |

@@ -26,6 +26,7 @@ import re
 import secrets
 import sys
 import time
+import uuid
 from typing import Any, Optional
 
 import encryption_helper
@@ -1029,6 +1030,53 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return phantom.APP_SUCCESS
 
+    def _build_message_payload(self, action_result, message, adaptive_card):
+        """This function builds the Microsoft Graph chatMessage request body, optionally embedding an
+        Adaptive Card as an attachment.
+
+        :param action_result: ActionResult object
+        :param message: Plain/HTML message text (may be empty/None if adaptive_card is provided)
+        :param adaptive_card: JSON string of an Adaptive Card payload (may be empty/None)
+        :return: status, data dict suitable for use as the Graph API request body
+        """
+
+        if not message and not adaptive_card:
+            return action_result.set_status(phantom.APP_ERROR, "Please specify 'message', 'adaptive_card', or both"), None
+
+        if not adaptive_card:
+            return phantom.APP_SUCCESS, {"body": {"contentType": "html", "content": message}}
+
+        try:
+            card_content = json.loads(adaptive_card)
+        except (TypeError, ValueError) as exc:
+            return action_result.set_status(phantom.APP_ERROR, f"Parameter 'adaptive_card' must contain valid JSON: {exc}"), None
+
+        if not isinstance(card_content, dict) or card_content.get("type") != "AdaptiveCard":
+            return (
+                action_result.set_status(
+                    phantom.APP_ERROR,
+                    'Parameter \'adaptive_card\' must be a JSON object with "type": "AdaptiveCard"',
+                ),
+                None,
+            )
+
+        attachment_id = uuid.uuid4().hex
+        content = f'<attachment id="{attachment_id}"></attachment>'
+        if message:
+            content = f"<div>{message}</div>" + content
+
+        data = {
+            "body": {"contentType": "html", "content": content},
+            "attachments": [
+                {
+                    "id": attachment_id,
+                    "contentType": "application/vnd.microsoft.card.adaptive",
+                    "content": json.dumps(card_content),
+                }
+            ],
+        }
+        return phantom.APP_SUCCESS, data
+
     def _handle_send_channel_message(self, param: dict) -> str:
         """This function is used to Sends a message to a specified channel in a Microsoft Teams group.
 
@@ -1041,7 +1089,12 @@ class MicrosoftTeamConnector(BaseConnector):
 
         group_id = param[MSTEAMS_JSON_GROUP_ID]
         channel_id = param[MSTEAMS_JSON_CHANNEL_ID]
-        message = param[MSTEAMS_JSON_MSG]
+        message = param.get(MSTEAMS_JSON_MSG)
+        adaptive_card = param.get(MSTEAMS_JSON_ADAPTIVE_CARD)
+
+        status, data = self._build_message_payload(action_result, message, adaptive_card)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
         status = self._verify_parameters(group_id=group_id, channel_id=channel_id, action_result=action_result)
 
@@ -1055,8 +1108,6 @@ class MicrosoftTeamConnector(BaseConnector):
             group_id=_encode_graph_path_segment(group_id),
             channel_id=_encode_graph_path_segment(channel_id),
         )
-
-        data = {"body": {"contentType": "html", "content": message}}
 
         # make rest call
         status, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
@@ -1463,17 +1514,20 @@ class MicrosoftTeamConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _send_chat_message(self, action_result, chat_id, message):
+    def _send_chat_message(self, action_result, chat_id, message, adaptive_card=None):
         """This function is used to send a message to a chat.
 
         :param action_result: ActionResult object
         :param chat_id: ID of desired chat
         :param message: Message to be sent
+        :param adaptive_card: JSON string of an Adaptive Card to send as an attachment
         :return: status success/failure
         """
-        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
+        status, data = self._build_message_payload(action_result, message, adaptive_card)
+        if phantom.is_fail(status):
+            return action_result.get_status(), None
 
-        data = {"body": {"contentType": "html", "content": message}}
+        endpoint = MSTEAMS_MSGRAPH_SEND_DIRECT_MSG_ENDPOINT.format(chat_id=_encode_graph_path_segment(chat_id))
 
         # make rest call
         status, response = self._update_request(endpoint=endpoint, action_result=action_result, method="post", data=json.dumps(data))
@@ -1495,9 +1549,10 @@ class MicrosoftTeamConnector(BaseConnector):
 
         chat_id = param[MSTEAMS_JSON_CHAT_ID]
 
-        message = param[MSTEAMS_JSON_MSG]
+        message = param.get(MSTEAMS_JSON_MSG)
+        adaptive_card = param.get(MSTEAMS_JSON_ADAPTIVE_CARD)
 
-        status, response = self._send_chat_message(action_result, chat_id, message)
+        status, response = self._send_chat_message(action_result, chat_id, message, adaptive_card)
 
         if phantom.is_fail(status):
             return action_result.get_status()
@@ -1517,7 +1572,13 @@ class MicrosoftTeamConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         user_id = param[MSTEAMS_JSON_USER_ID]
-        message = param[MSTEAMS_JSON_MSG]
+        message = param.get(MSTEAMS_JSON_MSG)
+        adaptive_card = param.get(MSTEAMS_JSON_ADAPTIVE_CARD)
+
+        # Validate the message payload up-front so we fail fast before making any Graph API calls
+        status, _ = self._build_message_payload(action_result, message, adaptive_card)
+        if phantom.is_fail(status):
+            return action_result.get_status()
 
         # Get our ID
         status, me_response = self._update_request(endpoint=MSTEAMS_MSGRAPH_LIST_ME_ENDPOINT, action_result=action_result)
@@ -1571,7 +1632,7 @@ class MicrosoftTeamConnector(BaseConnector):
             chat_id = response.get("id")
 
         # Send chat message now
-        status, response = self._send_chat_message(action_result, chat_id, message)
+        status, response = self._send_chat_message(action_result, chat_id, message, adaptive_card)
 
         if phantom.is_fail(status):
             return action_result.get_status()

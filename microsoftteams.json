@@ -546,6 +546,12 @@
                     "data_type": "string",
                     "required": true,
                     "order": 2
+                },
+                "adaptive_card": {
+                    "description": "JSON string of an Adaptive Card to send as a rich card attachment",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3
                 }
             },
             "output": [
@@ -556,6 +562,10 @@
                         "success",
                         "failed"
                     ]
+                },
+                {
+                    "data_path": "action_result.parameter.adaptive_card",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.parameter.channel_id",
@@ -1099,6 +1109,12 @@
                     "data_type": "string",
                     "required": true,
                     "order": 1
+                },
+                "adaptive_card": {
+                    "description": "JSON string of an Adaptive Card to send as a rich card attachment",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2
                 }
             },
             "output": [
@@ -1119,6 +1135,10 @@
                 },
                 {
                     "data_path": "action_result.parameter.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.adaptive_card",
                     "data_type": "string"
                 },
                 {
@@ -1307,6 +1327,12 @@
                     "data_type": "string",
                     "required": true,
                     "order": 1
+                },
+                "adaptive_card": {
+                    "description": "JSON string of an Adaptive Card to send as a rich card attachment",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2
                 }
             },
             "output": [
@@ -1327,6 +1353,10 @@
                 },
                 {
                     "data_path": "action_result.parameter.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.adaptive_card",
                     "data_type": "string"
                 },
                 {
