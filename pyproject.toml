@@ -12,6 +12,7 @@ dependencies = [
     "botbuilder-integration-aiohttp==4.16.2",
     "botbuilder-schema==4.16.2",
     "botframework-connector==4.16.2",
+    "httpx>=0.28.1,<1",
     "splunk-soar-sdk==7.1.2",
 ]
 

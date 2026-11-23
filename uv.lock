@@ -911,6 +911,7 @@ dependencies = [
     { name = "botbuilder-integration-aiohttp" },
     { name = "botbuilder-schema" },
     { name = "botframework-connector" },
+    { name = "httpx" },
     { name = "splunk-soar-sdk" },
 ]
 
@@ -932,6 +933,7 @@ requires-dist = [
     { name = "botbuilder-integration-aiohttp", specifier = "==4.16.2" },
     { name = "botbuilder-schema", specifier = "==4.16.2" },
     { name = "botframework-connector", specifier = "==4.16.2" },
+    { name = "httpx", specifier = ">=0.28.1,<1" },
     { name = "splunk-soar-sdk", specifier = "==7.1.2" },
 ]
 
