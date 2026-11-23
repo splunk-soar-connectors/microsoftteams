@@ -16,11 +16,16 @@ import re
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url, encode_graph_path_segment
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import (
+    graph_request_error,
+    graph_token_rejected,
+    graph_url,
+    encode_graph_path_segment,
+)
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class GetResponseMessageParams(Params):
@@ -43,7 +48,9 @@ class BodyOutput(ActionOutput):
 class UserOutput(ActionOutput):
     odata: OdataOutput | None
     displayName: str | None = OutputField(example_values=["Test User"])
-    id: str | None = OutputField(example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"])
+    id: str | None = OutputField(
+        example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"]
+    )
     userIdentityType: str | None = OutputField(example_values=["aadUser"])
     tenantId: str | None = OutputField(example_values=["aadUser"])
 
@@ -71,7 +78,9 @@ class AttachmentsOutput(ActionOutput):
 class GetResponseMessageOutput(ActionOutput):
     odata: OdataOutput | None
     body: BodyOutput | None
-    createdDateTime: str | None = OutputField(example_values=["2021-03-12T06:02:01.352Z"])
+    createdDateTime: str | None = OutputField(
+        example_values=["2021-03-12T06:02:01.352Z"]
+    )
     deletedDateTime: str | None
     etag: str | None = OutputField(example_values=["1615528921100"])
     from_: FromOutput | None = OutputField(alias="from")
@@ -79,7 +88,9 @@ class GetResponseMessageOutput(ActionOutput):
     importance: str | None = OutputField(example_values=["normal"])
     contain_attachment: str | None
     lastEditedDateTime: str | None
-    lastModifiedDateTime: str | None = OutputField(example_values=["2021-03-12T06:02:01.352Z"])
+    lastModifiedDateTime: str | None = OutputField(
+        example_values=["2021-03-12T06:02:01.352Z"]
+    )
     locale: str | None
     messageType: str | None = OutputField(example_values=["message"])
     policyViolation: str | None
@@ -138,9 +149,13 @@ def get_response(
                     if reply.get("id") == params.message_id:
                         parent_found = True
                     attachments = reply.get("attachments", [])
-                    attachment_ids = [attachment.get("id") for attachment in attachments]
+                    attachment_ids = [
+                        attachment.get("id") for attachment in attachments
+                    ]
                     if params.message_id in attachment_ids:
-                        reply["contain_attachment"] = "Yes" if len(attachments) > 1 else "No"
+                        reply["contain_attachment"] = (
+                            "Yes" if len(attachments) > 1 else "No"
+                        )
                         matched_replies.append(reply)
                 if parent_found:
                     break

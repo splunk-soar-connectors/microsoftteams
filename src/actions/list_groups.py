@@ -14,11 +14,11 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import graph_request_error, graph_token_rejected, graph_url
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class ListGroupsOutput(ActionOutput):
@@ -35,7 +35,9 @@ class ListGroupsOutput(ActionOutput):
         example_values=["594101ba-1fde-482d-8e24-3bbab23a3ca8"],
     )
     isAssignableToRole: bool | None
-    mail: str | None = OutputField(cef_types=["email"], example_values=["team2@test.com"])
+    mail: str | None = OutputField(
+        cef_types=["email"], example_values=["team2@test.com"]
+    )
     mailEnabled: bool | None
     mailNickname: str | None = OutputField(example_values=["team2"])
     membershipRule: str | None = OutputField(

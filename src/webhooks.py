@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING
 from soar_sdk.auth import create_oauth_callback_handler
 from soar_sdk.webhooks.models import WebhookRequest, WebhookResponse
 
-from src.auth import AUTHORIZATION_URL_STATE_KEY, authorization_flow
+from .auth import AUTHORIZATION_URL_STATE_KEY, authorization_flow
 
 if TYPE_CHECKING:
     from soar_sdk.app import App

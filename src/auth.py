@@ -20,7 +20,7 @@ from soar_sdk.auth import AuthorizationCodeFlow, OAuthConfig
 from soar_sdk.auth.client import AuthorizationRequiredError, SOARAssetOAuthClient
 from soar_sdk.auth.models import OAuthGrantType
 
-from src.asset import Asset
+from .asset import Asset
 
 LOGIN_BASE_URL = "https://login.microsoftonline.com"
 AUTHORIZATION_URL_STATE_KEY = "microsoftteams_authorization_url"

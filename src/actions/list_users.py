@@ -14,16 +14,18 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import graph_request_error, graph_token_rejected, graph_url
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class AssignedlicensesOutput(ActionOutput):
     disabledPlans: str | None
-    skuId: str | None = OutputField(example_values=["6fd2c87f-b296-42f0-b197-1e91e994b900"])
+    skuId: str | None = OutputField(
+        example_values=["6fd2c87f-b296-42f0-b197-1e91e994b900"]
+    )
 
 
 class AssignedplansOutput(ActionOutput):
@@ -56,13 +58,23 @@ class ListUsersOutput(ActionOutput):
         cef_types=["user name"], example_values=["Test User"]
     )
     employeeId: str | None
-    givenName: str | None = OutputField(cef_types=["user name"], example_values=["User"])
-    id: str | None = OutputField(example_values=["a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09"])
-    imAddresses: str | None = OutputField(cef_types=["email"], example_values=["test@abc.com"])
+    givenName: str | None = OutputField(
+        cef_types=["user name"], example_values=["User"]
+    )
+    id: str | None = OutputField(
+        example_values=["a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09"]
+    )
+    imAddresses: str | None = OutputField(
+        cef_types=["email"], example_values=["test@abc.com"]
+    )
     jobTitle: str | None
     legalAgeGroupClassification: str | None
-    mail: str | None = OutputField(cef_types=["email"], example_values=["test.user@abc.com"])
-    mailNickname: str | None = OutputField(cef_types=["user name"], example_values=["User"])
+    mail: str | None = OutputField(
+        cef_types=["email"], example_values=["test.user@abc.com"]
+    )
+    mailNickname: str | None = OutputField(
+        cef_types=["user name"], example_values=["User"]
+    )
     mobilePhone: str | None
     officeLocation: str | None
     onPremisesDomainName: str | None = OutputField(cef_types=["domain"])
@@ -101,9 +113,7 @@ class ListUsersSummary(ActionOutput):
     total_users: int
 
 
-def list_users(
-    params: Params, soar: SOARClient, asset: Asset
-) -> list[ListUsersOutput]:
+def list_users(params: Params, soar: SOARClient, asset: Asset) -> list[ListUsersOutput]:
     try:
         validate_oauth_configuration(asset)
         oauth_client = oauth_token_client(asset)

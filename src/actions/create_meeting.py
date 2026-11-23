@@ -14,12 +14,12 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import graph_request_error, graph_token_rejected, graph_url
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.models.view import ViewContext
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class CreateMeetingParams(Params):
@@ -46,11 +46,15 @@ class OdataOutput(ActionOutput):
             "https://graph.microsoft.com/v1.0/$metadata#users('hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f')/onlineMeetings/$entity",
         ],
     )
-    etag: str | None = OutputField(example_values=['W/"07XhOkNngkCkqoNfY+k/jQAFHNmDaQ=="'])
+    etag: str | None = OutputField(
+        example_values=['W/"07XhOkNngkCkqoNfY+k/jQAFHNmDaQ=="']
+    )
 
 
 class EmailaddressOutput(ActionOutput):
-    address: str | None = OutputField(cef_types=["email"], example_values=["test@abc.com"])
+    address: str | None = OutputField(
+        cef_types=["email"], example_values=["test@abc.com"]
+    )
     name: str | None = OutputField(example_values=["Test User"])
 
 
@@ -91,7 +95,9 @@ class OnlinemeetingOutput(ActionOutput):
 
 
 class UserOutput(ActionOutput):
-    id: str | None = OutputField(example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"])
+    id: str | None = OutputField(
+        example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"]
+    )
     tenantId: str | None = OutputField(
         example_values=["149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"]
     )
@@ -165,8 +171,12 @@ class CreateMeetingOutput(ActionOutput):
             ".........................................................................................................................................\\r\\nJoin Teams Meeting\\r\\nen-US\\r\\nhttps://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYT"
         ]
     )
-    changeKey: str | None = OutputField(example_values=["07XhOkNngkCkqoNfY+k/jQAFHNmDaQ=="])
-    createdDateTime: str | None = OutputField(example_values=["2022-04-22T10:51:54.9092527Z"])
+    changeKey: str | None = OutputField(
+        example_values=["07XhOkNngkCkqoNfY+k/jQAFHNmDaQ=="]
+    )
+    createdDateTime: str | None = OutputField(
+        example_values=["2022-04-22T10:51:54.9092527Z"]
+    )
     end: EndOutput | None
     hasAttachments: bool | None
     hideAttendees: float | None = OutputField(example_values=[False])
@@ -196,8 +206,12 @@ class CreateMeetingOutput(ActionOutput):
     onlineMeetingProvider: str | None = OutputField(example_values=["teamsForBusiness"])
     onlineMeetingUrl: str | None
     organizer: OrganizerOutput | None
-    originalEndTimeZone: str | None = OutputField(example_values=["Pacific Standard Time"])
-    originalStartTimeZone: str | None = OutputField(example_values=["Pacific Standard Time"])
+    originalEndTimeZone: str | None = OutputField(
+        example_values=["Pacific Standard Time"]
+    )
+    originalStartTimeZone: str | None = OutputField(
+        example_values=["Pacific Standard Time"]
+    )
     recurrence: str | None
     reminderMinutesBeforeStart: float | None = OutputField(example_values=[15])
     responseRequested: bool | None
@@ -229,15 +243,21 @@ class CreateMeetingOutput(ActionOutput):
             "https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
         ],
     )
-    endDateTime: str | None = OutputField(example_values=["2022-04-28T13:11:55.0940461Z"])
+    endDateTime: str | None = OutputField(
+        example_values=["2022-04-28T13:11:55.0940461Z"]
+    )
     isBroadcast: float | None = OutputField(example_values=[False])
     meetingCode: str | None = OutputField(example_values=["230408462435"])
     meetingInfo: str | None
     participants: ParticipantsOutput | None
-    startDateTime: str | None = OutputField(example_values=["2022-04-28T12:11:55.0940461Z"])
+    startDateTime: str | None = OutputField(
+        example_values=["2022-04-28T12:11:55.0940461Z"]
+    )
     joinInformation: JoininformationOutput | None
     allowMeetingChat: str | None = OutputField(example_values=["enabled"])
-    creationDateTime: str | None = OutputField(example_values=["2022-04-28T12:11:55.7803555Z"])
+    creationDateTime: str | None = OutputField(
+        example_values=["2022-04-28T12:11:55.7803555Z"]
+    )
     allowedPresenters: str | None = OutputField(example_values=["everyone"])
     audioConferencing: str | None
     autoAdmittedUsers: str | None = OutputField(example_values=["everyoneInCompany"])
@@ -266,7 +286,7 @@ def display_meeting(
                 "data": [output.model_dump(by_alias=True)],
             }
             for output, param in zip(outputs, params, strict=True)
-        ]
+        ],
     }
 
 

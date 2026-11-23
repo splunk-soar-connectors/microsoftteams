@@ -15,7 +15,7 @@ from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, OutputField
 from soar_sdk.params import Param, Params
 from soar_sdk.exceptions import ActionFailure
-from src.asset import Asset
+from ..asset import Asset
 
 
 class AskQuestionParams(Params):

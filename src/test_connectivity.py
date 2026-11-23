@@ -18,13 +18,13 @@ from soar_sdk.auth import StaticTokenAuth
 from soar_sdk.auth.client import AuthorizationRequiredError, OAuthClientError
 from soar_sdk.exceptions import ActionFailure
 
-from src.actions._graph import (
+from .actions._graph import (
     GRAPH_V1_BASE_URL,
     graph_request_error,
     graph_token_rejected,
 )
-from src.asset import Asset
-from src.auth import (
+from .asset import Asset
+from .auth import (
     AUTHORIZATION_URL_STATE_KEY,
     authorization_flow,
     oauth_token_client,

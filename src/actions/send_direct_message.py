@@ -14,11 +14,16 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url, encode_graph_path_segment
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import (
+    graph_request_error,
+    graph_token_rejected,
+    graph_url,
+    encode_graph_path_segment,
+)
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class SendDirectMessageParams(Params):
@@ -120,8 +125,12 @@ def send_direct_message(
             chat_id = None
             for chat in chats.get("value", []):
                 members = chat.get("members", [])
-                if chat.get("chatType") == "oneOnOne" and len(members) == 2 and any(
-                    member.get("userId") == params.user_id for member in members
+                if (
+                    chat.get("chatType") == "oneOnOne"
+                    and len(members) == 2
+                    and any(
+                        member.get("userId") == params.user_id for member in members
+                    )
                 ):
                     chat_id = chat.get("id")
                     break

@@ -14,10 +14,10 @@
 from soar_sdk.abstract import SOARClient
 from soar_sdk.app import App
 
-from src.actions import register_actions
-from src.asset import Asset
-from src.test_connectivity import run_test_connectivity
-from src.webhooks import OAUTH_CALLBACK_ROUTE, OAUTH_START_ROUTE, register_webhooks
+from .actions import register_actions
+from .asset import Asset
+from .test_connectivity import run_test_connectivity
+from .webhooks import OAUTH_CALLBACK_ROUTE, OAUTH_START_ROUTE, register_webhooks
 
 
 def create_microsoftteams_app() -> App:

@@ -1,56 +1,81 @@
+# Copyright (c) 2026 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 """Explicit SDK action registration for Microsoft Teams."""
+
 from typing import TYPE_CHECKING
 
-from src.actions.ask_question import AskQuestionOutput, AskQuestionParams
-from src.actions.create_meeting import (
+from .ask_question import AskQuestionOutput, AskQuestionParams, ask_question
+from .create_meeting import (
     CreateMeetingOutput,
     CreateMeetingParams,
+    create_meeting,
+    display_meeting,
 )
-from src.actions.get_admin_consent import AdminConsentOutput, make_admin_consent_action
-from src.actions.get_channel_message import (
+from .get_admin_consent import AdminConsentOutput, make_admin_consent_action
+from .get_channel_message import (
     GetChannelMessageOutput,
     GetChannelMessageParams,
+    get_channel_message,
 )
-from src.actions.get_chat_message import (
+from .get_chat_message import (
     GetChatMessageOutput,
     GetChatMessageParams,
+    get_chat_message,
 )
-from src.actions.get_response import (
+from .get_response import (
     GetResponseMessageOutput,
     GetResponseMessageParams,
+    get_response,
 )
-from src.actions.list_channels import (
+from .list_channels import (
     ListChannelsOutput,
     ListChannelsParams,
     ListChannelsSummary,
+    display_channels,
+    list_channels,
 )
-from src.actions.list_chats import (
+from .list_chats import (
     ListChatsOutput,
     ListChatsParams,
     ListChatsSummary,
+    list_chats,
 )
-from src.actions.list_groups import (
+from .list_groups import (
     ListGroupsOutput,
     ListGroupsSummary,
+    list_groups,
 )
-from src.actions.list_teams import (
+from .list_teams import (
     ListTeamsOutput,
     ListTeamsSummary,
+    list_teams,
 )
-from src.actions.list_users import (
+from .list_users import (
     ListUsersOutput,
     ListUsersSummary,
+    list_users,
 )
-from src.actions.send_channel_message import (
-    SendChannelMessageOutput,
-)
-from src.actions.send_chat_message import (
+from .send_channel_message import SendChannelMessageOutput, send_channel_message
+from .send_chat_message import (
     SendChatMessageOutput,
     SendChatMessageParams,
+    send_chat_message,
 )
-from src.actions.send_direct_message import (
+from .send_direct_message import (
     SendDirectMessageOutput,
     SendDirectMessageParams,
+    send_direct_message,
 )
 
 if TYPE_CHECKING:
@@ -60,9 +85,7 @@ if TYPE_CHECKING:
 def register_actions(app: "App") -> "App":
     """Register the ordinary actions and their published metadata."""
     app.register_action(
-        action=make_admin_consent_action(
-            lambda: app.get_webhook_url("oauth/callback")
-        ),
+        action=make_admin_consent_action(lambda: app.get_webhook_url("oauth/callback")),
         name="get admin consent",
         identifier="get_admin_consent",
         description="Get the admin consent for a non-admin user",
@@ -76,7 +99,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="list_users:list_users",
+        action=list_users,
         name="list users",
         identifier="list_users",
         description="List all users",
@@ -87,7 +110,7 @@ def register_actions(app: "App") -> "App":
         summary_type=ListUsersSummary,
     )
     app.register_action(
-        action="send_channel_message:send_channel_message",
+        action=send_channel_message,
         name="send channel message",
         identifier="send_channel_message",
         description="Send a message to a channel of a group",
@@ -97,7 +120,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="ask_question:ask_question",
+        action=ask_question,
         name="ask question",
         identifier="ask_question",
         description="Ask a question in a channel (DEPRECATED)",
@@ -108,7 +131,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="list_chats:list_chats",
+        action=list_chats,
         name="list chats",
         identifier="list_chats",
         description="List chats for authenticated user",
@@ -120,7 +143,7 @@ def register_actions(app: "App") -> "App":
         summary_type=ListChatsSummary,
     )
     app.register_action(
-        action="send_direct_message:send_direct_message",
+        action=send_direct_message,
         name="send direct message",
         identifier="send_direct_message",
         description="Send a direct message to a user",
@@ -131,7 +154,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="send_chat_message:send_chat_message",
+        action=send_chat_message,
         name="send chat message",
         identifier="send_chat_message",
         description="Send a message to specific chat",
@@ -142,7 +165,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="list_channels:list_channels",
+        action=list_channels,
         name="list channels",
         identifier="list_channels",
         description="Lists all channels of a group",
@@ -151,12 +174,12 @@ def register_actions(app: "App") -> "App":
         params_class=ListChannelsParams,
         output_class=ListChannelsOutput,
         render_as="custom",
-        view_handler="list_channels:display_channels",
+        view_handler=display_channels,
         view_template="channels.html",
         summary_type=ListChannelsSummary,
     )
     app.register_action(
-        action="list_groups:list_groups",
+        action=list_groups,
         name="list groups",
         identifier="list_groups",
         description="List all Azure Groups",
@@ -167,7 +190,7 @@ def register_actions(app: "App") -> "App":
         summary_type=ListGroupsSummary,
     )
     app.register_action(
-        action="list_teams:list_teams",
+        action=list_teams,
         name="list teams",
         identifier="list_teams",
         description="List all Microsoft Teams",
@@ -178,7 +201,7 @@ def register_actions(app: "App") -> "App":
         summary_type=ListTeamsSummary,
     )
     app.register_action(
-        action="create_meeting:create_meeting",
+        action=create_meeting,
         name="create meeting",
         identifier="create_meeting",
         description="Create a microsoft teams meeting",
@@ -194,11 +217,11 @@ def register_actions(app: "App") -> "App":
         params_class=CreateMeetingParams,
         output_class=CreateMeetingOutput,
         render_as="custom",
-        view_handler="create_meeting:display_meeting",
+        view_handler=display_meeting,
         view_template="meeting.html",
     )
     app.register_action(
-        action="get_channel_message:get_channel_message",
+        action=get_channel_message,
         name="get channel message",
         identifier="get_channel_message",
         description="Get message in a channel",
@@ -209,7 +232,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="get_chat_message:get_chat_message",
+        action=get_chat_message,
         name="get chat message",
         identifier="get_chat_message",
         description="Get message in a chat",
@@ -220,7 +243,7 @@ def register_actions(app: "App") -> "App":
         render_as="table",
     )
     app.register_action(
-        action="get_response:get_response",
+        action=get_response,
         name="get response message",
         identifier="get_response",
         description="Get response on message in a chat",

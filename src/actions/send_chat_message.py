@@ -14,11 +14,16 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url, encode_graph_path_segment
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import (
+    graph_request_error,
+    graph_token_rejected,
+    graph_url,
+    encode_graph_path_segment,
+)
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class SendChatMessageParams(Params):
@@ -109,7 +114,9 @@ def send_chat_message(
                     response = client.post(
                         endpoint,
                         auth=auth,
-                        json={"body": {"contentType": "html", "content": params.message}},
+                        json={
+                            "body": {"contentType": "html", "content": params.message}
+                        },
                     )
             response.raise_for_status()
             data = response.json()

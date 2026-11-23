@@ -15,16 +15,16 @@ from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
 from soar_sdk.models.view import ViewContext
-from src.actions._graph import (
+from ._graph import (
     encode_graph_path_segment,
     graph_request_error,
     graph_token_rejected,
     graph_url,
 )
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class ListChannelsParams(Params):
@@ -41,7 +41,9 @@ class ListChannelsOutput(ActionOutput):
         example_values=["149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"]
     )
     isArchived: bool | None
-    createdDateTime: str | None = OutputField(example_values=["2020-07-13T12:39:21.573Z"])
+    createdDateTime: str | None = OutputField(
+        example_values=["2020-07-13T12:39:21.573Z"]
+    )
     id: str | None = OutputField(
         cef_types=["ms teams channel id"],
         example_values=["78f4a378-e7d3-49c8-a8a7-645b886752d9"],
@@ -64,7 +66,7 @@ def display_channels(
                 "data": [output.model_dump(by_alias=True)],
             }
             for output, param in zip(outputs, params, strict=True)
-        ]
+        ],
     }
 
 

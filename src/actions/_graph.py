@@ -87,10 +87,7 @@ def graph_error_message(response: httpx.Response) -> str:
             error_text = "\n".join(parser.lines) or "Cannot parse error details"
         except Exception:
             error_text = "Cannot parse error details"
-        return (
-            f"Status Code: {response.status_code}. Data from server:\n"
-            f"{error_text}\n"
-        )
+        return f"Status Code: {response.status_code}. Data from server:\n{error_text}\n"
 
     if not response.content:
         return (

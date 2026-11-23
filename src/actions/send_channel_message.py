@@ -14,11 +14,16 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from src.actions._graph import graph_request_error, graph_token_rejected, graph_url, encode_graph_path_segment
-from src.auth import oauth_token_client, validate_oauth_configuration
+from ._graph import (
+    graph_request_error,
+    graph_token_rejected,
+    graph_url,
+    encode_graph_path_segment,
+)
+from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
 from soar_sdk.params import Param, Params
-from src.asset import Asset
+from ..asset import Asset
 
 
 class SendChannelMessageParams(Params):
@@ -32,7 +37,9 @@ class SendChannelMessageParams(Params):
 
 
 class OdataOutput(ActionOutput):
-    type: str | None = OutputField(example_values=["#microsoft.graph.teamworkUserIdentity"])
+    type: str | None = OutputField(
+        example_values=["#microsoft.graph.teamworkUserIdentity"]
+    )
 
 
 class BodyOutput(ActionOutput):
@@ -42,7 +49,9 @@ class BodyOutput(ActionOutput):
 
 class UserOutput(ActionOutput):
     displayName: str | None = OutputField(example_values=["Test User"])
-    id: str | None = OutputField(example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"])
+    id: str | None = OutputField(
+        example_values=["hu45nfhf-df19-47a1-8e8c-fcd234cb5f6f"]
+    )
     userIdentityType: str | None = OutputField(example_values=["aadUser"])
     tenantId: str | None = OutputField(
         example_values=["149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"]
@@ -69,14 +78,18 @@ class ChannelidentityOutput(ActionOutput):
 class SendChannelMessageOutput(ActionOutput):
     odata: OdataOutput | None
     body: BodyOutput | None
-    createdDateTime: str | None = OutputField(example_values=["2021-03-12T06:02:01.352Z"])
+    createdDateTime: str | None = OutputField(
+        example_values=["2021-03-12T06:02:01.352Z"]
+    )
     deletedDateTime: str | None
     etag: str | None = OutputField(example_values=["1615528921352"])
     from_: FromOutput | None = OutputField(alias="from")
     id: str | None = OutputField(example_values=["1517826451101"])
     importance: str | None = OutputField(example_values=["normal"])
     lastEditedDateTime: str | None
-    lastModifiedDateTime: str | None = OutputField(example_values=["2021-03-12T06:02:01.352Z"])
+    lastModifiedDateTime: str | None = OutputField(
+        example_values=["2021-03-12T06:02:01.352Z"]
+    )
     locale: str | None
     messageType: str | None = OutputField(example_values=["message"])
     policyViolation: str | None
@@ -140,9 +153,7 @@ def send_channel_message(
                 f"Channel {params.channel_id} does not belongs to group {params.group_id}",
                 params.model_dump(by_alias=True),
             )
-        endpoint = graph_url(
-            f"/teams/{group_id}/channels/{channel_id}/messages"
-        )
+        endpoint = graph_url(f"/teams/{group_id}/channels/{channel_id}/messages")
         with httpx.Client(
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             timeout=30.0,
@@ -162,7 +173,9 @@ def send_channel_message(
                     response = client.post(
                         endpoint,
                         auth=auth,
-                        json={"body": {"contentType": "html", "content": params.message}},
+                        json={
+                            "body": {"contentType": "html", "content": params.message}
+                        },
                     )
             response.raise_for_status()
             result = response.json()

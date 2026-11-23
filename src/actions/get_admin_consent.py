@@ -20,7 +20,7 @@ from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, ActionResult
 from soar_sdk.params import Params
 
-from src.asset import Asset
+from ..asset import Asset
 
 LOGIN_BASE_URL = "https://login.microsoftonline.com"
 
