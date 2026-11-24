@@ -73,8 +73,7 @@ def run_test_connectivity(
         logging.info("Please authorize user in a separate tab using URL")
         logging.info(start_url_with_asset)
         try:
-            flow.wait_for_authorization()
-            token = oauth_client.get_valid_token(auto_refresh=True)
+            token = flow.wait_for_authorization()
             with httpx.Client(
                 auth=StaticTokenAuth(token),
                 headers={
