@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING
 from soar_sdk.auth import create_oauth_callback_handler
 from soar_sdk.webhooks.models import WebhookRequest, WebhookResponse
 
-from .auth import AUTHORIZATION_URL_STATE_KEY, authorization_flow
+from .auth import AUTHORIZATION_URL_STATE_KEY, authorization_flow, oauth_token_client
 
 if TYPE_CHECKING:
     from soar_sdk.app import App
@@ -46,11 +46,7 @@ def register_webhooks(app: "App") -> None:
         )
 
     oauth_callback = create_oauth_callback_handler(
-        lambda request: authorization_flow(
-            request.asset,
-            str(request.asset_id),
-            app.get_webhook_url(OAUTH_CALLBACK_ROUTE),
-        ).client,
+        oauth_token_client,
         success_message=(
             "Code received. Please close this window, the action will continue to get new token."
         ),
