@@ -22,7 +22,7 @@ from .webhooks import OAUTH_CALLBACK_ROUTE, OAUTH_START_ROUTE, register_webhooks
 
 def create_microsoftteams_app() -> App:
     app = App(
-        name="microsoftteams",
+        name="Microsoft Teams",
         app_type="information",
         logo="logo_microsoftteams.svg",
         logo_dark="logo_microsoftteams_dark.svg",
