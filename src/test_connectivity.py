@@ -16,6 +16,7 @@ from soar_sdk import logging
 from soar_sdk.abstract import SOARClient
 from soar_sdk.auth import StaticTokenAuth
 from soar_sdk.auth.client import AuthorizationRequiredError, OAuthClientError
+from soar_sdk.auth.models import OAuthState
 from soar_sdk.exceptions import ActionFailure
 
 from .actions._graph import (
@@ -74,6 +75,16 @@ def run_test_connectivity(
         logging.info(start_url_with_asset)
         try:
             token = flow.wait_for_authorization()
+            # SDK 7.1.2 clears the session using state captured before token storage.
+            # Persist the returned token through the public SDK state model and API.
+            state = asset.auth_state.get_all()
+            oauth_state = OAuthState.model_validate(state.get("oauth") or {})
+            oauth_state.token = token
+            oauth_state.client_id = asset.client_id
+            oauth_state.session = None
+            state["oauth"] = oauth_state.model_dump(mode="json", exclude_none=True)
+            asset.auth_state.put_all(state)
+            token = oauth_client.get_valid_token(auto_refresh=True)
             with httpx.Client(
                 auth=StaticTokenAuth(token),
                 headers={
