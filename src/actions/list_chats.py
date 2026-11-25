@@ -47,11 +47,11 @@ class OnlinemeetinginfoOutput(ActionOutput):
 
 
 class ListChatsOutput(ActionOutput):
-    id: str | None = OutputField(cef_types=["ms teams chat id"])
-    topic: str | None
-    createdDateTime: str | None
+    id: str | None = OutputField(column_name="Chat ID", cef_types=["ms teams chat id"])
+    topic: str | None = OutputField(column_name="Topic")
+    createdDateTime: str | None = OutputField(column_name="Created On")
+    chatType: str | None = OutputField(column_name="Chat Type")
     lastUpdatedDateTime: str | None
-    chatType: str | None
     webUrl: str | None = OutputField(cef_types=["url"])
     tenantId: str | None
     viewpoint: ViewpointOutput | None

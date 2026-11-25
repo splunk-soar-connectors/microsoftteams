@@ -22,18 +22,24 @@ from ..asset import Asset
 
 
 class ListGroupsOutput(ActionOutput):
-    classification: str | None = OutputField(example_values=["classification"])
-    createdDateTime: str | None = OutputField(example_values=["2018-01-30T09:43:13Z"])
-    deletedDateTime: str | None = OutputField(example_values=["2018-01-30T09:43:13Z"])
-    description: str | None = OutputField(example_values=["team2"])
-    displayName: str | None = OutputField(example_values=["team2"])
-    uniqueName: str | None
-    expirationDateTime: str | None
-    groupTypes: str | None = OutputField(example_values=["DynamicMembership"])
     id: str | None = OutputField(
+        column_name="Group ID",
         cef_types=["ms teams group id"],
         example_values=["594101ba-1fde-482d-8e24-3bbab23a3ca8"],
     )
+    displayName: str | None = OutputField(column_name="Name", example_values=["team2"])
+    createdDateTime: str | None = OutputField(
+        column_name="Created On", example_values=["2018-01-30T09:43:13Z"]
+    )
+    visibility: str | None = OutputField(
+        column_name="Visibility", example_values=["Private"]
+    )
+    classification: str | None = OutputField(example_values=["classification"])
+    deletedDateTime: str | None = OutputField(example_values=["2018-01-30T09:43:13Z"])
+    description: str | None = OutputField(example_values=["team2"])
+    uniqueName: str | None
+    expirationDateTime: str | None
+    groupTypes: str | None = OutputField(example_values=["DynamicMembership"])
     isAssignableToRole: bool | None
     mail: str | None = OutputField(
         cef_types=["email"], example_values=["team2@test.com"]
@@ -64,7 +70,6 @@ class ListGroupsOutput(ActionOutput):
         example_values=["S-2-22-2-123456789-1234567890-123456789-1234567890"]
     )
     theme: str | None
-    visibility: str | None = OutputField(example_values=["Private"])
 
 
 class ListGroupsSummary(ActionOutput):

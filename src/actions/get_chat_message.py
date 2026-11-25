@@ -28,7 +28,10 @@ from ..asset import Asset
 
 class GetChatMessageParams(Params):
     chat_id: str = Param(
-        description="ID of chat", primary=True, cef_types=["ms teams chat id"]
+        column_name="Chat ID",
+        description="ID of chat",
+        primary=True,
+        cef_types=["ms teams chat id"],
     )
     message_id: str = Param(description="ID of message")
 
@@ -73,6 +76,9 @@ class AttachmentsOutput(ActionOutput):
 
 
 class GetChatMessageOutput(ActionOutput):
+    id: str | None = OutputField(
+        column_name="Message ID", example_values=["1517826451101"]
+    )
     odata: OdataOutput | None
     body: BodyOutput | None
     createdDateTime: str | None = OutputField(
@@ -81,7 +87,6 @@ class GetChatMessageOutput(ActionOutput):
     deletedDateTime: str | None
     etag: str | None = OutputField(example_values=["1615528921765"])
     from_: FromOutput | None = OutputField(alias="from")
-    id: str | None = OutputField(example_values=["1517826451101"])
     importance: str | None = OutputField(example_values=["normal"])
     lastEditedDateTime: str | None
     lastModifiedDateTime: str | None = OutputField(

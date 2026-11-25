@@ -27,18 +27,26 @@ class WritebackconfigurationOutput(ActionOutput):
 
 
 class ListTeamsOutput(ActionOutput):
-    classification: str | None
-    createdByAppId: str | None
-    createdDateTime: str | None = OutputField(example_values=["2018-02-05T21:42:33Z"])
-    deletedDateTime: str | None
-    description: str | None = OutputField(example_values=["TeamOne"])
-    displayName: str | None = OutputField(example_values=["TeamOne"])
-    expirationDateTime: str | None
-    groupTypes: list[str] | None = OutputField(example_values=["Unified"])
     id: str | None = OutputField(
+        column_name="Group ID",
         cef_types=["ms teams group id"],
         example_values=["a84b973e-ad51-4248-9a3e-df054415f026"],
     )
+    displayName: str | None = OutputField(
+        column_name="Name", example_values=["TeamOne"]
+    )
+    createdDateTime: str | None = OutputField(
+        column_name="Created On", example_values=["2018-02-05T21:42:33Z"]
+    )
+    visibility: str | None = OutputField(
+        column_name="Visibility", example_values=["Public"]
+    )
+    classification: str | None
+    createdByAppId: str | None
+    deletedDateTime: str | None
+    description: str | None = OutputField(example_values=["TeamOne"])
+    expirationDateTime: str | None
+    groupTypes: list[str] | None = OutputField(example_values=["Unified"])
     isAssignableToRole: str | None
     isManagementRestricted: str | None
     mail: str | None = OutputField(
@@ -68,7 +76,6 @@ class ListTeamsOutput(ActionOutput):
         example_values=["S-1-12-1-2823526206-1112059217-98516634-653268292"]
     )
     theme: str | None
-    visibility: str | None = OutputField(example_values=["Public"])
     writebackConfiguration: WritebackconfigurationOutput | None
 
 

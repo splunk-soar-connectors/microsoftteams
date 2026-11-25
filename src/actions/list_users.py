@@ -44,6 +44,16 @@ class ProvisionedplansOutput(ActionOutput):
 
 
 class ListUsersOutput(ActionOutput):
+    id: str | None = OutputField(
+        column_name="User ID", example_values=["a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09"]
+    )
+    givenName: str | None = OutputField(
+        column_name="First Name", cef_types=["user name"], example_values=["User"]
+    )
+    surname: str | None = OutputField(column_name="Surname", example_values=["User"])
+    mail: str | None = OutputField(
+        column_name="Email", cef_types=["email"], example_values=["test.user@abc.com"]
+    )
     accountEnabled: bool | None
     assignedLicenses: list[AssignedlicensesOutput] | None
     assignedPlans: list[AssignedplansOutput] | None
@@ -58,20 +68,11 @@ class ListUsersOutput(ActionOutput):
         cef_types=["user name"], example_values=["Test User"]
     )
     employeeId: str | None
-    givenName: str | None = OutputField(
-        cef_types=["user name"], example_values=["User"]
-    )
-    id: str | None = OutputField(
-        example_values=["a1a6d0a2-b0f6-46c1-b49e-98a9ddabac09"]
-    )
     imAddresses: str | None = OutputField(
         cef_types=["email"], example_values=["test@abc.com"]
     )
     jobTitle: str | None
     legalAgeGroupClassification: str | None
-    mail: str | None = OutputField(
-        cef_types=["email"], example_values=["test.user@abc.com"]
-    )
     mailNickname: str | None = OutputField(
         cef_types=["user name"], example_values=["User"]
     )
@@ -101,7 +102,6 @@ class ListUsersOutput(ActionOutput):
     showInAddressList: str | None
     state: str | None
     streetAddress: str | None
-    surname: str | None = OutputField(example_values=["User"])
     usageLocation: str | None = OutputField(example_values=["US"])
     userPrincipalName: str | None = OutputField(
         cef_types=["email"], example_values=["test.user@abc.com"]

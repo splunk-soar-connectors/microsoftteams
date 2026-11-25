@@ -45,7 +45,7 @@ class FromOutput(ActionOutput):
 
 
 class BodyOutput(ActionOutput):
-    content: str | None
+    content: str | None = OutputField(column_name="Message")
     contentType: str | None
 
 
@@ -65,7 +65,9 @@ class ChannelidentityOutput(ActionOutput):
 
 
 class SendChatMessageOutput(ActionOutput):
-    id: str | None = OutputField(cef_types=["ms teams message id"])
+    id: str | None = OutputField(
+        column_name="Message ID", cef_types=["ms teams message id"]
+    )
     chatId: str | None = OutputField(cef_types=["ms teams chat id"])
     createdDateTime: str | None
     deletedDateTime: str | None

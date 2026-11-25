@@ -30,7 +30,10 @@ from ..asset import Asset
 
 class GetResponseMessageParams(Params):
     chat_id: str = Param(
-        description="ID of chat", primary=True, cef_types=["ms teams chat id"]
+        column_name="Chat ID",
+        description="ID of chat",
+        primary=True,
+        cef_types=["ms teams chat id"],
     )
     message_id: str = Param(description="The ID of the message to be replied to")
 
@@ -40,9 +43,11 @@ class OdataOutput(ActionOutput):
 
 
 class BodyOutput(ActionOutput):
+    message_reply: str | None = OutputField(
+        column_name="Message Reply", example_values=["try it"]
+    )
     content: str | None = OutputField(example_values=["test message"])
     contentType: str | None = OutputField(example_values=["text"])
-    message_reply: str | None = OutputField(example_values=["try it"])
 
 
 class UserOutput(ActionOutput):
@@ -76,17 +81,19 @@ class AttachmentsOutput(ActionOutput):
 
 
 class GetResponseMessageOutput(ActionOutput):
-    odata: OdataOutput | None
+    id: str | None = OutputField(
+        column_name="Response Message ID", example_values=["1517826451101"]
+    )
     body: BodyOutput | None
+    contain_attachment: str | None = OutputField(column_name="Contain Attachment?")
+    odata: OdataOutput | None
     createdDateTime: str | None = OutputField(
         example_values=["2021-03-12T06:02:01.352Z"]
     )
     deletedDateTime: str | None
     etag: str | None = OutputField(example_values=["1615528921100"])
     from_: FromOutput | None = OutputField(alias="from")
-    id: str | None = OutputField(example_values=["1517826451101"])
     importance: str | None = OutputField(example_values=["normal"])
-    contain_attachment: str | None
     lastEditedDateTime: str | None
     lastModifiedDateTime: str | None = OutputField(
         example_values=["2021-03-12T06:02:01.352Z"]

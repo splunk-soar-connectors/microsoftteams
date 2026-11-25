@@ -28,10 +28,16 @@ from ..asset import Asset
 
 class GetChannelMessageParams(Params):
     group_id: str = Param(
-        description="ID of group", primary=True, cef_types=["ms teams group id"]
+        column_name="Group ID",
+        description="ID of group",
+        primary=True,
+        cef_types=["ms teams group id"],
     )
     channel_id: str = Param(
-        description="ID of channel", primary=True, cef_types=["ms teams channel id"]
+        column_name="Channel ID",
+        description="ID of channel",
+        primary=True,
+        cef_types=["ms teams channel id"],
     )
     message_id: str = Param(description="ID of message")
 
@@ -75,6 +81,9 @@ class ChannelidentityOutput(ActionOutput):
 
 
 class GetChannelMessageOutput(ActionOutput):
+    id: str | None = OutputField(
+        column_name="Message ID", example_values=["1517826451101"]
+    )
     odata: OdataOutput | None
     body: BodyOutput | None
     createdDateTime: str | None = OutputField(
@@ -83,7 +92,6 @@ class GetChannelMessageOutput(ActionOutput):
     deletedDateTime: str | None
     etag: str | None = OutputField(example_values=["1615528921352"])
     eventDetail: str | None
-    id: str | None = OutputField(example_values=["1517826451101"])
     importance: str | None = OutputField(example_values=["normal"])
     lastEditedDateTime: str | None
     lastModifiedDateTime: str | None = OutputField(
