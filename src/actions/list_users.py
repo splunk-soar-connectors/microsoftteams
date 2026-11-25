@@ -47,7 +47,7 @@ class ListUsersOutput(ActionOutput):
     accountEnabled: bool | None
     assignedLicenses: list[AssignedlicensesOutput] | None
     assignedPlans: list[AssignedplansOutput] | None
-    businessPhones: str | None = OutputField(example_values=["22211156"])
+    businessPhones: list[str] | None = OutputField(example_values=["22211156"])
     city: str | None
     companyName: str | None
     country: str | None = OutputField(example_values=["US"])
