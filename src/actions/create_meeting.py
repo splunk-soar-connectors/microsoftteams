@@ -157,8 +157,14 @@ class JoininformationOutput(ActionOutput):
 
 
 class LobbybypasssettingsOutput(ActionOutput):
-    scope: bool | None
+    scope: str | None = OutputField(example_values=["organization"])
     isDialInBypassEnabled: bool | None
+
+
+class JoinmeetingidsettingsOutput(ActionOutput):
+    isPasscodeRequired: bool | None
+    joinMeetingId: str | None
+    passcode: str | None
 
 
 class CreateMeetingOutput(ActionOutput):
@@ -265,7 +271,7 @@ class CreateMeetingOutput(ActionOutput):
     lobbyBypassSettings: LobbybypasssettingsOutput | None
     recordAutomatically: bool | None
     isEntryExitAnnounced: bool | None
-    joinMeetingIdSettings: str | None
+    joinMeetingIdSettings: JoinmeetingidsettingsOutput | None
     videoTeleconferenceId: str | None
     allowTeamworkReactions: bool | None
     allowAttendeeToEnableMic: bool | None
