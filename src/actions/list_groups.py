@@ -21,6 +21,13 @@ from soar_sdk.params import Params
 from ..asset import Asset
 
 
+class OnpremisesprovisioningerrorOutput(ActionOutput):
+    category: str | None
+    occurredDateTime: str | None
+    propertyCausingError: str | None
+    value: str | None
+
+
 class ListGroupsOutput(ActionOutput):
     id: str | None = OutputField(
         column_name="Group ID",
@@ -39,7 +46,7 @@ class ListGroupsOutput(ActionOutput):
     description: str | None = OutputField(example_values=["team2"])
     uniqueName: str | None
     expirationDateTime: str | None
-    groupTypes: str | None = OutputField(example_values=["DynamicMembership"])
+    groupTypes: list[str] | None = OutputField(example_values=["DynamicMembership"])
     isAssignableToRole: bool | None
     mail: str | None = OutputField(
         cef_types=["email"], example_values=["team2@test.com"]
@@ -55,16 +62,18 @@ class ListGroupsOutput(ActionOutput):
         example_values=["2018-01-30T09:43:13Z"]
     )
     onPremisesNetBiosName: str | None
-    onPremisesProvisioningErrors: str | None
+    onPremisesProvisioningErrors: list[OnpremisesprovisioningerrorOutput] | None
     onPremisesSamAccountName: str | None
     onPremisesSecurityIdentifier: str | None
     onPremisesSyncEnabled: bool | None
     preferredDataLocation: str | None
     preferredLanguage: str | None
-    proxyAddresses: str | None = OutputField(example_values=["SMTP : team2@test.com"])
+    proxyAddresses: list[str] | None = OutputField(
+        example_values=["SMTP : team2@test.com"]
+    )
     renewedDateTime: str | None = OutputField(example_values=["2018-01-30T09:43:13Z"])
-    resourceBehaviorOptions: str | None
-    resourceProvisioningOptions: str | None
+    resourceBehaviorOptions: list[str] | None
+    resourceProvisioningOptions: list[str] | None
     securityEnabled: bool | None
     securityIdentifier: str | None = OutputField(
         example_values=["S-2-22-2-123456789-1234567890-123456789-1234567890"]
