@@ -17,7 +17,6 @@ from soar_sdk.auth import StaticTokenAuth
 from ._graph import graph_request_error, graph_token_rejected, graph_url
 from ..auth import oauth_token_client, validate_oauth_configuration
 from soar_sdk.action_results import ActionOutput, ActionResult, OutputField
-from soar_sdk.models.view import ViewContext
 from soar_sdk.params import Param, Params
 from ..asset import Asset
 
@@ -75,7 +74,9 @@ class BodyOutput(ActionOutput):
 
 
 class EndOutput(ActionOutput):
-    dateTime: str | None = OutputField(example_values=["2022-04-23T12:40:00.0000000"])
+    dateTime: str | None = OutputField(
+        column_name="End Time", example_values=["2022-04-23T12:40:00.0000000"]
+    )
     timeZone: str | None = OutputField(example_values=["Pacific Standard Time"])
 
 
@@ -87,6 +88,7 @@ class LocationOutput(ActionOutput):
 
 class OnlinemeetingOutput(ActionOutput):
     joinUrl: str | None = OutputField(
+        column_name="Calendar Meeting Link",
         cef_types=["url"],
         example_values=[
             "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDljMDhjMDAtNWI2Yy00MGUxLWExYjUtYThjNzMwNDc4NzZj%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
@@ -133,7 +135,9 @@ class ResponsestatusOutput(ActionOutput):
 
 
 class StartOutput(ActionOutput):
-    dateTime: str | None = OutputField(example_values=["2022-04-23T12:30:00.0000000"])
+    dateTime: str | None = OutputField(
+        column_name="Start Time", example_values=["2022-04-23T12:30:00.0000000"]
+    )
     timeZone: str | None = OutputField(example_values=["Pacific Standard Time"])
 
 
@@ -226,7 +230,9 @@ class CreateMeetingOutput(ActionOutput):
     seriesMasterId: str | None
     showAs: str | None = OutputField(example_values=["busy"])
     start: StartOutput | None
-    subject: str | None = OutputField(example_values=["My Code Review"])
+    subject: str | None = OutputField(
+        column_name="Subject", example_values=["My Code Review"]
+    )
     transactionId: str | None
     type: str | None = OutputField(example_values=["singleInstance"])
     webLink: str | None = OutputField(
@@ -236,6 +242,7 @@ class CreateMeetingOutput(ActionOutput):
         ],
     )
     joinUrl: str | None = OutputField(
+        column_name="Meeting Link",
         cef_types=["url"],
         example_values=[
             "https://teams.microsoft.com/l/meetup-join/19%3ameeting_MjViZWE2ODItM2UyNi00YjdhLWJhOGUtN2FmYWQwM2NkOTJm%40thread.v2/0?context=%7b%22Tid%22%3a%22140fe46d-819d-4b6d-b7ef-1c0a8270f4f0%22%2c%22Oid%22%3a%22eeb3645f-df19-47a1-8e8c-fcd234cb5f6f%22%7d"
@@ -277,23 +284,6 @@ class CreateMeetingOutput(ActionOutput):
     allowAttendeeToEnableMic: bool | None
     allowAttendeeToEnableCamera: bool | None
     outerMeetingAutoAdmittedUsers: str | None
-
-
-def display_meeting(
-    context: ViewContext,
-    outputs: list[CreateMeetingOutput],
-    params: list[CreateMeetingParams],
-) -> dict:
-    return {
-        "container_id": context.container,
-        "results": [
-            {
-                "param": param.model_dump(by_alias=True),
-                "data": [output.model_dump(by_alias=True)],
-            }
-            for output, param in zip(outputs, params, strict=True)
-        ],
-    }
 
 
 def create_meeting(

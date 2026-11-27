@@ -20,7 +20,6 @@ from .create_meeting import (
     CreateMeetingOutput,
     CreateMeetingParams,
     create_meeting,
-    display_meeting,
 )
 from .get_admin_consent import AdminConsentOutput, make_admin_consent_action
 from .get_channel_message import (
@@ -42,7 +41,6 @@ from .list_channels import (
     ListChannelsOutput,
     ListChannelsParams,
     ListChannelsSummary,
-    display_channels,
     list_channels,
 )
 from .list_chats import (
@@ -173,9 +171,7 @@ def register_actions(app: "App") -> "App":
         read_only=True,
         params_class=ListChannelsParams,
         output_class=ListChannelsOutput,
-        render_as="custom",
-        view_handler=display_channels,
-        view_template="channels.html",
+        render_as="table",
         summary_type=ListChannelsSummary,
     )
     app.register_action(
@@ -216,9 +212,7 @@ def register_actions(app: "App") -> "App":
         read_only=False,
         params_class=CreateMeetingParams,
         output_class=CreateMeetingOutput,
-        render_as="custom",
-        view_handler=display_meeting,
-        view_template="meeting.html",
+        render_as="table",
     )
     app.register_action(
         action=get_channel_message,

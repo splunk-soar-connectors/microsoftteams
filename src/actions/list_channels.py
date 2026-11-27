@@ -14,7 +14,6 @@
 from soar_sdk.abstract import SOARClient
 import httpx
 from soar_sdk.auth import StaticTokenAuth
-from soar_sdk.models.view import ViewContext
 from ._graph import (
     encode_graph_path_segment,
     graph_request_error,
@@ -34,8 +33,12 @@ class ListChannelsParams(Params):
 
 
 class ListChannelsOutput(ActionOutput):
-    description: str | None = OutputField(example_values=["Test team"])
-    displayName: str | None = OutputField(example_values=["General"])
+    description: str | None = OutputField(
+        column_name="Description", example_values=["Test team"]
+    )
+    displayName: str | None = OutputField(
+        column_name="Channel Name", example_values=["General"]
+    )
     email: str | None
     tenantId: str | None = OutputField(
         example_values=["149y9r6d-819d-4b6d-b7ef-1c0a827792970f4f0"]
@@ -45,29 +48,13 @@ class ListChannelsOutput(ActionOutput):
         example_values=["2020-07-13T12:39:21.573Z"]
     )
     id: str | None = OutputField(
+        column_name="Channel ID",
         cef_types=["ms teams channel id"],
         example_values=["78f4a378-e7d3-49c8-a8a7-645b886752d9"],
     )
     isFavoriteByDefault: str | None
     membershipType: str | None = OutputField(example_values=["standard"])
     webUrl: str | None
-
-
-def display_channels(
-    context: ViewContext,
-    outputs: list[ListChannelsOutput],
-    params: list[ListChannelsParams],
-) -> dict:
-    return {
-        "container_id": context.container,
-        "results": [
-            {
-                "param": param.model_dump(by_alias=True),
-                "data": [output.model_dump(by_alias=True)],
-            }
-            for output, param in zip(outputs, params, strict=True)
-        ],
-    }
 
 
 class ListChannelsSummary(ActionOutput):
